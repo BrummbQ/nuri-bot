@@ -93,3 +93,5 @@ sw.*
 
 # Vercel
 .vercel
+.env.development.local
+.env*.local
