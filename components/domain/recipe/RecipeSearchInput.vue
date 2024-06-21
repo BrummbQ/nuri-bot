@@ -1,17 +1,13 @@
 <template>
   <form className="flex items-center mb-4" @submit="emit('search', query)">
-    <AtomsInput
-      class="rounded-r-none"
-      :disabled="props.loading"
-      v-model="query"
-    />
-    <AtomsButton
+    <UiInput class="rounded-r-none" :disabled="props.loading" v-model="query" />
+    <UiButton
       class="rounded-l-none"
-      iconName="uil:food"
+      iconName="fluent:food-16-regular"
       :loading="props.loading"
       style="min-width: 6em"
       @click="emit('search', query)"
-      >Los</AtomsButton
+      >Los</UiButton
     >
   </form>
 </template>

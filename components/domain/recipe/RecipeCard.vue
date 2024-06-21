@@ -15,16 +15,30 @@
         {{ props.recipe.description }}
       </p>
       <div class="flex items-center gap-2">
-        <Icon name="fluent:timer-16-regular" />
-        <span class="text-gray-500 dark:text-gray-400">
-          <template v-if="recipeTime">{{ recipeTime }} minutes</template>
-          <template v-else>-</template>
-        </span>
-        <Icon name="fluent:person-16-regular" />
-        <span class="text-gray-500 dark:text-gray-400">{{
-          props.recipe.recipeYield
-        }}</span>
+        <UILabeledInfo
+          iconName="fluent:timer-16-regular"
+          :text="recipeTime ? recipeTime + ' minutes' : '-'"
+        />
+
+        <UILabeledInfo
+          iconName="fluent:person-16-regular"
+          :text="props.recipe.recipeYield"
+        />
       </div>
+      <UiButton
+        v-if="props.selectable"
+        class="mt-4"
+        iconName="fluent:checkmark-16-regular"
+        variant="accent"
+        @click="emit('select', props.recipe)"
+      />
+      <UiButton
+        v-else
+        class="mt-4"
+        iconName="fluent:delete-16-regular"
+        variant="accent"
+        @click="emit('unselect', props.recipe)"
+      />
     </div>
   </article>
 </template>
@@ -34,6 +48,12 @@ import type { RecipeSchema } from "~/lib/search";
 
 const props = defineProps<{
   recipe: RecipeSchema;
+  selectable?: boolean;
+}>();
+
+const emit = defineEmits<{
+  select: [RecipeSchema];
+  unselect: [RecipeSchema];
 }>();
 
 function parseTimeInMinutes(recipeTime: string): number | undefined {

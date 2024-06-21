@@ -11,7 +11,7 @@ export type RecipeSchema = {
   keywords: string;
   name: string;
   recipeCategory: string;
-  recipeIngredients: string[];
+  recipeIngredient: string[];
   recipeInstructions: { name: string; text: string; url: string }[];
   recipeYield: number;
   totalTime?: string;

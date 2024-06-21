@@ -8,4 +8,13 @@ export default defineNuxtConfig({
   },
 
   modules: ["@nuxtjs/tailwindcss", "nuxt-icon"],
+
+  typescript: { typeCheck: true },
+
+  components: [
+    {
+      path: "~/components",
+      pathPrefix: false,
+    },
+  ],
 });
