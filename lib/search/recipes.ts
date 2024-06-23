@@ -39,7 +39,7 @@ const searchRecipesByEmbedding = async (
   // Obtain a client for Pinecone
   const pinecone = new Pinecone();
 
-  const indexName = "recipes-index";
+  const indexName = "recipes-index-aws";
 
   // Retrieve the list of indexes to check if expected index exists
   const indexes = (await pinecone.listIndexes())?.indexes;

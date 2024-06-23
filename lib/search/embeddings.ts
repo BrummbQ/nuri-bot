@@ -1,20 +1,29 @@
-import Replicate from "replicate";
-
-interface EmbeddingOutput {
-  vectors: number[];
-}
-
-const replicate = new Replicate({
-  auth: process.env.REPLICATE_API_KEY || "",
-});
+import {
+  BedrockRuntimeClient,
+  InvokeModelCommand,
+} from "@aws-sdk/client-bedrock-runtime";
 
 export async function getEmbedding(text: string): Promise<number[]> {
-  const output = (await replicate.run(
-    "brummbq/gbert-large-paraphrase-cosine:e514bc51be488261aaae87e55e2089631d77c6331dc11b1ad8e0c67c5d710735",
-    {
-      input: { text },
-    },
-  )) as EmbeddingOutput;
+  const client = new BedrockRuntimeClient({ region: "us-east-1" });
+  const modelId = "amazon.titan-embed-text-v2:0";
 
-  return output.vectors;
+  // Prepare the payload for the model.
+  const payload = {
+    inputText: text,
+    dimensions: 1024,
+    normalize: true,
+  };
+
+  // Invoke the model with the payload and wait for the response.
+  const command = new InvokeModelCommand({
+    contentType: "application/json",
+    body: JSON.stringify(payload),
+    modelId,
+  });
+  const apiResponse = await client.send(command);
+
+  // Decode and return the response.
+  const decodedResponseBody = new TextDecoder().decode(apiResponse.body);
+  const responseBody = JSON.parse(decodedResponseBody);
+  return responseBody.embedding;
 }
