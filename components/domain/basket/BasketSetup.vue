@@ -4,8 +4,14 @@
       >Rewe Markt {{ basketConfigured ? "ändern" : "wählen" }}</UiLink
     >
     <p v-if="!basketConfigured">
-      Gewünschten Markt auswählen und mit der Extension den Warenkorb
-      konfigurieren
+      Gewünschten Markt auswählen und mit der
+      <a
+        class="underline text-lime-700"
+        href="https://github.com/BrummbQ/nuri-bot/tree/main/chrome-extension"
+        target="_blank"
+        >Chrome Extension</a
+      >
+      den Warenkorb konfigurieren
     </p>
   </div>
 </template>
