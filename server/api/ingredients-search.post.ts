@@ -1,24 +1,9 @@
-import type { ReweProduct, ReweProductsResponse } from "~/lib/models";
-import type { Ingredient } from "~/utils/collectIngredients";
-
-interface IngredientsSearchBody {
-  ingredients: Ingredient[];
-  market: string;
-}
-
-export interface SelectedProduct {
-  quantity: number;
-  product: ReweProduct;
-}
-
-export interface IngredientWithProducts extends Ingredient {
-  products: ReweProduct[];
-  selectedProducts?: SelectedProduct[];
-}
-
-export interface IngredientsSearchResponse {
-  ingredients: IngredientWithProducts[];
-}
+import type {
+  IngredientWithProducts,
+  IngredientsSearchBody,
+  IngredientsSearchResponse,
+  ReweProductsResponse,
+} from "~/lib/models";
 
 async function searchProducts(
   search: string,

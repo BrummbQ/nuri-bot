@@ -24,6 +24,7 @@
 </template>
 
 <script setup lang="ts">
+import { getSearchRecipes } from "~/lib/api";
 import type { RecipeSchema } from "~/lib/search";
 
 const loading = ref(false);
@@ -34,10 +35,7 @@ const queryRecipes = async (query: string) => {
   loading.value = true;
   recipes.value = [];
 
-  const result = await $fetch("/api/recipes", {
-    method: "POST",
-    body: { query },
-  });
+  const result = await getSearchRecipes(query);
   loading.value = false;
 
   const mappedRecipes: RecipeSchema[] = [];

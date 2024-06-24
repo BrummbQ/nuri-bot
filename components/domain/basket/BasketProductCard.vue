@@ -78,11 +78,7 @@ const productListing = computed(() => {
 });
 
 const toggleProduct = () => {
-  if (props.selectedQuantity) {
-    emit("quantityChanged", 0);
-  } else {
-    emit("quantityChanged", 1);
-  }
+  emit("quantityChanged", props.selectedQuantity ? 0 : 1);
 };
 
 const changeQuantity = (delta: number) => {

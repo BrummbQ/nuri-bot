@@ -1,10 +1,5 @@
+import type { Ingredient } from "~/lib/models";
 import type { RecipeSchema } from "~/lib/search";
-
-export interface Ingredient {
-  quantity?: number;
-  unit?: string;
-  productName: string;
-}
 
 function parseIngredients(ingredients: string[]): Ingredient[] {
   const parsedIngredients: Ingredient[] = [];

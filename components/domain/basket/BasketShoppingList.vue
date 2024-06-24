@@ -1,57 +1,26 @@
 <template>
-  <BasketSetup @buildBasket="searchIngedients()" />
+  <BasketSetup @buildBasket="saveBasketData($event)" />
 
-  <UiHeader v-if="ingredientsWithProducts.length" :level="2" class="mt-4"
+  <UiHeader v-if="ingredientsWithProducts" :level="2" class="mt-4"
     >Zutaten</UiHeader
   >
 
-  <ul class="mb-4">
-    <UiAccordionItem
-      v-for="ingredient in ingredientsWithProducts"
-      :key="ingredient.productName"
-    >
-      <template #title>
-        <div class="flex items-center">
-          <span class="font-bold italic">{{
-            ingredientTitle(ingredient)
-          }}</span>
-          <Icon
-            v-if="!ingredient.selectedProducts?.length"
-            name="fluent:warning-16-regular"
-            class="text-2xl text-red-500 ml-2"
-          />
-        </div>
-      </template>
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        <BasketProductCard
-          v-for="product in ingredient.products"
-          :key="product.id"
-          :product="product"
-          :selectedQuantity="
-            selectedProduct(product, ingredient)?.quantity ?? 0
-          "
-          @quantityChanged="
-            selectProduct({ product, quantity: $event }, ingredient)
-          "
-        />
-      </div>
-      <div class="text-center" v-if="!ingredient.products.length">
-        <Icon name="fluent:emoji-sad-16-regular" width="50" height="50" />
-        keine Produkte gefunden
-      </div>
-    </UiAccordionItem>
+  <div v-if="searchLoading" class="text-center">
+    <Icon name="line-md:loading-loop" width="50" height="50" />
+  </div>
+  <ul v-else class="mb-4">
+    <BasketIngredientItem
+      v-if="ingredientsWithProducts"
+      :ingredientsWithProducts="ingredientsWithProducts"
+      @selectProduct="selectProduct($event.selectedProduct, $event.ingredient)"
+    />
   </ul>
 
-  <div class="flex gap-4">
-    <UiButton
-      v-if="ingredientsWithProducts && basketDirty"
-      :loading="orderLoading"
-      @click="orderBasket()"
+  <div v-if="ingredientsWithProducts && !searchLoading" class="flex gap-4">
+    <UiButton v-if="basketDirty" :loading="orderLoading" @click="orderBasket()"
       >Bestellen</UiButton
     >
-    <UiLink
-      v-if="ingredientsWithProducts && !basketDirty"
-      href="https://shop.rewe.de/checkout/basket"
+    <UiLink v-else href="https://shop.rewe.de/checkout/basket"
       >Zum Rewe Warenkorb</UiLink
     >
   </div>
@@ -59,20 +28,32 @@
 
 <script setup lang="ts">
 import type { RecipeSchema } from "~/lib/search";
-import type {
-  IngredientWithProducts,
-  SelectedProduct,
-} from "~/server/api/ingredients-search.post";
-import type { ReweProduct } from "~/lib/models";
+import {
+  type BasketData,
+  type Ingredient,
+  type IngredientWithProducts,
+  type SelectedProduct,
+} from "~/lib/models";
+import type { BuildBasketEvent } from "./BasketSetup.vue";
+import { postOrderIngredients, postSearchIngredients } from "~/lib/api";
 
 const props = defineProps<{ recipes: RecipeSchema[] }>();
 
 const ingredients = computed(() => {
   return collectIngredients(props.recipes);
 });
-const ingredientsWithProducts = ref<IngredientWithProducts[]>([]);
+const ingredientsWithProducts = ref<IngredientWithProducts[] | undefined>();
+const marketId = ref<string | undefined>();
+const basketData = ref<BasketData[] | undefined>();
+const searchLoading = ref(false);
 const orderLoading = ref(false);
 const basketDirty = ref(false);
+
+watchEffect(() => {
+  if (marketId.value && ingredients.value.length) {
+    searchIngedients(ingredients.value, marketId.value);
+  }
+});
 
 const selectProduct = (
   event: SelectedProduct,
@@ -86,35 +67,37 @@ const selectProduct = (
   basketDirty.value = true;
 };
 
-const selectedProduct = (
-  product: ReweProduct,
-  ingredient: IngredientWithProducts,
-): SelectedProduct | undefined => {
-  return ingredient.selectedProducts?.find((p) => p.product.id === product.id);
+const saveBasketData = (event: BuildBasketEvent) => {
+  marketId.value = event.marketId;
+  basketData.value = event.basketData;
 };
 
-const searchIngedients = async () => {
-  const result = await $fetch("/api/ingredients-search", {
-    method: "POST",
-    body: { ingredients: ingredients.value, market: "4040426" },
-  });
-  // auto select first product for each ingredient
-  result.ingredients.forEach((i) => {
-    if (i.products.length) {
-      i.selectedProducts = [{ product: i.products[0], quantity: 1 }];
-    }
-  });
+const searchIngedients = async (
+  ingredients: Ingredient[],
+  marketId: string,
+) => {
+  searchLoading.value = true;
+
+  const result = await postSearchIngredients(ingredients, marketId);
   ingredientsWithProducts.value = result.ingredients;
   basketDirty.value = true;
+  searchLoading.value = false;
 };
 
 const orderBasket = async () => {
-  orderLoading.value = true;
-  await $fetch("/api/ingredients-order", {
-    method: "POST",
-    body: { ingredients: ingredientsWithProducts.value },
-  });
-  orderLoading.value = false;
-  basketDirty.value = false;
+  if (basketData.value == null) {
+    console.error("No rewe cookies!");
+    return;
+  }
+
+  try {
+    orderLoading.value = true;
+    await postOrderIngredients(ingredientsWithProducts.value, basketData.value);
+    orderLoading.value = false;
+    basketDirty.value = false;
+  } catch (e) {
+    orderLoading.value = false;
+    console.error(e);
+  }
 };
 </script>
