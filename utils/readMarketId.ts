@@ -1,9 +1,11 @@
-import type { BasketData } from "~/lib/models";
+import type { ReweBasketCookieData } from "~/lib/models";
 
 /**
  * Extract market id from rewe cookies
  */
-export default function (basketData?: BasketData[]): string | undefined {
+export default function (
+  basketData?: ReweBasketCookieData[],
+): string | undefined {
   if (basketData) {
     const marketsCookie = basketData.find((v) => v.name === "marketsCookie");
     if (marketsCookie) {

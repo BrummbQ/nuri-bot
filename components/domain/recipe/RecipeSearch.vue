@@ -1,25 +1,14 @@
 <template>
   <RecipeSearchInput :loading="loading" @search="queryRecipes($event)" />
-  <RecipeCardView>
-    <RecipeCard
-      v-for="recipe in recipes"
-      :key="recipe['@id']"
-      :recipe="recipe"
-      :selectable="true"
-      @select="selectRecipe($event)"
-    />
-  </RecipeCardView>
+  <RecipeAvailableCards :recipes="recipes" @select="selectRecipe($event)" />
 
   <template v-if="selectedRecipes.length > 0">
-    <UiHeader :level="2">Ausgewählte Rezepte</UiHeader>
-    <RecipeCardView>
-      <RecipeCard
-        v-for="recipe in selectedRecipes"
-        :key="recipe['@id']"
-        :recipe="recipe"
-        @unselect="unselectRecipe($event)"
-      />
-    </RecipeCardView>
+    <RecipeSelectedCards
+      :selectedRecipes="selectedRecipes"
+      @unselect="unselectRecipe($event)"
+    />
+
+    <UiLink :to="basketUrl">Zum Warenkorb</UiLink>
   </template>
 </template>
 
@@ -27,9 +16,18 @@
 import { getSearchRecipes } from "~/lib/api";
 import type { RecipeSchema } from "~/lib/models";
 
+const props = defineProps<{
+  basketId: string;
+  selectedRecipes: RecipeSchema[];
+}>();
+const emit = defineEmits<{
+  selectedRecipesChanged: [recipes: RecipeSchema[]];
+}>();
+
 const loading = ref(false);
 const recipes = ref<RecipeSchema[]>([]);
-const selectedRecipes = defineModel<RecipeSchema[]>({ required: true });
+
+const basketUrl = computed(() => `/basket/${props.basketId}/basket`);
 
 const queryRecipes = async (query: string) => {
   loading.value = true;
@@ -49,13 +47,14 @@ const queryRecipes = async (query: string) => {
 
 const selectRecipe = (recipe: RecipeSchema) => {
   recipes.value = recipes.value.filter((r) => r["@id"] !== recipe["@id"]);
-  selectedRecipes.value.push(recipe);
+  emit("selectedRecipesChanged", [...props.selectedRecipes, recipe]);
 };
 
 const unselectRecipe = (recipe: RecipeSchema) => {
-  selectedRecipes.value = selectedRecipes.value.filter(
+  const filteredSelectedRecipes = props.selectedRecipes.filter(
     (r) => r["@id"] !== recipe["@id"],
   );
+  emit("selectedRecipesChanged", filteredSelectedRecipes);
   recipes.value.push(recipe);
 };
 </script>

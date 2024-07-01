@@ -17,4 +17,8 @@ export default defineNuxtConfig({
       pathPrefix: false,
     },
   ],
+
+  experimental: {
+    typedPages: true,
+  },
 });

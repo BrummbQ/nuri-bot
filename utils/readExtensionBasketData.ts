@@ -1,9 +1,9 @@
-import type { BasketData } from "~/lib/models";
+import type { ReweBasketCookieData } from "~/lib/models";
 
 /**
  * Read rewe cookies from local storage (after set by extension)
  */
-export default function (): BasketData[] | undefined {
+export default function (): ReweBasketCookieData[] | undefined {
   const data = localStorage.getItem("rewe-cookies");
   if (data) {
     return JSON.parse(data);

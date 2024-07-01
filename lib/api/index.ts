@@ -1,5 +1,5 @@
 import type {
-  BasketData,
+  ReweBasketCookieData,
   Ingredient,
   IngredientWithProducts,
   IngredientsSearchResponse,
@@ -34,7 +34,7 @@ export async function postSearchIngredients(
 
 export function postOrderIngredients(
   ingredientsWithProducts?: IngredientWithProducts[],
-  basketData?: BasketData[],
+  basketData?: ReweBasketCookieData[],
 ) {
   if (ingredientsWithProducts == null || basketData == null) {
     throw new Error("Incomplete data");

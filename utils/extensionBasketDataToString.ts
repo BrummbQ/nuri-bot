@@ -1,6 +1,6 @@
-import type { BasketData } from "~/lib/models";
+import type { ReweBasketCookieData } from "~/lib/models";
 
-export default function (data: BasketData[]): string | undefined {
+export default function (data: ReweBasketCookieData[]): string | undefined {
   const cookieStrList = data.map((c) => `${c.name}=${c.value}`);
   return cookieStrList.join("; ");
 }

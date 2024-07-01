@@ -1,15 +1,17 @@
 <template>
   <article class="flex flex-col bg-white rounded-lg overflow-hidden shadow-lg">
-    <img
-      :src="recipeImage"
-      alt="Recipe Image"
-      width="{300}"
-      height="{200}"
-      class="w-full h-48 object-cover"
-    />
+    <a :href="recipeId" target="_blank">
+      <img
+        :src="recipeImage"
+        alt="Recipe Image"
+        width="{300}"
+        height="{200}"
+        class="w-full h-48 object-cover"
+      />
+    </a>
     <div class="p-4 flex-1 flex flex-col">
       <h3 class="text-lg text-gray-600 font-bold mb-2">
-        {{ props.recipe.name }}
+        <a :href="recipeId" target="_blank">{{ props.recipe.name }}</a>
       </h3>
       <p class="flex-1 text-gray-600 dark:text-gray-400 mb-4">
         {{ props.recipe.description }}
@@ -25,20 +27,8 @@
           :text="props.recipe.recipeYield"
         />
       </div>
-      <UiButton
-        v-if="props.selectable"
-        class="mt-4"
-        iconName="fluent:checkmark-16-regular"
-        variant="accent"
-        @click="emit('select', props.recipe)"
-      />
-      <UiButton
-        v-else
-        class="mt-4"
-        iconName="fluent:delete-16-regular"
-        variant="accent"
-        @click="emit('unselect', props.recipe)"
-      />
+
+      <slot />
     </div>
   </article>
 </template>
@@ -48,13 +38,9 @@ import type { RecipeSchema } from "~/lib/models";
 
 const props = defineProps<{
   recipe: RecipeSchema;
-  selectable?: boolean;
 }>();
 
-const emit = defineEmits<{
-  select: [RecipeSchema];
-  unselect: [RecipeSchema];
-}>();
+const recipeId = computed(() => props.recipe["@id"]);
 
 function parseTimeInMinutes(recipeTime: string): number | undefined {
   const [_, minutesString] = recipeTime.split("PT");

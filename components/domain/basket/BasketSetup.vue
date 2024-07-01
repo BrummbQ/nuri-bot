@@ -1,6 +1,9 @@
 <template>
   <div class="flex items-center gap-4">
-    <UiLink iconName="fluent:link-16-regular" href="https://shop.rewe.de/"
+    <UiLink
+      iconName="fluent:link-16-regular"
+      to="https://shop.rewe.de/"
+      target="_blank"
       >Rewe Markt {{ basketConfigured ? "ändern" : "wählen" }}</UiLink
     >
     <p v-if="!basketConfigured">
@@ -17,10 +20,10 @@
 </template>
 
 <script setup lang="ts">
-import type { BasketData } from "~/lib/models";
+import type { ReweBasketCookieData } from "~/lib/models";
 
 export interface BuildBasketEvent {
-  basketData: BasketData[];
+  basketData: ReweBasketCookieData[];
   marketId: string;
 }
 
@@ -30,7 +33,9 @@ const emit = defineEmits<{
 
 const marketId = ref<string | undefined>();
 // try to read basket data from local storage
-const basketData = ref<BasketData[] | undefined>(readExtensionBasketData());
+const basketData = ref<ReweBasketCookieData[] | undefined>(
+  readExtensionBasketData(),
+);
 
 const basketConfigured = computed(() => marketId.value && basketData.value);
 

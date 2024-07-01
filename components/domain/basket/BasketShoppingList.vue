@@ -20,15 +20,12 @@
     <UiButton v-if="basketDirty" :loading="orderLoading" @click="orderBasket()"
       >Bestellen</UiButton
     >
-    <UiLink v-else href="https://shop.rewe.de/checkout/basket"
-      >Zum Rewe Warenkorb</UiLink
-    >
   </div>
 </template>
 
 <script setup lang="ts">
 import {
-  type BasketData,
+  type ReweBasketCookieData,
   type Ingredient,
   type IngredientWithProducts,
   type RecipeSchema,
@@ -37,14 +34,20 @@ import {
 import type { BuildBasketEvent } from "./BasketSetup.vue";
 import { postOrderIngredients, postSearchIngredients } from "~/lib/api";
 
-const props = defineProps<{ recipes: RecipeSchema[] }>();
+const props = defineProps<{
+  recipes: RecipeSchema[];
+  ingredientsWithProducts?: IngredientWithProducts[];
+  basketId: string;
+}>();
+const emit = defineEmits<{
+  updateIngredientsWithProducts: [IngredientWithProducts[]];
+}>();
 
 const ingredients = computed(() => {
   return collectIngredients(props.recipes);
 });
-const ingredientsWithProducts = ref<IngredientWithProducts[] | undefined>();
 const marketId = ref<string | undefined>();
-const basketData = ref<BasketData[] | undefined>();
+const basketData = ref<ReweBasketCookieData[] | undefined>();
 const searchLoading = ref(false);
 const orderLoading = ref(false);
 const basketDirty = ref(false);
@@ -84,7 +87,7 @@ const searchIngedients = async (
   });
 
   const result = await postSearchIngredients(ingredients, marketId);
-  ingredientsWithProducts.value = result.ingredients;
+  emit("updateIngredientsWithProducts", result.ingredients);
   basketDirty.value = true;
   searchLoading.value = false;
 };
@@ -96,15 +99,19 @@ const orderBasket = async () => {
   }
 
   try {
-    await $fetch("/api/create-basket", {
+    const createBasketResponse = await $fetch("/api/create-basket", {
       method: "POST",
-      body: { ingredients: ingredientsWithProducts.value },
+      body: {
+        basketId: props.basketId,
+        ingredients: props.ingredientsWithProducts,
+      },
     });
 
     orderLoading.value = true;
-    await postOrderIngredients(ingredientsWithProducts.value, basketData.value);
+    await postOrderIngredients(props.ingredientsWithProducts, basketData.value);
     orderLoading.value = false;
     basketDirty.value = false;
+    await navigateTo(`/basket/${createBasketResponse.basketId}/ordered`);
   } catch (e) {
     orderLoading.value = false;
     console.error(e);
