@@ -106,7 +106,15 @@ export interface ReweProduct {
   boostings: Boosting[];
 }
 
+export interface RewePagination {
+  page: number;
+  totalPages: number;
+  objectsPerPage: number;
+  totalResultCount: number;
+}
+
 export interface ReweProductsResponse {
+  pagination: RewePagination;
   _embedded: {
     products: ReweProduct[];
   };

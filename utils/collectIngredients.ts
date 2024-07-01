@@ -1,12 +1,16 @@
-import type { Ingredient } from "~/lib/models";
-import type { RecipeSchema } from "~/lib/search";
+import type { Ingredient, RecipeSchema } from "~/lib/models";
 
-function parseIngredients(ingredients: string[]): Ingredient[] {
+interface RecipeIngredient {
+  ingredient: string;
+  recipe: RecipeSchema;
+}
+
+function parseIngredients(ingredients: RecipeIngredient[]): Ingredient[] {
   const parsedIngredients: Ingredient[] = [];
 
   ingredients.forEach((item) => {
     // Extracting quantity and unit using regex
-    const match = item.match(/^(\d*\.?\d+)?\s*([^\d\s]*)?\s*(.*)/);
+    const match = item.ingredient.match(/^(\d*\.?\d+)?\s*([^\d\s]*)?\s*(.*)/);
     if (match == null) {
       return;
     }
@@ -20,6 +24,18 @@ function parseIngredients(ingredients: string[]): Ingredient[] {
       unit = undefined;
     }
 
+    // fix "3 Äpfel (Größe M)"
+    if (productName?.startsWith("(") && unit != null) {
+      productName = `${unit} ${productName}`;
+      unit = undefined;
+    }
+
+    // fix "Öl für die Form"
+    if (quantity == null && productName && unit) {
+      productName = `${unit} ${productName}`;
+      unit = undefined;
+    }
+
     // product name must be defined
     if (productName == null || productName === "") {
       return;
@@ -30,6 +46,7 @@ function parseIngredients(ingredients: string[]): Ingredient[] {
       quantity: quantity,
       unit: unit,
       productName: productName,
+      recipes: [item.recipe],
     });
   });
 
@@ -45,6 +62,8 @@ function bundleIngredients(ingredients: Ingredient[]): Ingredient[] {
       acc.push({ ...ingredient });
     } else if (accIngredient.quantity != null && ingredient.quantity != null) {
       accIngredient.quantity += ingredient.quantity;
+      // link recipes
+      accIngredient.recipes = accIngredient.recipes.concat(ingredient.recipes);
     }
     return acc;
   }, [] as Ingredient[]);
@@ -67,14 +86,20 @@ function filterCommonIngredients(ingredients: Ingredient[]): Ingredient[] {
     "Butter",
     "Mehl",
   ];
-  return ingredients.filter((i) => !commonIgredients.includes(i.productName));
+  return ingredients.filter(
+    (i) => commonIgredients.find((cI) => i.productName.includes(cI)) == null,
+  );
 }
 
 export default function (recipes: RecipeSchema[]): Ingredient[] {
-  let ingredients: string[] = [];
-  recipes.forEach((r) => {
-    ingredients = ingredients.concat(r.recipeIngredient);
-  });
+  const ingredients = recipes.reduce((acc, r) => {
+    const recipeIngredients = r.recipeIngredient.map((i) => ({
+      ingredient: i,
+      recipe: r,
+    }));
+    acc = acc.concat(recipeIngredients);
+    return acc;
+  }, [] as RecipeIngredient[]);
 
   const ingredientsParsed = parseIngredients(ingredients);
   const ingredientsBundled = bundleIngredients(ingredientsParsed);

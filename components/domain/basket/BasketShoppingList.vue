@@ -27,11 +27,11 @@
 </template>
 
 <script setup lang="ts">
-import type { RecipeSchema } from "~/lib/search";
 import {
   type BasketData,
   type Ingredient,
   type IngredientWithProducts,
+  type RecipeSchema,
   type SelectedProduct,
 } from "~/lib/models";
 import type { BuildBasketEvent } from "./BasketSetup.vue";
@@ -78,6 +78,11 @@ const searchIngedients = async (
 ) => {
   searchLoading.value = true;
 
+  await $fetch("/api/load-products", {
+    method: "POST",
+    body: { marketId },
+  });
+
   const result = await postSearchIngredients(ingredients, marketId);
   ingredientsWithProducts.value = result.ingredients;
   basketDirty.value = true;
@@ -91,6 +96,11 @@ const orderBasket = async () => {
   }
 
   try {
+    await $fetch("/api/create-basket", {
+      method: "POST",
+      body: { ingredients: ingredientsWithProducts.value },
+    });
+
     orderLoading.value = true;
     await postOrderIngredients(ingredientsWithProducts.value, basketData.value);
     orderLoading.value = false;

@@ -44,7 +44,7 @@
 </template>
 
 <script setup lang="ts">
-import type { RecipeSchema } from "~/lib/search";
+import type { RecipeSchema } from "~/lib/models";
 
 const props = defineProps<{
   recipe: RecipeSchema;

@@ -1,28 +1,5 @@
+import { updateListingInBasket } from "~/lib/basket";
 import type { IngredientsOrderBody } from "~/lib/models";
-
-async function updateListingInBasket(
-  listingId: string,
-  quantity: number,
-  cookie: string,
-) {
-  const headers = {
-    accept: "application/vnd.com.rewe.digital.basket-v2+json",
-    cookie,
-  };
-
-  return await $fetch(
-    `https://shop.rewe.de/api/baskets/listings/${listingId}`,
-    {
-      method: "POST",
-      headers,
-      body: {
-        quantity,
-        includeTimeslot: false,
-        context: "product-list-search",
-      },
-    },
-  );
-}
 
 export default defineEventHandler(async (event) => {
   const body = await readBody<IngredientsOrderBody>(event);
@@ -51,8 +28,7 @@ export default defineEventHandler(async (event) => {
       console.log(
         "Added product",
         selectedProduct.quantity,
-        selectedProduct.product,
-        response,
+        selectedProduct.product.productName,
       );
     }
   }

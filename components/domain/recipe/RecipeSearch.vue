@@ -25,7 +25,7 @@
 
 <script setup lang="ts">
 import { getSearchRecipes } from "~/lib/api";
-import type { RecipeSchema } from "~/lib/search";
+import type { RecipeSchema } from "~/lib/models";
 
 const loading = ref(false);
 const recipes = ref<RecipeSchema[]>([]);

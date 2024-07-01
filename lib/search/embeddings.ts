@@ -2,6 +2,8 @@ import {
   BedrockRuntimeClient,
   InvokeModelCommand,
 } from "@aws-sdk/client-bedrock-runtime";
+import type { ProductRow } from "../models";
+import { paginateProduct, updateEmbeddings } from "../db";
 
 export async function getEmbedding(text: string): Promise<number[]> {
   const client = new BedrockRuntimeClient({ region: "us-east-1" });
@@ -26,4 +28,23 @@ export async function getEmbedding(text: string): Promise<number[]> {
   const decodedResponseBody = new TextDecoder().decode(apiResponse.body);
   const responseBody = JSON.parse(decodedResponseBody);
   return responseBody.embedding;
+}
+
+export async function loadEmbeddings(marketId: string, page = 1) {
+  const pageSize = 100; // Number of records per page
+  const offset = (page - 1) * pageSize;
+  const result = await paginateProduct(marketId, pageSize, offset);
+  const productNameEmbeddings = await Promise.all(
+    result.rows.map(async (r) => {
+      const nameEmbedding = await getEmbedding(r.product_name);
+      return { ...r, product_name_embedding: nameEmbedding };
+    }),
+  );
+
+  await updateEmbeddings(productNameEmbeddings as ProductRow[]);
+
+  console.log(`Loaded ${result.rowCount} embeddings`);
+  if (result.rowCount && result.rowCount > 0) {
+    await loadEmbeddings(marketId, page + 1);
+  }
 }

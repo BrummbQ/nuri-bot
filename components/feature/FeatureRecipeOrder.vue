@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import type { RecipeSchema } from "~/lib/search/recipes";
+import type { RecipeSchema } from "~/lib/models";
 
 const recipes = ref<RecipeSchema[]>([]);
 </script>
