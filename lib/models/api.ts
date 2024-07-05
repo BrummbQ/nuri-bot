@@ -48,3 +48,7 @@ export interface GetBasketQuery {
 export interface GetBasketResponse {
   basket: Basket;
 }
+
+export interface GetBasketsResponse {
+  baskets: Basket[];
+}

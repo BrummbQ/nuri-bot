@@ -64,7 +64,7 @@ const emit = defineEmits<{
 
 const productImg = computed(() => {
   if (!props.product.media.images.length) {
-    return "/assets/placeholder.svg";
+    return "/images/placeholder.svg";
   }
   return props.product.media.images[0]._links.self.href;
 });

@@ -7,7 +7,9 @@ try {
   await sql`
 CREATE TABLE IF NOT EXISTS Basket (
     id UUID PRIMARY KEY,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    user_id UUID NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES AppUser(id)
 );
 `;
 

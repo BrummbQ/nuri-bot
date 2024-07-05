@@ -37,9 +37,10 @@ async function linkProducts(products: SelectedProduct[], ingredientId: number) {
 
 export async function createBasket(
   ingredients: IngredientWithProducts[],
+  userId: string,
 ): Promise<string> {
   // first create basket
-  const basketId = await insertBasket();
+  const basketId = await insertBasket(userId);
 
   await Promise.all(
     ingredients.map(async (i) => {

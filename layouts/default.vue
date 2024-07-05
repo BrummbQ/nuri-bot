@@ -5,6 +5,13 @@
         <span>NURI</span>
       </NuxtLink>
       <nav class="ml-auto flex gap-4 sm:gap-6"></nav>
+
+      <ClientOnly>
+        <UiLink v-if="loggedIn" :to="basketsLink" iconName="mdi:cook"
+          >Meine Warenkörbe</UiLink
+        >
+        <UiLink v-else to="/auth/login">Anmelden</UiLink>
+      </ClientOnly>
     </header>
 
     <main class="max-w-6xl mx-auto px-4 py-12 md:px-6 lg:px-8 grow w-full">
@@ -20,3 +27,13 @@
     </footer>
   </div>
 </template>
+
+<script setup lang="ts">
+import UiLink from "~/components/ui/UiLink.vue";
+
+const { loggedIn, user } = useAuth();
+
+const basketsLink = computed(() =>
+  user.value ? `/user/${user.value.userId}/basket` : "",
+);
+</script>

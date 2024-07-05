@@ -21,6 +21,9 @@
       >Bestellen</UiButton
     >
   </div>
+  <UiNotification v-if="error" severity="error"
+    >Fehler beim Bestellen!</UiNotification
+  >
 </template>
 
 <script setup lang="ts">
@@ -51,6 +54,7 @@ const basketData = ref<ReweBasketCookieData[] | undefined>();
 const searchLoading = ref(false);
 const orderLoading = ref(false);
 const basketDirty = ref(false);
+const error = ref();
 
 watchEffect(() => {
   if (marketId.value && ingredients.value.length) {
@@ -114,7 +118,7 @@ const orderBasket = async () => {
     await navigateTo(`/basket/${createBasketResponse.basketId}/ordered`);
   } catch (e) {
     orderLoading.value = false;
-    console.error(e);
+    error.value = e;
   }
 };
 </script>

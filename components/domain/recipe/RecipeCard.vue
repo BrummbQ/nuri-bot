@@ -52,7 +52,7 @@ function parseTimeInMinutes(recipeTime: string): number | undefined {
 
 const recipeImage = computed<string>(() => {
   if (!props.recipe.image.length) {
-    return "/assets/placeholder.svg";
+    return "/images/placeholder.svg";
   }
   return props.recipe.image[0];
 });

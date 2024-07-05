@@ -28,6 +28,10 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({
+  middleware: ["auth"],
+});
+
 const route = useRoute("basket-id-ordered");
 
 const { data, error } = await useFetch(`/api/basket`, {

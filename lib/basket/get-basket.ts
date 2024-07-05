@@ -1,7 +1,11 @@
-import { getBasketIngredients } from "../db";
+import { getBasketById, getBasketIngredients, getBasketsByUserId } from "../db";
 import type { Basket, IngredientWithProducts, RecipeSchema } from "../models";
 
 export async function getBasket(basketId: string): Promise<Basket> {
+  const basket = await getBasketById(basketId);
+  if (basket == null) {
+    throw new Error(`Basket with id ${basketId} not found!`);
+  }
   const ingredients = await getBasketIngredients(basketId);
   const recipes: RecipeSchema[] = [];
   const ingredientsWithProducts: IngredientWithProducts[] = [];
@@ -34,5 +38,19 @@ export async function getBasket(basketId: string): Promise<Basket> {
       ];
     }
   });
-  return { recipes, ingredientsWithProducts };
+  return {
+    basketId: basketId,
+    recipes,
+    ingredientsWithProducts,
+    createdAt: basket.created_at,
+  };
+}
+
+export async function getBaskets(userId: string): Promise<Basket[]> {
+  const basketsResult = await getBasketsByUserId(userId);
+  const baskets = await Promise.all(
+    basketsResult.rows.map((basket) => getBasket(basket.id)),
+  );
+
+  return baskets;
 }

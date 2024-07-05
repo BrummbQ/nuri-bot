@@ -28,7 +28,11 @@ export const useBasketStore = () => {
 
   function createOrSetBasket(id: string) {
     if (baskets.value[id] == null) {
-      baskets.value[id] = { recipes: [], ingredientsWithProducts: [] };
+      baskets.value[id] = {
+        recipes: [],
+        ingredientsWithProducts: [],
+        basketId: "new",
+      };
     }
     currentBasket.value = id;
   }

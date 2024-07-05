@@ -1,6 +1,11 @@
 <template>
-  <form className="flex items-center mb-4" @submit="emit('search', query)">
-    <UiInput class="rounded-r-none" :disabled="props.loading" v-model="query" />
+  <form class="flex items-center mb-4" @submit="emit('search', query)">
+    <UiInput
+      class="rounded-r-none"
+      placeholder="Was möchtest du essen?"
+      :disabled="props.loading"
+      v-model="query"
+    />
     <UiButton
       class="rounded-l-none"
       iconName="fluent:food-16-regular"
