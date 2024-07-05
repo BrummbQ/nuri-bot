@@ -20,6 +20,8 @@
       >
       </RecipeCard>
     </RecipeCardView>
+
+    <BasketShoppingListOverview :basket="data.basket" />
     <p v-if="!data.basket.recipes.length">Warenkorb ist leer</p>
   </template>
   <p v-if="error" class="mt-5 text-center font-bold">

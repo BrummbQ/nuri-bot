@@ -19,13 +19,9 @@ export function useAuth() {
   const user = useState<User | null>("user");
   const loading = ref<boolean>(false);
   const error = ref<AuthError | null>(null);
+  const { getItem, setItem, removeItem } = useSessionStorage<User>();
 
-  if (import.meta.client) {
-    const authValue = sessionStorage.getItem(sessionStorageAuthKey);
-    if (authValue) {
-      user.value = JSON.parse(authValue);
-    }
-  }
+  user.value = getItem(sessionStorageAuthKey);
 
   const sendMagicLink = async (email: string) => {
     loading.value = true;
@@ -56,9 +52,8 @@ export function useAuth() {
         method: "POST",
         body: { token },
       });
-      user.value = { ...result };
-      sessionStorage.setItem(sessionStorageAuthKey, JSON.stringify(user.value));
-      await nextTick();
+      user.value = result;
+      setItem(sessionStorageAuthKey, result);
     } catch (e: unknown) {
       if (e instanceof Error) {
         error.value = { message: e.message };
@@ -74,7 +69,7 @@ export function useAuth() {
 
   const logout = () => {
     user.value = null;
-    sessionStorage.removeItem(sessionStorageAuthKey);
+    removeItem(sessionStorageAuthKey);
   };
 
   const loggedIn = computed(() => {
