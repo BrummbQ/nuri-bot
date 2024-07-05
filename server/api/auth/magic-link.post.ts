@@ -7,8 +7,8 @@ interface MagicLinkBody {
 }
 
 function getAppUrl(): string {
-  if (process.env.VERCEL_URL) {
-    return `https://${process.env.VERCEL_BRANCH_URL}${process.env.VERCEL_URL}`;
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
+    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
   } else {
     return `http://localhost:3000`;
   }
