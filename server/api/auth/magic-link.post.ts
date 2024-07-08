@@ -38,7 +38,7 @@ export default defineEventHandler(async (event) => {
 
   // Send email with magic link
   const transporter = nodemailer.createTransport({
-    host: "smtp.fastmail.com",
+    host: process.env.EMAIL_SMTP_HOST,
     port: 465,
     auth: {
       user: process.env.EMAIL_SMTP_LOGIN,
