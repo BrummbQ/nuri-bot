@@ -19,12 +19,7 @@
         :key="product.id"
         :product="product"
         :selectedQuantity="selectedProduct(product, ingredient)?.quantity ?? 0"
-        @quantityChanged="
-          emit('selectProduct', {
-            selectedProduct: { product, quantity: $event },
-            ingredient,
-          })
-        "
+        @quantityChanged="changeQuantity(product, ingredient, $event)"
       />
     </div>
     <div class="text-center" v-if="!ingredient.products.length">
@@ -58,5 +53,20 @@ const selectedProduct = (
   ingredient: IngredientWithProducts,
 ): SelectedProduct | undefined => {
   return ingredient.selectedProducts?.find((p) => p.product.id === product.id);
+};
+
+const changeQuantity = (
+  product: ReweProduct,
+  ingredient: IngredientWithProducts,
+  quantity?: number,
+) => {
+  if (quantity == null) {
+    quantity = calcProductQuantity(ingredient, product) ?? 1;
+  }
+
+  emit("selectProduct", {
+    selectedProduct: { product, quantity },
+    ingredient,
+  });
 };
 </script>

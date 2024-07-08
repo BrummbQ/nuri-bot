@@ -52,3 +52,7 @@ export interface GetBasketResponse {
 export interface GetBasketsResponse {
   baskets: Basket[];
 }
+
+export interface SearchGenerateTermResponse {
+  searchTerm: string;
+}

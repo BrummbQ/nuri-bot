@@ -6,3 +6,8 @@ export interface Ingredient {
   productName: string;
   recipes: RecipeSchema[];
 }
+
+export interface ProductGrammage {
+  quantity: number;
+  unit: string;
+}

@@ -2,7 +2,7 @@
   <form class="flex items-center mb-4" @submit="emit('search', query)">
     <UiInput
       class="rounded-r-none"
-      placeholder="Was möchtest du essen?"
+      :placeholder="props.placeholder ?? 'Was möchtest du essen?'"
       :disabled="props.loading"
       v-model="query"
     />
@@ -18,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-const props = defineProps<{ loading?: boolean }>();
+const props = defineProps<{ loading?: boolean; placeholder?: string }>();
 const emit = defineEmits<{
   search: [query: string];
 }>();

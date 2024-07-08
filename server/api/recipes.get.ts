@@ -3,14 +3,15 @@ import { searchRecipes } from "~/lib/search";
 
 interface RecipesQuery {
   query: string;
+  suggest?: boolean;
 }
 
 export default defineEventHandler(
   async (event): Promise<RecipesSearchResponse> => {
-    const query = getQuery<RecipesQuery>(event);
+    const { query } = getQuery<RecipesQuery>(event);
 
-    const recipes = await searchRecipes(query.query);
-    const parsedRecipes = recipes.map((r) => {
+    const searchResults = await searchRecipes(query);
+    const recipes = searchResults.map((r) => {
       if (r.metadata?.recipeSchema) {
         const recipeSchema = JSON.parse(r.metadata?.recipeSchema);
         r.metadata.recipeSchema = recipeSchema;
@@ -18,8 +19,6 @@ export default defineEventHandler(
       return r;
     });
 
-    return {
-      recipes: parsedRecipes,
-    };
+    return { recipes };
   },
 );

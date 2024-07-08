@@ -25,7 +25,10 @@ export async function postSearchIngredients(
   // auto select first product for each ingredient
   result.ingredients.forEach((i) => {
     if (i.products.length) {
-      i.selectedProducts = [{ product: i.products[0], quantity: 1 }];
+      const product = i.products[0];
+      i.selectedProducts = [
+        { product, quantity: calcProductQuantity(i, product) ?? 1 },
+      ];
     }
   });
 

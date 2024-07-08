@@ -18,10 +18,12 @@
       >E-Mail senden</UiButton
     >
   </form>
-  <p v-if="error">{{ error }}</p>
   <UiNotification severity="success" v-if="success">
     Prüfe dein E-Mail Postfach und klicke auf den Anmelden Link!
   </UiNotification>
+  <UiNotification v-if="error" severity="error"
+    >Fehler beim Login! {{ error.message }}</UiNotification
+  >
 </template>
 
 <script setup lang="ts">

@@ -1,5 +1,9 @@
 <template>
-  <RecipeSearchInput :loading="loading" @search="queryRecipes($event)" />
+  <RecipeSearchInput
+    :loading="loading"
+    :placeholder="data?.searchTerm"
+    @search="queryRecipes($event)"
+  />
   <RecipeAvailableCards :recipes="recipes" @select="selectRecipe($event)" />
 
   <template v-if="selectedRecipes.length > 0">
@@ -14,7 +18,7 @@
 
 <script setup lang="ts">
 import { getSearchRecipes } from "~/lib/api";
-import type { RecipeSchema } from "~/lib/models";
+import type { RecipeSchema, SearchGenerateTermResponse } from "~/lib/models";
 
 const props = defineProps<{
   basketId: string;
@@ -26,6 +30,9 @@ const emit = defineEmits<{
 
 const loading = ref(false);
 const recipes = ref<RecipeSchema[]>([]);
+const { data } = await useFetch<SearchGenerateTermResponse>(
+  `/api/search/generate-term`,
+);
 
 const basketUrl = computed(() => `/basket/${props.basketId}/basket`);
 
@@ -57,4 +64,10 @@ const unselectRecipe = (recipe: RecipeSchema) => {
   emit("selectedRecipesChanged", filteredSelectedRecipes);
   recipes.value.push(recipe);
 };
+
+watchEffect(() => {
+  if (data.value?.searchTerm) {
+    queryRecipes(data.value?.searchTerm);
+  }
+});
 </script>

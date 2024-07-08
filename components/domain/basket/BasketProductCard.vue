@@ -59,7 +59,7 @@ const props = defineProps<{
   selectedQuantity: number;
 }>();
 const emit = defineEmits<{
-  quantityChanged: [quantity: number];
+  quantityChanged: [quantity?: number];
 }>();
 
 const productImg = computed(() => {
@@ -78,7 +78,8 @@ const productListing = computed(() => {
 });
 
 const toggleProduct = () => {
-  emit("quantityChanged", props.selectedQuantity ? 0 : 1);
+  // if undefined parent must calculate quantity
+  emit("quantityChanged", props.selectedQuantity ? 0 : undefined);
 };
 
 const changeQuantity = (delta: number) => {

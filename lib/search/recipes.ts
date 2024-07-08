@@ -18,7 +18,7 @@ const searchRecipes = async (
 
 const searchRecipesByEmbedding = async (
   embedding: number[],
-  topK: number = 3,
+  topK: number = 6,
   namespace: string = "",
 ): Promise<ScoredPineconeRecord<Metadata>[]> => {
   // Obtain a client for Pinecone
