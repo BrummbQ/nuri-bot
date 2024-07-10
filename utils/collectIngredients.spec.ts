@@ -15,10 +15,18 @@ describe("Collect Ingredients", () => {
       "3 Äpfel (Größe M)",
       "Öl für die Form",
       "Kokosfett für die Form",
+      "1 gelbe Paprika",
+      "1 rote Paprika",
     ];
     const ingredients2 = ["Salz", "2 Eier", "100 ml Milch", "1 Würfel Hefe"];
-    const recipe1 = { recipeIngredient: ingredients1 } as RecipeSchema;
-    const recipe2 = { recipeIngredient: ingredients2 } as RecipeSchema;
+    const recipe1 = {
+      "@id": "1",
+      recipeIngredient: ingredients1,
+    } as RecipeSchema;
+    const recipe2 = {
+      "@id": "2",
+      recipeIngredient: ingredients2,
+    } as RecipeSchema;
 
     const parsedIngredients = collectIngredients([recipe1, recipe2]);
     expect(parsedIngredients).toEqual([
@@ -69,6 +77,12 @@ describe("Collect Ingredients", () => {
         productName: "Kokosfett für die Form",
         quantity: undefined,
         unit: undefined,
+        recipes: [recipe1],
+      },
+      {
+        productName: "Paprika",
+        quantity: 2,
+        unit: "gelbe",
         recipes: [recipe1],
       },
       {

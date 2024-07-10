@@ -63,7 +63,11 @@ function bundleIngredients(ingredients: Ingredient[]): Ingredient[] {
     } else if (accIngredient.quantity != null && ingredient.quantity != null) {
       accIngredient.quantity += ingredient.quantity;
       // link recipes
-      accIngredient.recipes = accIngredient.recipes.concat(ingredient.recipes);
+      ingredient.recipes.forEach((iR) => {
+        if (accIngredient.recipes.find((r) => r["@id"] === iR["@id"]) == null) {
+          accIngredient.recipes.push(iR);
+        }
+      });
     }
     return acc;
   }, [] as Ingredient[]);

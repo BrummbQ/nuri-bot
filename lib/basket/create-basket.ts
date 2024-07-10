@@ -9,7 +9,9 @@ import {
 } from "../db";
 import type { IngredientWithProducts, SelectedProduct } from "../models";
 
-async function getRecipeIds(i: IngredientWithProducts): Promise<number[]> {
+async function getOrCreateRecipeIds(
+  i: IngredientWithProducts,
+): Promise<number[]> {
   return await Promise.all(
     // find or insert recipes
     i.recipes.map(async (r) => {
@@ -44,7 +46,7 @@ export async function createBasket(
 
   await Promise.all(
     ingredients.map(async (i) => {
-      const recipeIds = await getRecipeIds(i);
+      const recipeIds = await getOrCreateRecipeIds(i);
 
       // insert ingredient
       const ingredientId = await insertIngredient(i, basketId);

@@ -20,37 +20,9 @@
 </template>
 
 <script setup lang="ts">
-import type { ReweBasketCookieData } from "~/lib/models";
+const { reweCookieDataValue, updateReweCookieData } = useBasketStore();
 
-export interface BuildBasketEvent {
-  basketData: ReweBasketCookieData[];
-  marketId: string;
-}
-
-const emit = defineEmits<{
-  buildBasket: [event: BuildBasketEvent];
-}>();
-
-const marketId = ref<string | undefined>();
-// try to read basket data from local storage
-const basketData = ref<ReweBasketCookieData[] | undefined>(
-  readExtensionBasketData(),
-);
-
-const basketConfigured = computed(() => marketId.value && basketData.value);
-
-watchEffect(() => {
-  marketId.value = readMarketId(basketData.value);
-});
-
-watchEffect(() => {
-  if (basketData.value && marketId.value) {
-    emit("buildBasket", {
-      basketData: basketData.value,
-      marketId: marketId.value,
-    });
-  }
-});
+const basketConfigured = computed(() => reweCookieDataValue.value);
 
 // watch rewe configured event
 window.addEventListener(
@@ -62,7 +34,7 @@ window.addEventListener(
     }
 
     if (event.data.type && event.data.type === "REWE_CONFIGURED") {
-      basketData.value = readExtensionBasketData();
+      updateReweCookieData(readExtensionBasketData());
     }
   },
   false,

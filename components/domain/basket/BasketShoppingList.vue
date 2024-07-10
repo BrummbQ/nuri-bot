@@ -1,11 +1,11 @@
 <template>
-  <BasketSetup @buildBasket="saveBasketData($event)" />
+  <BasketSetup />
 
   <UiHeader v-if="ingredientsWithProducts" :level="2" class="mt-4"
     >Zutaten</UiHeader
   >
 
-  <div v-if="searchLoading" class="text-center">
+  <div v-if="searchLoadingValue" class="text-center">
     <Icon name="line-md:loading-loop" width="50" height="50" />
   </div>
   <ul v-else class="mb-4">
@@ -16,8 +16,8 @@
     />
   </ul>
 
-  <div v-if="ingredientsWithProducts && !searchLoading" class="flex gap-4">
-    <UiButton v-if="basketDirty" :loading="orderLoading" @click="orderBasket()"
+  <div v-if="ingredientsWithProducts && !searchLoadingValue" class="flex gap-4">
+    <UiButton :loading="orderLoading" @click="orderBasket()"
       >Bestellen</UiButton
     >
   </div>
@@ -28,76 +28,34 @@
 
 <script setup lang="ts">
 import {
-  type ReweBasketCookieData,
-  type Ingredient,
   type IngredientWithProducts,
-  type RecipeSchema,
   type SelectedProduct,
 } from "~/lib/models";
-import type { BuildBasketEvent } from "./BasketSetup.vue";
-import { postOrderIngredients, postSearchIngredients } from "~/lib/api";
+import { postOrderIngredients } from "~/lib/api";
 
 const props = defineProps<{
-  recipes: RecipeSchema[];
-  ingredientsWithProducts?: IngredientWithProducts[];
   basketId: string;
 }>();
-const emit = defineEmits<{
-  updateIngredientsWithProducts: [IngredientWithProducts[]];
-}>();
 
-const ingredients = computed(() => {
-  return collectIngredients(props.recipes);
-});
-const marketId = ref<string | undefined>();
-const basketData = ref<ReweBasketCookieData[] | undefined>();
-const searchLoading = ref(false);
 const orderLoading = ref(false);
-const basketDirty = ref(false);
 const error = ref();
 
-watchEffect(() => {
-  if (marketId.value && ingredients.value.length) {
-    searchIngedients(ingredients.value, marketId.value);
-  }
-});
+const {
+  searchLoadingValue,
+  reweCookieDataValue,
+  updateIngredientSelectedProducts,
+  ingredientsWithProducts,
+} = useBasketStore();
 
 const selectProduct = (
   event: SelectedProduct,
   ingredient: IngredientWithProducts,
 ) => {
-  if (event.quantity) {
-    ingredient.selectedProducts = [event];
-  } else {
-    ingredient.selectedProducts = [];
-  }
-  basketDirty.value = true;
-};
-
-const saveBasketData = (event: BuildBasketEvent) => {
-  marketId.value = event.marketId;
-  basketData.value = event.basketData;
-};
-
-const searchIngedients = async (
-  ingredients: Ingredient[],
-  marketId: string,
-) => {
-  searchLoading.value = true;
-
-  await $fetch("/api/load-products", {
-    method: "POST",
-    body: { marketId },
-  });
-
-  const result = await postSearchIngredients(ingredients, marketId);
-  emit("updateIngredientsWithProducts", result.ingredients);
-  basketDirty.value = true;
-  searchLoading.value = false;
+  updateIngredientSelectedProducts(event, ingredient, props.basketId);
 };
 
 const orderBasket = async () => {
-  if (basketData.value == null) {
+  if (reweCookieDataValue.value == null) {
     console.error("No rewe cookies!");
     return;
   }
@@ -107,14 +65,16 @@ const orderBasket = async () => {
       method: "POST",
       body: {
         basketId: props.basketId,
-        ingredients: props.ingredientsWithProducts,
+        ingredients: ingredientsWithProducts.value,
       },
     });
 
     orderLoading.value = true;
-    await postOrderIngredients(props.ingredientsWithProducts, basketData.value);
+    await postOrderIngredients(
+      ingredientsWithProducts.value,
+      reweCookieDataValue.value,
+    );
     orderLoading.value = false;
-    basketDirty.value = false;
     await navigateTo(`/basket/${createBasketResponse.basketId}/ordered`);
   } catch (e) {
     orderLoading.value = false;

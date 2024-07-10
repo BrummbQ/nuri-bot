@@ -1,6 +1,8 @@
 export function useSessionStorage<T>() {
   const setItem = (key: string, data: T) => {
-    sessionStorage.setItem(key, JSON.stringify(data));
+    if (import.meta.client) {
+      sessionStorage.setItem(key, JSON.stringify(data));
+    }
   };
 
   const getItem = (key: string): T | null => {

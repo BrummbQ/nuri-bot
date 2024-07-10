@@ -1,17 +1,40 @@
+import { postSearchIngredients } from "~/lib/api";
 import {
   type RecipeSchema,
   type Basket,
   type IngredientWithProducts,
+  type ReweBasketCookieData,
+  type SelectedProduct,
 } from "~/lib/models";
 
-export const useBaskets = () =>
-  useState<Record<string, Basket>>("baskets", () => ({}));
+type BasketState = Record<string, Basket>;
+
+const basketsSessionKey = "baskets";
+
+export const useBaskets = () => useState<BasketState>("baskets", () => ({}));
 export const useCurrentBasket = () =>
   useState<string | undefined>("currentBasket", () => undefined);
+const useSearchLoading = () => useState("searchLoading", () => false);
+const useMarketId = () => useState<string | undefined>("marketId");
 
 export const useBasketStore = () => {
   const baskets = useBaskets();
   const currentBasket = useCurrentBasket();
+  const searchLoading = useSearchLoading();
+  const marketId = useMarketId();
+  // try to read basket data from local storage
+  const reweCookieData = ref<ReweBasketCookieData[] | undefined>(
+    readExtensionBasketData(),
+  );
+  const { getItem, setItem } = useSessionStorage<BasketState>();
+
+  watchEffect(() => {
+    marketId.value = readMarketId(reweCookieData.value);
+  });
+
+  onMounted(() => {
+    baskets.value = getItem(basketsSessionKey) ?? {};
+  });
 
   const recipes = computed(() => {
     if (currentBasket.value != null) {
@@ -25,6 +48,24 @@ export const useBasketStore = () => {
       return baskets.value[currentBasket.value].ingredientsWithProducts;
     }
   });
+
+  async function searchIngedients(
+    recipes: RecipeSchema[],
+    marketId: string,
+    basketId: string,
+  ) {
+    const ingredients = collectIngredients(recipes);
+    searchLoading.value = true;
+
+    await $fetch("/api/load-products", {
+      method: "POST",
+      body: { marketId },
+    });
+
+    const result = await postSearchIngredients(ingredients, marketId);
+    updateIngredientsWithProducts(result.ingredients, basketId);
+    searchLoading.value = false;
+  }
 
   function createOrSetBasket(id: string) {
     if (baskets.value[id] == null) {
@@ -43,6 +84,11 @@ export const useBasketStore = () => {
     }
 
     baskets.value[basketId] = { ...baskets.value[basketId], recipes };
+    setItem(basketsSessionKey, baskets.value);
+
+    if (marketId.value != null) {
+      searchIngedients(recipes, marketId.value, basketId);
+    }
   }
 
   function updateIngredientsWithProducts(
@@ -57,6 +103,44 @@ export const useBasketStore = () => {
       ...baskets.value[basketId],
       ingredientsWithProducts,
     };
+    setItem(basketsSessionKey, baskets.value);
+  }
+
+  function updateIngredientSelectedProducts(
+    product: SelectedProduct,
+    ingredient: IngredientWithProducts,
+    basketId?: string,
+  ) {
+    if (basketId == null || baskets.value[basketId] == null) {
+      return;
+    }
+
+    const ingredients = baskets.value[basketId].ingredientsWithProducts;
+    if (ingredients != null) {
+      const basketIngredient = ingredients.find(
+        (i) => i.productName === ingredient.productName,
+      );
+      if (basketIngredient != null) {
+        basketIngredient.selectedProducts = [product];
+      }
+    }
+    setItem(basketsSessionKey, baskets.value);
+  }
+
+  const marketIdValue = computed(() => marketId.value);
+  const reweCookieDataValue = computed(() => reweCookieData.value);
+  const searchLoadingValue = computed(() => searchLoading.value);
+
+  function updateReweCookieData(data?: ReweBasketCookieData[]) {
+    reweCookieData.value = data;
+
+    const marketId = readMarketId(reweCookieData.value);
+    if (marketId != null && currentBasket.value != null) {
+      const basketValue = baskets.value[currentBasket.value];
+      if (basketValue != null) {
+        searchIngedients(basketValue.recipes, marketId, currentBasket.value);
+      }
+    }
   }
 
   return {
@@ -64,8 +148,13 @@ export const useBasketStore = () => {
     currentBasket,
     createOrSetBasket,
     updateRecipes,
-    updateIngredientsWithProducts,
     recipes,
     ingredientsWithProducts,
+    marketIdValue,
+    updateReweCookieData,
+    reweCookieDataValue,
+    updateIngredientSelectedProducts,
+    searchLoadingValue,
+    searchLoading,
   };
 };

@@ -5,12 +5,14 @@
   </div>
   <RecipeSearch
     :selectedRecipes="recipes"
-    @selectedRecipesChanged="updateRecipes($event, currentBasket)"
+    @selectedRecipesChanged="changeSelectedRecipes($event)"
     :basketId="route.params.id"
   />
 </template>
 
 <script setup lang="ts">
+import type { RecipeSchema } from "~/lib/models";
+
 definePageMeta({
   middleware: ["auth"],
 });
@@ -20,7 +22,11 @@ const { currentBasket, createOrSetBasket, updateRecipes, recipes } =
   useBasketStore();
 const basketUrl = computed(() => `/basket/${route.params.id}/basket`);
 
-await callOnce(async () => {
+await callOnce(() => {
   createOrSetBasket(route.params.id);
 });
+
+const changeSelectedRecipes = (recipes: RecipeSchema[]) => {
+  updateRecipes(recipes, currentBasket.value);
+};
 </script>

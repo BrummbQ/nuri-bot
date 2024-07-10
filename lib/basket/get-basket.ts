@@ -12,6 +12,7 @@ export async function getBasket(basketId: string): Promise<Basket> {
 
   ingredients.forEach((ingredient) => {
     if (
+      ingredient.recipe_json != null &&
       recipes.find((r) => r["@id"] === ingredient.recipe_json["@id"]) == null
     ) {
       recipes.push(ingredient.recipe_json);
