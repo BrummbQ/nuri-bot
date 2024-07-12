@@ -45,6 +45,7 @@ const {
   reweCookieDataValue,
   updateIngredientSelectedProducts,
   ingredientsWithProducts,
+  completeCurrentBasket,
 } = useBasketStore();
 
 const selectProduct = (
@@ -76,6 +77,7 @@ const orderBasket = async () => {
     );
     orderLoading.value = false;
     await navigateTo(`/basket/${createBasketResponse.basketId}/ordered`);
+    completeCurrentBasket();
   } catch (e) {
     orderLoading.value = false;
     error.value = e;

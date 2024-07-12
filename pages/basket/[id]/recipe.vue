@@ -18,15 +18,10 @@ definePageMeta({
 });
 
 const route = useRoute("basket-id-recipe");
-const { currentBasket, createOrSetBasket, updateRecipes, recipes } =
-  useBasketStore();
+const { updateRecipes, recipes } = useBasketStore();
 const basketUrl = computed(() => `/basket/${route.params.id}/basket`);
 
-await callOnce(() => {
-  createOrSetBasket(route.params.id);
-});
-
 const changeSelectedRecipes = (recipes: RecipeSchema[]) => {
-  updateRecipes(recipes, currentBasket.value);
+  updateRecipes(recipes, route.params.id);
 };
 </script>

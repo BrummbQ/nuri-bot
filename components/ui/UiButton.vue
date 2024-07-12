@@ -18,15 +18,20 @@
 const props = withDefaults(
   defineProps<{
     iconName?: string;
-    variant?: "primary" | "accent";
+    variant?: "primary" | "accent" | "custom";
+    size?: "small" | "regular";
     loading?: boolean;
   }>(),
   { variant: "primary" },
 );
 
 const btnClass = computed(() => {
-  const defaultClasses =
-    "rounded-md border flex items-center justify-center px-4 py-2 h-10";
+  let sizeClasses = "px-4 h-10";
+  if (props.size === "small") {
+    sizeClasses = "px-2 h-8";
+  }
+
+  const defaultClasses = `rounded-md border flex items-center justify-center ${sizeClasses} `;
 
   switch (props.variant) {
     case "primary":

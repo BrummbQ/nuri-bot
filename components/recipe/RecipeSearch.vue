@@ -1,9 +1,10 @@
 <template>
   <RecipeSearchInput
     :loading="loading"
-    :placeholder="data?.searchTerm"
+    :placeholder="searchTerm"
     @search="queryRecipes($event)"
   />
+  <RecipeSearchSuggestions @suggest="suggestRecipe($event)" />
   <RecipeAvailableCards :recipes="recipes" @select="selectRecipe($event)" />
 
   <template v-if="selectedRecipes.length > 0">
@@ -18,7 +19,11 @@
 
 <script setup lang="ts">
 import { getSearchRecipes } from "~/lib/api";
-import type { RecipeSchema, SearchGenerateTermResponse } from "~/lib/models";
+import type {
+  RecipeSchema,
+  RecipeSuggestion,
+  SearchGenerateTermResponse,
+} from "~/lib/models";
 
 const props = defineProps<{
   basketId: string;
@@ -30,6 +35,7 @@ const emit = defineEmits<{
 
 const loading = ref(false);
 const recipes = ref<RecipeSchema[]>([]);
+const searchTerm = ref<string>();
 const { data } = await useFetch<SearchGenerateTermResponse>(
   `/api/search/generate-term`,
 );
@@ -65,9 +71,18 @@ const unselectRecipe = (recipe: RecipeSchema) => {
   recipes.value.push(recipe);
 };
 
+const suggestRecipe = async ({ seed, dietType }: RecipeSuggestion) => {
+  const result = await $fetch("/api/search/generate-term", {
+    query: { seed, dietType },
+  });
+  searchTerm.value = result.searchTerm;
+  queryRecipes(result.searchTerm);
+};
+
 watchEffect(() => {
   if (data.value?.searchTerm) {
     queryRecipes(data.value?.searchTerm);
+    searchTerm.value = data.value?.searchTerm;
   }
 });
 </script>

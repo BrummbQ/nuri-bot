@@ -11,13 +11,6 @@ export default defineNuxtConfig({
 
   typescript: { typeCheck: true },
 
-  components: [
-    {
-      path: "~/components",
-      pathPrefix: false,
-    },
-  ],
-
   experimental: {
     typedPages: true,
   },

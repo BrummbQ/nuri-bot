@@ -2,20 +2,35 @@ import {
   BedrockRuntimeClient,
   InvokeModelCommand,
 } from "@aws-sdk/client-bedrock-runtime";
+import type { SearchGenerateTermQuery } from "../models";
 
-const searchPrompt = `
+const searchBasePrompt = `
 Erstelle eine Sucheingabe für eine Rezeptsuche. Maximal 30 Zeichen, Gib nur den Suchtext zurück ohne weitere Angaben
 
 Beispiele:
-- deftiges Frühstück
-- gesundes Abendessen ohne Fleisch`;
+`;
 
 /**
  * Creates a randomized search query with an llm to seed the recipe search
  */
-export async function generateSearchTerm(): Promise<string> {
+export async function generateSearchTerm(
+  query: SearchGenerateTermQuery,
+): Promise<string> {
   const client = new BedrockRuntimeClient({ region: "eu-central-1" });
   const modelId = "anthropic.claude-3-haiku-20240307-v1:0";
+
+  let prompt = searchBasePrompt;
+  if (query.seed) {
+    prompt += ` Nutze insbesondere: ${query.seed}`;
+  } else {
+    prompt +=
+      "deftiges Frühstück, gesundes Abendessen, Pizza, Pasta, Deutsche Küche";
+  }
+  if (query.dietType === "vegan") {
+    prompt += ` Nur vegane Gerichte!`;
+  } else if (query.dietType === "vegetarian") {
+    prompt += ` Nur vegetarische Gerichte!`;
+  }
 
   const payload = {
     anthropic_version: "bedrock-2023-05-31",
@@ -23,7 +38,7 @@ export async function generateSearchTerm(): Promise<string> {
     messages: [
       {
         role: "user",
-        content: [{ type: "text", text: searchPrompt }],
+        content: [{ type: "text", text: prompt }],
       },
     ],
   };

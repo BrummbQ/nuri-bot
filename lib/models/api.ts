@@ -3,6 +3,7 @@ import type { Ingredient } from "./ingredient.model";
 import type { ReweProduct } from "./rewe.model";
 import type { Metadata } from "../search";
 import type { Basket } from "./basket-store.model";
+import type { DietType } from "./suggestion";
 
 export interface SelectedProduct {
   quantity: number;
@@ -55,4 +56,9 @@ export interface GetBasketsResponse {
 
 export interface SearchGenerateTermResponse {
   searchTerm: string;
+}
+
+export interface SearchGenerateTermQuery {
+  seed?: string;
+  dietType?: DietType;
 }

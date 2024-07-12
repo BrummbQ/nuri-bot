@@ -3,11 +3,13 @@
     <UiHeader class="flex-grow mb-0" :level="1">Warenkorb</UiHeader>
     <UiLink :to="recipeUrl">Rezepte ändern</UiLink>
   </div>
-  <BasketShoppingList v-if="recipes.length" :basketId="route.params.id" />
-  <p v-else class="text-center mt-10 font-bold text-gray-500">
-    <Icon name="fluent:emoji-sad-16-regular" width="50" height="50" />
-    Keine Rezepte ausgewählt!
-  </p>
+  <ClientOnly>
+    <BasketShoppingList v-if="recipes.length" :basketId="route.params.id" />
+    <p v-else class="text-center mt-10 font-bold text-gray-500">
+      <Icon name="fluent:emoji-sad-16-regular" width="50" height="50" />
+      Keine Rezepte ausgewählt!
+    </p>
+  </ClientOnly>
 </template>
 
 <script setup lang="ts">
@@ -17,10 +19,6 @@ definePageMeta({
 
 const route = useRoute("basket-id-basket");
 
-const { createOrSetBasket, recipes } = useBasketStore();
+const { recipes } = useBasketStore();
 const recipeUrl = computed(() => `/basket/${route.params.id}/recipe`);
-
-await callOnce(async () => {
-  createOrSetBasket(route.params.id);
-});
 </script>

@@ -37,7 +37,10 @@ export const useBasketStore = () => {
   });
 
   const recipes = computed(() => {
-    if (currentBasket.value != null) {
+    if (
+      currentBasket.value != null &&
+      baskets.value[currentBasket.value] != null
+    ) {
       return baskets.value[currentBasket.value].recipes;
     }
     return [];
@@ -79,9 +82,10 @@ export const useBasketStore = () => {
   }
 
   function updateRecipes(recipes: RecipeSchema[], basketId?: string) {
-    if (basketId == null || baskets.value[basketId] == null) {
+    if (basketId == null) {
       return;
     }
+    createOrSetBasket(basketId);
 
     baskets.value[basketId] = { ...baskets.value[basketId], recipes };
     setItem(basketsSessionKey, baskets.value);
@@ -93,11 +97,9 @@ export const useBasketStore = () => {
 
   function updateIngredientsWithProducts(
     ingredientsWithProducts: IngredientWithProducts[],
-    basketId?: string,
+    basketId: string,
   ) {
-    if (basketId == null || baskets.value[basketId] == null) {
-      return;
-    }
+    createOrSetBasket(basketId);
 
     baskets.value[basketId] = {
       ...baskets.value[basketId],
@@ -109,11 +111,9 @@ export const useBasketStore = () => {
   function updateIngredientSelectedProducts(
     product: SelectedProduct,
     ingredient: IngredientWithProducts,
-    basketId?: string,
+    basketId: string,
   ) {
-    if (basketId == null || baskets.value[basketId] == null) {
-      return;
-    }
+    createOrSetBasket(basketId);
 
     const ingredients = baskets.value[basketId].ingredientsWithProducts;
     if (ingredients != null) {
@@ -143,10 +143,16 @@ export const useBasketStore = () => {
     }
   }
 
+  function completeCurrentBasket() {
+    if (currentBasket.value) {
+      delete baskets.value[currentBasket.value];
+      currentBasket.value = undefined;
+    }
+  }
+
   return {
     baskets,
     currentBasket,
-    createOrSetBasket,
     updateRecipes,
     recipes,
     ingredientsWithProducts,
@@ -156,5 +162,6 @@ export const useBasketStore = () => {
     updateIngredientSelectedProducts,
     searchLoadingValue,
     searchLoading,
+    completeCurrentBasket,
   };
 };

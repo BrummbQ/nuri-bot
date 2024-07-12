@@ -1,9 +1,14 @@
-import type { SearchGenerateTermResponse } from "~/lib/models";
+import type {
+  SearchGenerateTermQuery,
+  SearchGenerateTermResponse,
+} from "~/lib/models";
 import { generateSearchTerm } from "~/lib/search";
 
 export default defineEventHandler(
-  async (): Promise<SearchGenerateTermResponse> => {
-    const searchTerm = await generateSearchTerm();
+  async (event): Promise<SearchGenerateTermResponse> => {
+    const query = await getQuery<SearchGenerateTermQuery>(event);
+
+    const searchTerm = await generateSearchTerm(query);
 
     return { searchTerm };
   },
