@@ -1,4 +1,3 @@
-import { postSearchIngredients } from "~/lib/api";
 import {
   type RecipeSchema,
   type Basket,
@@ -27,6 +26,7 @@ export const useBasketStore = () => {
     readExtensionBasketData(),
   );
   const { getItem, setItem } = useSessionStorage<BasketState>();
+  const { postSearchIngredients, loadProducts } = useApi();
 
   watchEffect(() => {
     marketId.value = readMarketId(reweCookieData.value);
@@ -60,10 +60,7 @@ export const useBasketStore = () => {
     const ingredients = collectIngredients(recipes);
     searchLoading.value = true;
 
-    await $fetch("/api/load-products", {
-      method: "POST",
-      body: { marketId },
-    });
+    await loadProducts(marketId);
 
     const result = await postSearchIngredients(ingredients, marketId);
     updateIngredientsWithProducts(result.ingredients, basketId);
@@ -151,6 +148,7 @@ export const useBasketStore = () => {
   }
 
   return {
+    createOrSetBasket,
     baskets,
     currentBasket,
     updateRecipes,

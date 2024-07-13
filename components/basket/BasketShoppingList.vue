@@ -31,7 +31,6 @@ import {
   type IngredientWithProducts,
   type SelectedProduct,
 } from "~/lib/models";
-import { postOrderIngredients } from "~/lib/api";
 
 const props = defineProps<{
   basketId: string;
@@ -47,6 +46,7 @@ const {
   ingredientsWithProducts,
   completeCurrentBasket,
 } = useBasketStore();
+const { postOrderIngredients } = useApi();
 
 const selectProduct = (
   event: SelectedProduct,

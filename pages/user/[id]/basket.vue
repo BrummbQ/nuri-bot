@@ -10,11 +10,9 @@
 </template>
 
 <script setup lang="ts">
-import type { GetBasketsResponse } from "~/lib/models";
-
 definePageMeta({
   middleware: ["auth"],
 });
 
-const { data } = await useFetch<GetBasketsResponse>("/api/baskets");
+const data = await useFetchBaskets();
 </script>

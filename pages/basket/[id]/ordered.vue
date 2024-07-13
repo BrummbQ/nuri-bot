@@ -36,7 +36,5 @@ definePageMeta({
 
 const route = useRoute("basket-id-ordered");
 
-const { data, error } = await useFetch(`/api/basket`, {
-  query: { basketId: route.params.id },
-});
+const { data, error } = await useFetchBasket(route.params.id);
 </script>

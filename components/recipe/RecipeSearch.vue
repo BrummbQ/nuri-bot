@@ -1,15 +1,18 @@
 <template>
   <RecipeSearchInput
     :loading="loading"
-    :placeholder="searchTerm"
+    :placeholder="data?.searchTerm"
     @search="queryRecipes($event)"
   />
   <RecipeSearchSuggestions @suggest="suggestRecipe($event)" />
-  <RecipeAvailableCards :recipes="recipes" @select="selectRecipe($event)" />
+  <RecipeAvailableCards
+    :recipes="recipesFromSearch"
+    @select="selectRecipe($event)"
+  />
 
-  <template v-if="selectedRecipes.length > 0">
+  <template v-if="recipes.length > 0">
     <RecipeSelectedCards
-      :selectedRecipes="selectedRecipes"
+      :selectedRecipes="recipes"
       @unselect="unselectRecipe($event)"
     />
 
@@ -18,33 +21,25 @@
 </template>
 
 <script setup lang="ts">
-import { getSearchRecipes } from "~/lib/api";
-import type {
-  RecipeSchema,
-  RecipeSuggestion,
-  SearchGenerateTermResponse,
-} from "~/lib/models";
+import type { RecipeSchema, RecipeSuggestion } from "~/lib/models";
 
 const props = defineProps<{
   basketId: string;
-  selectedRecipes: RecipeSchema[];
-}>();
-const emit = defineEmits<{
-  selectedRecipesChanged: [recipes: RecipeSchema[]];
 }>();
 
 const loading = ref(false);
-const recipes = ref<RecipeSchema[]>([]);
-const searchTerm = ref<string>();
-const { data } = await useFetch<SearchGenerateTermResponse>(
-  `/api/search/generate-term`,
-);
+const recipesFromSearch = ref<RecipeSchema[]>([]);
+const { data } = await useFetchGenerateSearchTerm();
+const { getSearchRecipes, generateTerm } = useApi();
+const { updateRecipes, recipes, createOrSetBasket } = useBasketStore();
+
+callOnce(() => createOrSetBasket(props.basketId));
 
 const basketUrl = computed(() => `/basket/${props.basketId}/basket`);
 
 const queryRecipes = async (query: string) => {
   loading.value = true;
-  recipes.value = [];
+  recipesFromSearch.value = [];
 
   const result = await getSearchRecipes(query);
   loading.value = false;
@@ -55,34 +50,33 @@ const queryRecipes = async (query: string) => {
       mappedRecipes.push(r.metadata.recipeSchema as unknown as RecipeSchema);
     }
   });
-  recipes.value = mappedRecipes;
+  recipesFromSearch.value = mappedRecipes;
 };
 
 const selectRecipe = (recipe: RecipeSchema) => {
-  recipes.value = recipes.value.filter((r) => r["@id"] !== recipe["@id"]);
-  emit("selectedRecipesChanged", [...props.selectedRecipes, recipe]);
+  recipesFromSearch.value = recipesFromSearch.value.filter(
+    (r) => r["@id"] !== recipe["@id"],
+  );
+  updateRecipes([...recipes.value, recipe], props.basketId);
 };
 
 const unselectRecipe = (recipe: RecipeSchema) => {
-  const filteredSelectedRecipes = props.selectedRecipes.filter(
+  const filteredSelectedRecipes = recipes.value.filter(
     (r) => r["@id"] !== recipe["@id"],
   );
-  emit("selectedRecipesChanged", filteredSelectedRecipes);
-  recipes.value.push(recipe);
+  updateRecipes(filteredSelectedRecipes, props.basketId);
+  recipesFromSearch.value.push(recipe);
 };
 
-const suggestRecipe = async ({ seed, dietType }: RecipeSuggestion) => {
-  const result = await $fetch("/api/search/generate-term", {
-    query: { seed, dietType },
-  });
-  searchTerm.value = result.searchTerm;
+const suggestRecipe = async (query: RecipeSuggestion) => {
+  const result = await generateTerm(query);
+  data.value = result;
   queryRecipes(result.searchTerm);
 };
 
-watchEffect(() => {
+onMounted(() => {
   if (data.value?.searchTerm) {
-    queryRecipes(data.value?.searchTerm);
-    searchTerm.value = data.value?.searchTerm;
+    queryRecipes(data.value.searchTerm);
   }
 });
 </script>

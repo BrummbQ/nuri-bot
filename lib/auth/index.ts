@@ -7,6 +7,7 @@ export async function verifySession(
 ): Promise<string | undefined> {
   const sessionToken = await getCookie(event, "sessionToken");
   if (sessionToken == null) {
+    console.log("No session token", event.node.req.url);
     return undefined;
   }
 
@@ -24,6 +25,7 @@ export async function verifySession(
 
     return result.id;
   } catch (error) {
+    console.error(error);
     return undefined;
   }
 }
