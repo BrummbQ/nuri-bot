@@ -3,10 +3,10 @@ import type { CreateBasketBody, CreateBasketResponse } from "~/lib/models";
 
 export default defineEventHandler(
   async (event): Promise<CreateBasketResponse> => {
-    const body = await readBody<CreateBasketBody>(event);
+    const { recipes, ingredients } = await readBody<CreateBasketBody>(event);
     const { userId } = event.context.auth;
 
-    const basketId = await createBasket(body.ingredients, userId);
+    const basketId = await createBasket(recipes, ingredients, userId);
 
     return { basketId };
   },

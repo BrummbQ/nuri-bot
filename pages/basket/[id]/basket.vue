@@ -19,8 +19,15 @@ definePageMeta({
 
 const route = useRoute("basket-id-basket");
 
-const { recipes, createOrSetBasket } = useBasketStore();
+const { recipes, createOrSetBasket, searchIngedients, marketIdValue } =
+  useBasketStore();
 const recipeUrl = computed(() => `/basket/${route.params.id}/recipe`);
 
 callOnce(() => createOrSetBasket(route.params.id));
+
+onMounted(() => {
+  if (marketIdValue.value) {
+    searchIngedients(recipes.value, marketIdValue.value, route.params.id);
+  }
+});
 </script>

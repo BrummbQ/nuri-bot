@@ -3,19 +3,48 @@ import type {
   IngredientsSearchBody,
   IngredientsSearchResponse,
 } from "~/lib/models";
-import { searchSimilarProducts } from "~/lib/search";
+import {
+  collectIngredients,
+  consolidateSimilarIngredients,
+  filterCommonIngredients,
+  searchSimilarProducts,
+} from "~/lib/search";
+import calcProductQuantity from "~/utils/calcProductQuantity";
 
 export default defineEventHandler(
   async (event): Promise<IngredientsSearchResponse> => {
-    const body = await readBody<IngredientsSearchBody>(event);
+    const { recipes, market } = await readBody<IngredientsSearchBody>(event);
+
+    const ingredients = filterCommonIngredients(recipes);
+    const collectedIngredients = await collectIngredients(ingredients);
+    const consolidatedIngredients =
+      consolidateSimilarIngredients(collectedIngredients);
 
     const responseIngredients: IngredientWithProducts[] = await Promise.all(
-      body.ingredients.map(async (ingredient) => {
+      consolidatedIngredients.map(async (ingredient) => {
         const products = await searchSimilarProducts(
           ingredient.productName,
-          body.market,
+          market,
         );
-        return { ...ingredient, products };
+        const ingredientWithProducts: IngredientWithProducts = {
+          ...ingredient,
+          products,
+          selectedProducts: [],
+        };
+
+        // auto select first product for each ingredient
+        if (products.length) {
+          const product = products[0];
+          ingredientWithProducts.selectedProducts = [
+            {
+              product,
+              quantity:
+                calcProductQuantity(ingredientWithProducts, product) ?? 1,
+            },
+          ];
+        }
+
+        return ingredientWithProducts;
       }),
     );
 

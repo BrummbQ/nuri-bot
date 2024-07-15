@@ -1,7 +1,9 @@
 import type {
-  Ingredient,
+  CreateBasketBody,
+  CreateBasketResponse,
   IngredientsSearchResponse,
   IngredientWithProducts,
+  RecipeSchema,
   RecipesSearchResponse,
   ReweBasketCookieData,
   SearchGenerateTermQuery,
@@ -18,26 +20,32 @@ export function useApi() {
   }
 
   async function postSearchIngredients(
-    ingredients: Ingredient[],
+    recipes: RecipeSchema[],
     marketId: string,
   ): Promise<IngredientsSearchResponse> {
     const result: IngredientsSearchResponse = await $api(
       "/api/ingredients-search",
       {
         method: "POST",
-        body: { ingredients: ingredients, market: marketId },
+        body: { recipes, market: marketId },
       },
     );
-    // auto select first product for each ingredient
-    result.ingredients.forEach((i) => {
-      if (i.products.length) {
-        const product = i.products[0];
-        i.selectedProducts = [
-          { product, quantity: calcProductQuantity(i, product) ?? 1 },
-        ];
-      }
-    });
+    return result;
+  }
 
+  async function createBasket({
+    basketId,
+    recipes,
+    ingredients,
+  }: CreateBasketBody): Promise<CreateBasketResponse> {
+    const result = await $api("/api/create-basket", {
+      method: "POST",
+      body: {
+        basketId,
+        ingredients,
+        recipes,
+      },
+    });
     return result;
   }
 
@@ -76,6 +84,7 @@ export function useApi() {
   return {
     getSearchRecipes,
     postSearchIngredients,
+    createBasket,
     postOrderIngredients,
     loadProducts,
     generateTerm,

@@ -57,12 +57,11 @@ export const useBasketStore = () => {
     marketId: string,
     basketId: string,
   ) {
-    const ingredients = collectIngredients(recipes);
     searchLoading.value = true;
 
     await loadProducts(marketId);
 
-    const result = await postSearchIngredients(ingredients, marketId);
+    const result = await postSearchIngredients(recipes, marketId);
     updateIngredientsWithProducts(result.ingredients, basketId);
     searchLoading.value = false;
   }
@@ -86,10 +85,6 @@ export const useBasketStore = () => {
 
     baskets.value[basketId] = { ...baskets.value[basketId], recipes };
     setItem(basketsSessionKey, baskets.value);
-
-    if (marketId.value != null) {
-      searchIngedients(recipes, marketId.value, basketId);
-    }
   }
 
   function updateIngredientsWithProducts(
@@ -161,5 +156,6 @@ export const useBasketStore = () => {
     searchLoadingValue,
     searchLoading,
     completeCurrentBasket,
+    searchIngedients,
   };
 };

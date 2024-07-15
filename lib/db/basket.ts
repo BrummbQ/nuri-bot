@@ -11,7 +11,7 @@ export async function insertBasket(
 }
 
 export async function getBasketsByUserId(userId: string) {
-  return await sql`SELECT * FROM Basket WHERE user_id = ${userId}`;
+  return await sql`SELECT * FROM Basket WHERE user_id = ${userId} ORDER BY created_at DESC`;
 }
 
 export async function getBasketById(id: string) {

@@ -11,3 +11,8 @@ export interface ProductGrammage {
   quantity: number;
   unit: string;
 }
+
+export interface RecipeIngredient {
+  ingredient: string;
+  recipe: RecipeSchema;
+}

@@ -4,6 +4,7 @@ import type { ReweProduct } from "./rewe.model";
 import type { Metadata } from "../search";
 import type { Basket } from "./basket-store.model";
 import type { DietType } from "./suggestion";
+import type { RecipeSchema } from "./recipe-schema.model";
 
 export interface SelectedProduct {
   quantity: number;
@@ -25,7 +26,7 @@ export interface IngredientsOrderBody {
 }
 
 export interface IngredientsSearchBody {
-  ingredients: Ingredient[];
+  recipes: RecipeSchema[];
   market: string;
 }
 
@@ -36,6 +37,7 @@ export interface RecipesSearchResponse {
 export interface CreateBasketBody {
   basketId: string;
   ingredients: IngredientWithProducts[];
+  recipes: RecipeSchema[];
 }
 
 export interface CreateBasketResponse {

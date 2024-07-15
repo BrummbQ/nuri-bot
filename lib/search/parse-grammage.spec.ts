@@ -1,4 +1,5 @@
-import { describe, expect, it } from "vitest";
+import { describe, it, expect } from "vitest";
+import { parseGrammage } from "./parse-grammage";
 
 describe("Parse Grammage", () => {
   it("should parse grammage", () => {

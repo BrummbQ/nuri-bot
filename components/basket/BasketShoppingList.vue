@@ -45,8 +45,9 @@ const {
   updateIngredientSelectedProducts,
   ingredientsWithProducts,
   completeCurrentBasket,
+  recipes,
 } = useBasketStore();
-const { postOrderIngredients } = useApi();
+const { createBasket, postOrderIngredients } = useApi();
 
 const selectProduct = (
   event: SelectedProduct,
@@ -61,13 +62,16 @@ const orderBasket = async () => {
     return;
   }
 
+  if (ingredientsWithProducts.value == null) {
+    console.error("No products");
+    return;
+  }
+
   try {
-    const createBasketResponse = await $fetch("/api/create-basket", {
-      method: "POST",
-      body: {
-        basketId: props.basketId,
-        ingredients: ingredientsWithProducts.value,
-      },
+    const createBasketResponse = await createBasket({
+      basketId: props.basketId,
+      ingredients: ingredientsWithProducts.value,
+      recipes: recipes.value,
     });
 
     orderLoading.value = true;

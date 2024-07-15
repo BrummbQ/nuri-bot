@@ -1,4 +1,5 @@
 import type { IngredientWithProducts, ReweProduct } from "~/lib/models";
+import { parseGrammage } from "~/lib/search/parse-grammage";
 
 export default function (
   ingredient: IngredientWithProducts,

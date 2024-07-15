@@ -7,7 +7,12 @@ import {
   linkIngredientToProduct,
   linkIngredientToRecipe,
 } from "../db";
-import type { IngredientWithProducts, SelectedProduct } from "../models";
+import type {
+  IngredientWithProducts,
+  RecipeSchema,
+  SelectedProduct,
+} from "../models";
+import { linkRecipeToIngredients } from "../search";
 
 async function getOrCreateRecipeIds(
   i: IngredientWithProducts,
@@ -38,11 +43,13 @@ async function linkProducts(products: SelectedProduct[], ingredientId: number) {
 }
 
 export async function createBasket(
+  recipes: RecipeSchema[],
   ingredients: IngredientWithProducts[],
   userId: string,
 ): Promise<string> {
   // first create basket
   const basketId = await insertBasket(userId);
+  ingredients = linkRecipeToIngredients(recipes, ingredients);
 
   await Promise.all(
     ingredients.map(async (i) => {

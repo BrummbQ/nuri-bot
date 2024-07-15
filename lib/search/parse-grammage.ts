@@ -1,6 +1,8 @@
-import type { ProductGrammage, ReweProduct } from "~/lib/models";
+import type { ProductGrammage, ReweProduct } from "../models";
 
-export default function (product: ReweProduct): ProductGrammage | undefined {
+export function parseGrammage(
+  product: ReweProduct,
+): ProductGrammage | undefined {
   if (product._embedded.articles.length) {
     const grammage =
       product._embedded.articles[0]._embedded.listing.pricing.grammage;
