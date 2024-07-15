@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
 
   // dont check public routes
   for (let publicRoute of publicRoutes) {
-    if (publicRoute.startsWith(route ?? "")) {
+    if (route != null && route.startsWith(publicRoute)) {
       return;
     }
   }
