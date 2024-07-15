@@ -1,7 +1,6 @@
 import { verifySession } from "~/lib/auth";
 
 const publicRoutes = [
-  "/",
   "/api/auth/magic-link",
   "/api/auth/verify",
   "/auth/login",
@@ -14,7 +13,7 @@ export default defineEventHandler(async (event) => {
 
   // dont check public routes
   for (let publicRoute of publicRoutes) {
-    if (route != null && route.startsWith(publicRoute)) {
+    if (route != null && (route.startsWith(publicRoute) || route === "/")) {
       return;
     }
   }
