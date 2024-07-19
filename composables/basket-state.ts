@@ -59,11 +59,16 @@ export const useBasketStore = () => {
   ) {
     searchLoading.value = true;
 
-    await loadProducts(marketId);
+    try {
+      await loadProducts(marketId);
 
-    const result = await postSearchIngredients(recipes, marketId);
-    updateIngredientsWithProducts(result.ingredients, basketId);
-    searchLoading.value = false;
+      const result = await postSearchIngredients(recipes, marketId);
+      updateIngredientsWithProducts(result.ingredients, basketId);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      searchLoading.value = false;
+    }
   }
 
   function createOrSetBasket(id: string) {

@@ -2,17 +2,20 @@ import {
   BedrockRuntimeClient,
   InvokeModelCommand,
 } from "@aws-sdk/client-bedrock-runtime";
+import OpenAI from "openai";
 import type { Ingredient, RecipeIngredient } from "../models";
+
+const openai = new OpenAI();
 
 const ingredientsBasePrompt = (ingredients: RecipeIngredient[]) => `
 Fasse folgende Zutatenliste in ein json zusammen. Gib nur JSON zurück ohne extra Text!
 
-productName: Produktname, versuche zu normalisieren (Singular, ohne Markenbezeichnung)
+productName: Produktname (Plural bei Obst/Stück, ohne Markenbezeichnung)
 quantity: Beschreibt die Anzahl oder Menge
 unit: Mengeneinheit (EL, g, ml, kg, Stück)
 note: Zusätzliche beschreibende Infos über das Produkt
 
-Beispiel JSON:
+Beispiel Antwort JSON:
 [
   {
     "productName": "Olivenöl",
@@ -30,6 +33,16 @@ Beispiel JSON:
     "productName": "Paprika",
     "quantity": 1,
     "note": "rot"
+  },
+  {
+    "productName": "Orangen",
+    "quantity": 1,
+    "unit": "Stück"
+  }
+  {
+    "productName": "Eier",
+    "quantity": 2,
+    "unit": "Stück"
   }
 ]
 
@@ -37,7 +50,7 @@ Zutaten:
 ${ingredients.map((i) => i.ingredient).join("\n")}
 `;
 
-export async function collectIngredients(
+export async function collectIngredients2(
   ingredients: RecipeIngredient[],
 ): Promise<Ingredient[]> {
   const client = new BedrockRuntimeClient({ region: "eu-central-1" });
@@ -79,4 +92,39 @@ export async function collectIngredients(
   }
 
   return [];
+}
+
+export async function collectIngredients(
+  ingredients: RecipeIngredient[],
+): Promise<Ingredient[]> {
+  const ingredientPrompt = ingredientsBasePrompt(ingredients);
+
+  const completion = await openai.chat.completions.create({
+    messages: [
+      {
+        role: "user",
+        content: [{ type: "text", text: ingredientPrompt }],
+      },
+    ],
+    model: "gpt-4o-mini",
+    response_format: { type: "json_object" },
+    max_tokens: 5000,
+  });
+
+  const resultIngredients = completion.choices[0].message.content;
+  if (resultIngredients == null) {
+    return [];
+  }
+
+  // Decode and return the response.
+  try {
+    const parsedIngredients = JSON.parse(resultIngredients);
+    return parsedIngredients.ingredients;
+  } catch {
+    console.error(resultIngredients);
+    throw createError({
+      statusCode: 500,
+      statusMessage: "Could not parse ingredients response",
+    });
+  }
 }

@@ -6,9 +6,13 @@ dotenv.config({ path: [".env.development.local"] });
 try {
   await sql`CREATE EXTENSION IF NOT EXISTS pg_trgm;`;
   await sql`CREATE EXTENSION IF NOT EXISTS vector;`;
+  await sql`CREATE EXTENSION IF NOT EXISTS unaccent`;
+  await sql`CREATE OR REPLACE FUNCTION normalize_text(text) RETURNS text AS $$
+  SELECT lower(unaccent($1));
+  $$ LANGUAGE SQL IMMUTABLE;`;
 
   const result = await sql`
-CREATE TABLE Product (
+CREATE TABLE IF NOT EXISTS Product (
     id SERIAL PRIMARY KEY,
     external_id VARCHAR(255) UNIQUE NOT NULL,
     product_name VARCHAR(255) NOT NULL,
@@ -21,7 +25,9 @@ CREATE TABLE Product (
 );
 `;
 
-  await sql`CREATE INDEX product_name_trgm_idx ON Product USING gin (product_name gin_trgm_ops);`;
+  await sql`CREATE INDEX IF NOT EXISTS idx_product_market_id ON product(market_id);`;
+  await sql`CREATE INDEX IF NOT EXISTS idx_product_name_trgm ON product USING gin(normalize_text(product_name) gin_trgm_ops);`;
+  await sql`CREATE INDEX IF NOT EXISTS idx_product_name_search ON product USING gin(product_name_search);`;
 
   console.log("Created table", result);
 } catch (error) {

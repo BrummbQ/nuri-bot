@@ -16,16 +16,16 @@ export default defineEventHandler(
     const { recipes, market } = await readBody<IngredientsSearchBody>(event);
 
     const ingredients = filterCommonIngredients(recipes);
+    console.time("Start collect");
     const collectedIngredients = await collectIngredients(ingredients);
+    console.timeEnd("Start collect");
     const consolidatedIngredients =
       consolidateSimilarIngredients(collectedIngredients);
 
+    console.time("db search products");
     const responseIngredients: IngredientWithProducts[] = await Promise.all(
       consolidatedIngredients.map(async (ingredient) => {
-        const products = await searchSimilarProducts(
-          ingredient.productName,
-          market,
-        );
+        const products = await searchSimilarProducts(ingredient, market);
         const ingredientWithProducts: IngredientWithProducts = {
           ...ingredient,
           products,
@@ -47,6 +47,7 @@ export default defineEventHandler(
         return ingredientWithProducts;
       }),
     );
+    console.timeEnd("db search products");
 
     return { ingredients: responseIngredients };
   },

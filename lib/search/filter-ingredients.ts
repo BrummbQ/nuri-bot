@@ -72,8 +72,14 @@ export function consolidateSimilarIngredients(
   ingredients: Ingredient[],
 ): Ingredient[] {
   return ingredients.reduce((acc, ingredient) => {
+    // normalize units
+    if (ingredient.unit == null) {
+      ingredient.unit = "Stück";
+    }
+
     const accIngredient = acc.find(
-      (i) => i.productName === ingredient.productName,
+      (i) =>
+        i.productName === ingredient.productName && i.unit === ingredient.unit,
     );
     if (accIngredient != null && ingredient.quantity != null) {
       accIngredient.quantity =

@@ -105,13 +105,24 @@ describe("Filter Ingredients", () => {
       {
         productName: "Ei",
         quantity: 1,
-        unit: undefined,
         recipes: [],
       },
       {
         productName: "Ei",
         quantity: 2,
         unit: "Stück",
+        recipes: [],
+      },
+      {
+        productName: "Öl",
+        quantity: 2,
+        unit: "EL",
+        recipes: [],
+      },
+      {
+        productName: "Öl",
+        quantity: 20,
+        unit: "ml",
         recipes: [],
       },
     ];
@@ -126,7 +137,19 @@ describe("Filter Ingredients", () => {
       {
         productName: "Ei",
         quantity: 3,
-        unit: undefined,
+        unit: "Stück",
+        recipes: [],
+      },
+      {
+        productName: "Öl",
+        quantity: 2,
+        unit: "EL",
+        recipes: [],
+      },
+      {
+        productName: "Öl",
+        quantity: 20,
+        unit: "ml",
         recipes: [],
       },
     ]);

@@ -3,9 +3,9 @@ import { getEmbedding } from "./embeddings";
 import {
   insertProducts,
   searchProductsByEmbedding,
-  searchProductsBySimilarity,
   searchProductsByTsquery,
 } from "../db";
+import type { Ingredient } from "../models";
 
 export function cleanupSearchQuery(search: string): string {
   return search.replace(/\s*\(.*?\)\s*/g, "");
@@ -46,16 +46,11 @@ export async function searchEmbeddedProducts(
   return result.rows.map((r) => r.data);
 }
 
-export async function searchTsqueryProducts(search: string, market: string) {
-  search = cleanupSearchQuery(search);
-  const result = await searchProductsByTsquery(search, market);
-
-  return result.rows.map((r) => r.data);
-}
-
-export async function searchSimilarProducts(search: string, market: string) {
-  search = cleanupSearchQuery(search);
-  const result = await searchProductsBySimilarity(market, search);
+export async function searchSimilarProducts(
+  ingredient: Ingredient,
+  market: string,
+) {
+  const result = await searchProductsByTsquery(market, ingredient);
 
   return result.rows.map((r) => r.data);
 }

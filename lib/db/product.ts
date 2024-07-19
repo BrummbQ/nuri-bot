@@ -1,5 +1,5 @@
 import { sql } from "@vercel/postgres";
-import type { ProductRow, ReweProduct } from "../models";
+import type { Ingredient, ProductRow, ReweProduct } from "../models";
 
 export async function findProductByExternalId(
   product: ReweProduct,
@@ -79,12 +79,26 @@ export async function paginateProduct(
   return await sql`SELECT * FROM Product WHERE market_id = ${marketId} AND product_name_embedding is NULL LIMIT ${pageSize} OFFSET ${offset};`;
 }
 
-export async function searchProductsByTsquery(market: string, search: string) {
-  return await sql`SELECT *, ts_rank(product_name_search, query, 32) AS rank
-    FROM product, websearch_to_tsquery('german', ${search}) as query
-    WHERE product_name_search @@ query AND market_id = ${market}
-    ORDER BY rank DESC
-    LIMIT 10`;
+export async function searchProductsByTsquery(
+  market: string,
+  ingredient: Ingredient,
+) {
+  const search = `${ingredient.productName} ${ingredient.quantity} ${ingredient.unit}`;
+  const searchBasic = ingredient.productName;
+
+  return await sql`
+    SELECT 
+      *,
+      similarity(normalize_text(p.product_name), normalize_text(${search})) AS similarity,
+      ts_rank(product_name_search, plainto_tsquery('german', normalize_text(${search}))) AS rank
+    FROM 
+      product p
+    WHERE 
+      market_id = ${market} AND
+      (normalize_text(p.product_name) % normalize_text(${searchBasic}) OR
+      product_name_search @@ plainto_tsquery('german', normalize_text(${searchBasic})))
+    ORDER BY rank DESC, similarity DESC, length(p.product_name) ASC
+    LIMIT 10;`;
 }
 
 export async function searchProductsByEmbedding(
