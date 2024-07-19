@@ -8,7 +8,7 @@ import type { Ingredient, RecipeIngredient } from "../models";
 const openai = new OpenAI();
 
 const ingredientsBasePrompt = (ingredients: RecipeIngredient[]) => `
-Fasse folgende Zutatenliste in ein json zusammen. Gib nur JSON zurück ohne extra Text!
+Fasse folgende Zutatenliste in ein json zusammen. Gib nur ein JSON Array zurück ohne extra Text! Keine Zutat darf doppelt auftreten, fasse ähnliche zusammen und addiere die Mengen.
 
 productName: Produktname (Plural bei Obst/Stück, ohne Markenbezeichnung)
 quantity: Beschreibt die Anzahl oder Menge
@@ -16,6 +16,7 @@ unit: Mengeneinheit (EL, g, ml, kg, Stück)
 note: Zusätzliche beschreibende Infos über das Produkt
 
 Beispiel Antwort JSON:
+{"ingredients":
 [
   {
     "productName": "Olivenöl",
@@ -44,13 +45,13 @@ Beispiel Antwort JSON:
     "quantity": 2,
     "unit": "Stück"
   }
-]
+]}
 
 Zutaten:
 ${ingredients.map((i) => i.ingredient).join("\n")}
 `;
 
-export async function collectIngredients2(
+export async function collectIngredients1(
   ingredients: RecipeIngredient[],
 ): Promise<Ingredient[]> {
   const client = new BedrockRuntimeClient({ region: "eu-central-1" });
@@ -108,6 +109,7 @@ export async function collectIngredients(
     ],
     model: "gpt-4o-mini",
     response_format: { type: "json_object" },
+    temperature: 0.5,
     max_tokens: 5000,
   });
 
@@ -119,7 +121,10 @@ export async function collectIngredients(
   // Decode and return the response.
   try {
     const parsedIngredients = JSON.parse(resultIngredients);
-    return parsedIngredients.ingredients;
+    if (parsedIngredients.ingredients != null) {
+      return parsedIngredients.ingredients;
+    }
+    return parsedIngredients;
   } catch {
     console.error(resultIngredients);
     throw createError({

@@ -1,5 +1,6 @@
-import type { ReweProduct } from "~/lib/models";
-import { getEmbedding, searchProducts } from "~/lib/search";
+import { lastFetchedProductByMarket } from "~/lib/db";
+import { loadProducts } from "~/lib/search";
+import { daysAgo } from "~/lib/utils/date";
 
 interface LoadProductsBody {
   marketId: string;
@@ -12,9 +13,18 @@ export default defineEventHandler(async (event): Promise<void> => {
   const body = await readBody<LoadProductsBody>(event);
 
   try {
-    //await loadProducts(body.marketId);
-    console.log("Loaded all products");
-    //await loadEmbeddings(body.marketId);
+    const lastFetched = await lastFetchedProductByMarket(body.marketId);
+    let fetchProducts = true;
+    // skip fetch if last import less then 7 days ago
+    if (lastFetched != null) {
+      const oneWeekAgo = daysAgo();
+      fetchProducts = lastFetched < oneWeekAgo;
+    }
+    if (fetchProducts) {
+      console.time("Load products");
+      await loadProducts(body.marketId);
+      console.timeEnd("Load products");
+    }
   } catch (e) {
     console.error("DB error:", e);
     throw createError({

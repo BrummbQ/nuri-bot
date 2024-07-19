@@ -1,5 +1,6 @@
 import { sql } from "@vercel/postgres";
 import type { Ingredient, ProductRow, ReweProduct } from "../models";
+import { daysAgo } from "../utils/date";
 
 export async function findProductByExternalId(
   product: ReweProduct,
@@ -8,6 +9,17 @@ export async function findProductByExternalId(
     await sql`SELECT id FROM Product WHERE external_id = ${product.id} LIMIT 1`;
   if (productSelect.rows.length) {
     return productSelect.rows[0].id;
+  }
+}
+
+export async function lastFetchedProductByMarket(
+  marketId: string,
+): Promise<Date | undefined> {
+  const response = await sql.query(
+    `SELECT fetched_at FROM product WHERE market_id = '${marketId}' ORDER BY fetched_at DESC LIMIT 1;`,
+  );
+  if (response.rows.length) {
+    return response.rows[0].fetched_at;
   }
 }
 
@@ -85,6 +97,7 @@ export async function searchProductsByTsquery(
 ) {
   const search = `${ingredient.productName} ${ingredient.quantity} ${ingredient.unit}`;
   const searchBasic = ingredient.productName;
+  const oneWeekAgo = daysAgo();
 
   return await sql`
     SELECT 
@@ -95,6 +108,7 @@ export async function searchProductsByTsquery(
       product p
     WHERE 
       market_id = ${market} AND
+      fetched_at > ${oneWeekAgo.toISOString()} AND
       (normalize_text(p.product_name) % normalize_text(${searchBasic}) OR
       product_name_search @@ plainto_tsquery('german', normalize_text(${searchBasic})))
     ORDER BY rank DESC, similarity DESC, length(p.product_name) ASC
