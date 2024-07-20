@@ -1,7 +1,7 @@
 <template>
   <UiHeader :level="1">Login</UiHeader>
 
-  <UiNotification severity="info"
+  <UiNotification class="my-4" severity="info"
     >Zum Fortfahren melde dich mit deiner E-Mail an</UiNotification
   >
 

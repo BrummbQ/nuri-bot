@@ -1,6 +1,6 @@
 <template>
   <div
-    class="p-4 rounded-md my-4"
+    class="p-4 rounded-md"
     :class="{
       'bg-green-200': props.severity === 'success',
       'bg-blue-200': props.severity === 'info',

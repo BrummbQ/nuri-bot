@@ -6,11 +6,15 @@ export default defineEventHandler(async (event) => {
 
   // add each ingredient to rewe basket
   for (let i of body.ingredients) {
-    if (!i.selectedProducts) {
+    const selectedProducts = i.selectedProducts?.filter(
+      (sP) => sP.product != null,
+    );
+    if (!selectedProducts) {
       continue;
     }
     // add all products for each ingredient
-    for (let selectedProduct of i.selectedProducts) {
+    for (let selectedProduct of selectedProducts) {
+      console.log(selectedProduct);
       const articles = selectedProduct.product._embedded.articles;
       if (!articles.length) {
         throw new Error("No articles found");

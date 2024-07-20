@@ -8,22 +8,18 @@
   <div v-if="searchLoadingValue" class="text-center">
     <Icon name="line-md:loading-loop" width="50" height="50" />
   </div>
-  <ul v-else class="mb-4">
-    <BasketIngredientItem
-      v-if="ingredientsWithProducts"
-      :ingredientsWithProducts="ingredientsWithProducts"
-      @selectProduct="selectProduct($event.selectedProduct, $event.ingredient)"
-    />
-  </ul>
-
-  <div v-if="ingredientsWithProducts && !searchLoadingValue" class="flex gap-4">
-    <UiButton :loading="orderLoading" @click="orderBasket()"
-      >Bestellen</UiButton
-    >
-  </div>
-  <UiNotification v-if="error" severity="error"
-    >Fehler beim Bestellen!</UiNotification
-  >
+  <template v-else class="mb-4">
+    <ul>
+      <BasketIngredientItem
+        v-if="ingredientsWithProducts"
+        :ingredientsWithProducts="ingredientsWithProducts"
+        @selectProduct="
+          selectProduct($event.selectedProduct, $event.ingredient)
+        "
+      />
+    </ul>
+    <BasketOrderButton :basketId="basketId" class="mt-2" />
+  </template>
 </template>
 
 <script setup lang="ts">
@@ -36,55 +32,16 @@ const props = defineProps<{
   basketId: string;
 }>();
 
-const orderLoading = ref(false);
-const error = ref();
-
 const {
   searchLoadingValue,
-  reweCookieDataValue,
   updateIngredientSelectedProducts,
   ingredientsWithProducts,
-  completeCurrentBasket,
-  recipes,
 } = useBasketStore();
-const { createBasket, postOrderIngredients } = useApi();
 
 const selectProduct = (
   event: SelectedProduct,
   ingredient: IngredientWithProducts,
 ) => {
   updateIngredientSelectedProducts(event, ingredient, props.basketId);
-};
-
-const orderBasket = async () => {
-  if (reweCookieDataValue.value == null) {
-    console.error("No rewe cookies!");
-    return;
-  }
-
-  if (ingredientsWithProducts.value == null) {
-    console.error("No products");
-    return;
-  }
-
-  try {
-    const createBasketResponse = await createBasket({
-      basketId: props.basketId,
-      ingredients: ingredientsWithProducts.value,
-      recipes: recipes.value,
-    });
-
-    orderLoading.value = true;
-    await postOrderIngredients(
-      ingredientsWithProducts.value,
-      reweCookieDataValue.value,
-    );
-    orderLoading.value = false;
-    await navigateTo(`/basket/${createBasketResponse.basketId}/ordered`);
-    completeCurrentBasket();
-  } catch (e) {
-    orderLoading.value = false;
-    error.value = e;
-  }
 };
 </script>
