@@ -14,7 +14,6 @@ export default defineEventHandler(async (event) => {
     }
     // add all products for each ingredient
     for (let selectedProduct of selectedProducts) {
-      console.log(selectedProduct);
       const articles = selectedProduct.product._embedded.articles;
       if (!articles.length) {
         throw new Error("No articles found");
