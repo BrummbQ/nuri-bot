@@ -11,26 +11,28 @@ function saveToLocalStorage(key, data) {
   );
 }
 
-function saveReweData() {
-  chrome.cookies.getAll({ domain: "rewe.de" }, (cookies) => {
-    chrome.storage.local.set({ [reweCookiesKey]: cookies });
+function readCookiesFromRewe() {
+  chrome.cookies.getAll({ domain: ".rewe.de" }, (cookies) => {
+    configureNuri(cookies);
   });
 }
 
-function readReweData() {
-  chrome.storage.local.get([reweCookiesKey], async function (result) {
-    const cookies = result[reweCookiesKey];
-    // Get the current tab
-    const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
-    const tab = tabs[0];
-
-    // Save data to page local storage
-    await chrome.scripting.executeScript({
-      target: { tabId: tab.id },
-      func: saveToLocalStorage,
-      args: [reweCookiesKey, cookies],
-    });
+async function configureNuri(reweCookies) {
+  // Get the tab with nuri app
+  const tabs = await chrome.tabs.query({
+    url: ["http://localhost:3000/*", "https://nuribot.de/*"],
+    currentWindow: true,
   });
+  const nuriTab = tabs[0];
+
+  // Save data to page local storage
+  if (nuriTab != null) {
+    await chrome.scripting.executeScript({
+      target: { tabId: nuriTab.id },
+      func: saveToLocalStorage,
+      args: [reweCookiesKey, reweCookies],
+    });
+  }
 }
 
 function addNotification(text) {
@@ -46,11 +48,12 @@ async function init() {
   }
 
   if (tab.url.includes("shop.rewe.de")) {
-    saveReweData();
-    addNotification("Warenkorb ausgelesen!");
+    readCookiesFromRewe();
+    addNotification("Warenkorb konfiguriert! Gehe zur&uuml;ck zu nuribot.de");
   } else {
-    readReweData();
-    addNotification("Warenkorb konfiguriert!");
+    addNotification(
+      "Gehe zu https://shop.rewe.de, wähle einen Markt und rufe die Erweiterung erneut auf",
+    );
   }
 }
 

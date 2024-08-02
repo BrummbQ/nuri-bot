@@ -8,8 +8,8 @@
   <div v-if="searchLoadingValue" class="text-center">
     <Icon name="line-md:loading-loop" width="50" height="50" />
   </div>
-  <template v-else class="mb-4">
-    <ul>
+  <div v-else class="mb-4">
+    <ul class="mb-2">
       <BasketIngredientItem
         v-if="ingredientsWithProducts"
         :ingredientsWithProducts="ingredientsWithProducts"
@@ -18,8 +18,8 @@
         "
       />
     </ul>
-    <BasketOrderButton :basketId="basketId" class="mt-2" />
-  </template>
+    <BasketOrderButton :basketId="basketId" />
+  </div>
 </template>
 
 <script setup lang="ts">

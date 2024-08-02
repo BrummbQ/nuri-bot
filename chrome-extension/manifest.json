@@ -1,12 +1,16 @@
 {
   "manifest_version": 3,
-  "name": "Nuri Bot Helper",
+  "name": "Nuri Bot Basket Helper",
   "description": "Integrate with rewe shopping basket",
   "version": "1.0",
   "action": {
     "default_popup": "popup.html",
     "default_icon": "icon.png"
   },
-  "permissions": ["cookies", "scripting", "storage", "activeTab"],
-  "host_permissions": ["*://*.rewe.de/"]
+  "permissions": ["cookies", "scripting", "activeTab", "tabs"],
+  "host_permissions": [
+    "*://*.rewe.de/",
+    "http://localhost:3000/",
+    "https://nuribot.de/"
+  ]
 }
