@@ -16,9 +16,8 @@ function getAppUrl(): string {
 
 export default defineEventHandler(async (event) => {
   const body = await readBody<MagicLinkBody>(event);
-  const { email } = body;
 
-  if (!email) {
+  if (body?.email == null) {
     throw createError({
       statusCode: 400,
       statusMessage: "Email is required",
@@ -39,7 +38,7 @@ export default defineEventHandler(async (event) => {
   // Send email with magic link
   const transporter = nodemailer.createTransport({
     host: process.env.EMAIL_SMTP_HOST,
-    port: 465,
+    port: Number(process.env.EMAIL_SMTP_PORT),
     auth: {
       user: process.env.EMAIL_SMTP_LOGIN,
       pass: process.env.EMAIL_SMTP_PW,
@@ -48,7 +47,7 @@ export default defineEventHandler(async (event) => {
 
   await transporter.sendMail({
     from: process.env.EMAIL_FROM,
-    to: email,
+    to: body.email,
     subject: "Nuri Login Link",
     text: `Hier klicken zum einloggen: ${magicLink}`,
     html: `<p>Klicke <a href="${magicLink}">hier</a> zum einloggen.</p>`,

@@ -14,7 +14,7 @@
 
 <script setup lang="ts">
 definePageMeta({
-  middleware: ["auth"],
+  middleware: ["auth-basket"],
 });
 
 const route = useRoute("basket-id-basket");

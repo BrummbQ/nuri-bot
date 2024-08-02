@@ -46,10 +46,8 @@
 </template>
 
 <script setup lang="ts">
-import UiButton from "~/components/ui/UiButton.vue";
-
 definePageMeta({
-  middleware: ["auth"],
+  middleware: ["auth-basket"],
 });
 
 const route = useRoute("basket-id-ordered");

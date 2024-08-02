@@ -1,4 +1,4 @@
-import jwt from "jsonwebtoken";
+import { createSessionToken } from "~/lib/auth";
 import { deleteMagicLink, findMagicLink } from "~/lib/db";
 
 interface VerifyBody {
@@ -26,13 +26,9 @@ export default defineEventHandler(async (event) => {
 
   await deleteMagicLink(magicLink.id);
 
-  // 7 days expire
-  const expiresIn = 60 * 60 * 24 * 7;
-  const sessionToken = jwt.sign(
-    { userId: magicLink.user_id },
-    process.env.JWT_SECRET!,
-    { expiresIn },
-  );
+  // 14 days expire
+  const expiresIn = 60 * 60 * 24 * 14;
+  const sessionToken = createSessionToken(magicLink.user_id, expiresIn);
 
   setCookie(event, "sessionToken", sessionToken, {
     secure: true,
