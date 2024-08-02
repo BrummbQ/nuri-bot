@@ -6,11 +6,16 @@ export async function findUserById(userId: string) {
   return userSelect.rows[0];
 }
 
-export async function findOrInsertUser(email: string) {
+export async function findUserByEmail(email: string) {
   const userSelect =
     await sql`SELECT * FROM AppUser WHERE email = ${email} LIMIT 1`;
-  if (userSelect.rows.length) {
-    return userSelect.rows[0];
+  return userSelect.rows[0];
+}
+
+export async function findOrInsertUser(email: string) {
+  const user = await findUserByEmail(email);
+  if (user != null) {
+    return user;
   }
 
   const userInsert = await sql`
@@ -23,4 +28,8 @@ export async function findOrInsertUser(email: string) {
   }
 
   return userInsert.rows[0];
+}
+
+export async function deleteUserByEmail(email: string) {
+  await sql`DELETE FROM AppUser WHERE email = ${email}`;
 }

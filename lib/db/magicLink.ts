@@ -27,6 +27,20 @@ export async function findMagicLink(token: string) {
   return linkSelect.rows[0];
 }
 
+export async function findMagicLinkByUser(userId: string) {
+  const linkSelect = await sql`
+    SELECT *
+    FROM MagicLink
+    WHERE user_id = ${userId}
+    LIMIT 1`;
+
+  return linkSelect.rows[0];
+}
+
 export async function deleteMagicLink(id: number) {
   await sql`DELETE FROM MagicLink WHERE id = ${id}`;
+}
+
+export async function deleteMagicLinkFromUser(userId: number) {
+  await sql`DELETE FROM MagicLink WHERE user_id = ${userId}`;
 }

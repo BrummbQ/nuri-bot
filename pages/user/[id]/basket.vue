@@ -11,7 +11,7 @@
 
 <script setup lang="ts">
 definePageMeta({
-  middleware: ["auth"],
+  middleware: ["auth-user"],
 });
 
 const data = await useFetchBaskets();

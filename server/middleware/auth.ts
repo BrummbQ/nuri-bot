@@ -18,7 +18,8 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  const userId = await verifySession(event);
+  const sessionToken = await getCookie(event, "sessionToken");
+  const userId = await verifySession(route, sessionToken);
   if (userId == null) {
     // api route throws 401
     if (route?.startsWith("/api")) {

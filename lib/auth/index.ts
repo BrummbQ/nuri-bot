@@ -1,13 +1,12 @@
-import type { H3Event } from "h3";
 import jwt from "jsonwebtoken";
 import { findUserById } from "../db";
 
 export async function verifySession(
-  event: H3Event,
+  url?: string,
+  sessionToken?: string | null,
 ): Promise<string | undefined> {
-  const sessionToken = await getCookie(event, "sessionToken");
   if (sessionToken == null) {
-    console.log("No session token", event.node.req.url);
+    console.log("No session token", url);
     return undefined;
   }
 
@@ -28,4 +27,8 @@ export async function verifySession(
     console.error(error);
     return undefined;
   }
+}
+
+export function createSessionToken(userId: string, expiresIn: number): string {
+  return jwt.sign({ userId }, process.env.JWT_SECRET!, { expiresIn });
 }
