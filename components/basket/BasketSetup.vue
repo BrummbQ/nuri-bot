@@ -10,7 +10,7 @@
       Gewünschten Markt auswählen und mit der
       <a
         class="underline text-lime-700"
-        href="https://github.com/BrummbQ/nuri-bot/tree/main/chrome-extension"
+        href="https://chromewebstore.google.com/detail/nuri-bot-basket-helper/paenjmocjdbgcnceecbhcccegahgkcpf?hl=de"
         target="_blank"
         >Chrome Extension</a
       >

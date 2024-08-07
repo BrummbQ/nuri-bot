@@ -8,48 +8,47 @@ import type { Ingredient, RecipeIngredient } from "../models";
 const openai = new OpenAI();
 
 const ingredientsBasePrompt = (ingredients: RecipeIngredient[]) => `
-Fasse folgende Zutatenliste in ein json zusammen. Gib nur ein JSON Array zurück ohne extra Text! Keine Zutat darf doppelt auftreten, fasse ähnliche zusammen und addiere die Mengen.
+Fasse folgende Zutatenliste in ein CSV zusammen. Gib nur ein CSV zurück ohne extra Text! Keine Zutat darf doppelt auftreten, fasse ähnliche zusammen und addiere die Mengen.
 
-productName: Produktname (Plural bei Obst/Stück, ohne Markenbezeichnung)
-quantity: Beschreibt die Anzahl oder Menge
-unit: Mengeneinheit (EL, g, ml, kg, Stück)
-note: Zusätzliche beschreibende Infos über das Produkt
+1. Feld: Produktname (Plural bei Obst/Stück, ohne Markenbezeichnung)
+2. Feld: Beschreibt die Anzahl oder Menge
+3. Feld: Mengeneinheit (EL, g, ml, kg, Stück)
+4. Feld: Zusätzliche beschreibende Infos über das Produkt
 
-Beispiel Antwort JSON:
-{"ingredients":
-[
-  {
-    "productName": "Olivenöl",
-    "quantity": 1,
-    "unit": "EL"
-  },
-  {
-    "productName": "Salz"
-  },
-  {
-    "productName": "Birnen",
-    "quantity": 2
-  },
-  {
-    "productName": "Paprika",
-    "quantity": 1,
-    "note": "rot"
-  },
-  {
-    "productName": "Orangen",
-    "quantity": 1,
-    "unit": "Stück"
-  }
-  {
-    "productName": "Eier",
-    "quantity": 2,
-    "unit": "Stück"
-  }
-]}
+Beispiel Antwort CSV, jeder Eintrag hat 4 Felder, also maximal 3 Kommas. Ohne Kopfzeile, nur Werte!
+Olivenöl,1,EL,
+Salz,,,
+Birnen,2,,
+Paprika,1,,rot
+Orangen,1,Stück,
+Eier,2,Stück,
 
 Zutaten:
 ${ingredients.map((i) => i.ingredient).join("\n")}
 `;
+
+function parseIngredientsCSV(csv: string, delimiter = ","): Ingredient[] {
+  const rows = csv.trim().split("\n");
+  const ingredients: Ingredient[] = [];
+
+  rows.forEach((row) => {
+    const values = row.split(delimiter).map((value) => value.trim());
+    // cleanup
+    if (!values.length || values[0] === "```csv" || values[0] === "```") {
+      return;
+    }
+
+    ingredients.push({
+      productName: values[0],
+      quantity: +values[1],
+      unit: values[2],
+      note: values[3],
+      recipes: [],
+    });
+  });
+
+  return ingredients;
+}
 
 export async function collectIngredients1(
   ingredients: RecipeIngredient[],
@@ -108,7 +107,6 @@ export async function collectIngredients(
       },
     ],
     model: "gpt-4o-mini",
-    response_format: { type: "json_object" },
     temperature: 0.5,
     max_tokens: 5000,
   });
@@ -120,10 +118,7 @@ export async function collectIngredients(
 
   // Decode and return the response.
   try {
-    const parsedIngredients = JSON.parse(resultIngredients);
-    if (parsedIngredients.ingredients != null) {
-      return parsedIngredients.ingredients;
-    }
+    const parsedIngredients = parseIngredientsCSV(resultIngredients);
     return parsedIngredients;
   } catch {
     console.error(resultIngredients);

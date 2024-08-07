@@ -16,9 +16,9 @@ export default defineEventHandler(
     const { recipes, market } = await readBody<IngredientsSearchBody>(event);
 
     const ingredients = filterCommonIngredients(recipes);
-    console.time("Start collect");
+    console.time("collectIngredients");
     const collectedIngredients = await collectIngredients(ingredients);
-    console.timeEnd("Start collect");
+    console.timeEnd("collectIngredients");
     const consolidatedIngredients =
       consolidateSimilarIngredients(collectedIngredients);
 

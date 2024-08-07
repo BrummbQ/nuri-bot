@@ -3,6 +3,7 @@ import type { RecipeSchema } from "./recipe-schema.model";
 export interface Ingredient {
   quantity?: number;
   unit?: string;
+  note?: string;
   productName: string;
   recipes: RecipeSchema[];
 }
