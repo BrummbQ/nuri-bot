@@ -17,7 +17,7 @@ export default defineEventHandler(async (event): Promise<void> => {
     let fetchProducts = true;
     // skip fetch if last import less then 7 days ago
     if (lastFetched != null) {
-      const oneWeekAgo = daysAgo();
+      const oneWeekAgo = daysAgo(7);
       fetchProducts = lastFetched < oneWeekAgo;
     }
     if (fetchProducts) {

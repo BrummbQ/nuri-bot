@@ -5,10 +5,13 @@
     >Zutaten</UiHeader
   >
 
-  <div v-if="searchLoadingValue" class="text-center">
+  <UiNotification v-if="searchError" severity="error">
+    Fehler beim Laden der Produkte!
+  </UiNotification>
+  <div v-if="searchLoading" class="text-center">
     <Icon name="line-md:loading-loop" width="50" height="50" />
   </div>
-  <div v-else class="mb-4">
+  <div v-if="!searchLoading && !searchError" class="mb-4">
     <ul class="mb-2">
       <BasketIngredientItem
         v-if="ingredientsWithProducts"
@@ -33,7 +36,8 @@ const props = defineProps<{
 }>();
 
 const {
-  searchLoadingValue,
+  searchLoading,
+  searchError,
   updateIngredientSelectedProducts,
   ingredientsWithProducts,
 } = useBasketStore();

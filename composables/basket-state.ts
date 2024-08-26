@@ -14,12 +14,14 @@ export const useBaskets = () => useState<BasketState>("baskets", () => ({}));
 export const useCurrentBasket = () =>
   useState<string | undefined>("currentBasket", () => undefined);
 const useSearchLoading = () => useState("searchLoading", () => false);
+const useSearchError = () => useState("searchError", () => "");
 const useMarketId = () => useState<string | undefined>("marketId");
 
 export const useBasketStore = () => {
   const baskets = useBaskets();
   const currentBasket = useCurrentBasket();
   const searchLoading = useSearchLoading();
+  const searchError = useSearchError();
   const marketId = useMarketId();
   // try to read basket data from local storage
   const reweCookieData = ref<ReweBasketCookieData[] | undefined>(
@@ -58,6 +60,7 @@ export const useBasketStore = () => {
     basketId: string,
   ) {
     searchLoading.value = true;
+    searchError.value = "";
 
     try {
       await loadProducts(marketId);
@@ -66,6 +69,7 @@ export const useBasketStore = () => {
       updateIngredientsWithProducts(result.ingredients, basketId);
     } catch (e) {
       console.error(e);
+      searchError.value = "Could not search ingredients";
     } finally {
       searchLoading.value = false;
     }
@@ -126,7 +130,6 @@ export const useBasketStore = () => {
 
   const marketIdValue = computed(() => marketId.value);
   const reweCookieDataValue = computed(() => reweCookieData.value);
-  const searchLoadingValue = computed(() => searchLoading.value);
 
   function updateReweCookieData(data?: ReweBasketCookieData[]) {
     reweCookieData.value = data;
@@ -158,8 +161,8 @@ export const useBasketStore = () => {
     updateReweCookieData,
     reweCookieDataValue,
     updateIngredientSelectedProducts,
-    searchLoadingValue,
     searchLoading,
+    searchError,
     completeCurrentBasket,
     searchIngedients,
   };

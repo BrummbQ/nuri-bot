@@ -26,8 +26,8 @@ export default defineEventHandler(async (event) => {
 
   await deleteMagicLink(magicLink.id);
 
-  // 14 days expire
-  const expiresIn = 60 * 60 * 24 * 14;
+  // 30 days expire
+  const expiresIn = 60 * 60 * 24 * 30;
   const sessionToken = createSessionToken(magicLink.user_id, expiresIn);
 
   setCookie(event, "sessionToken", sessionToken, {

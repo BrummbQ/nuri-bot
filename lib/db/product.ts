@@ -95,9 +95,10 @@ export async function searchProductsByTsquery(
   market: string,
   ingredient: Ingredient,
 ) {
-  const search = `${ingredient.productName} ${ingredient.quantity} ${ingredient.unit}`;
+  const search = `${ingredient.productName} ${ingredient.quantity}${ingredient.unit}`;
   const searchBasic = ingredient.productName;
-  const oneWeekAgo = daysAgo();
+  const searchBasicPattern = `%${ingredient.productName}%`;
+  const oneWeekAgo = daysAgo(7);
 
   return await sql`
     SELECT 
@@ -109,7 +110,8 @@ export async function searchProductsByTsquery(
     WHERE 
       market_id = ${market} AND
       fetched_at > ${oneWeekAgo.toISOString()} AND
-      (normalize_text(p.product_name) % normalize_text(${searchBasic}) OR
+      (normalize_text(p.product_name) LIKE normalize_text(${searchBasicPattern}) OR
+      normalize_text(p.product_name) % normalize_text(${searchBasic}) OR
       product_name_search @@ plainto_tsquery('german', normalize_text(${searchBasic})))
     ORDER BY rank DESC, similarity DESC, length(p.product_name) ASC
     LIMIT 10;`;
