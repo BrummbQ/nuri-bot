@@ -4,8 +4,6 @@
       <img
         :src="recipeImage"
         alt="Recipe Image"
-        width="{300}"
-        height="{200}"
         class="w-full h-48 object-cover"
       />
     </a>
@@ -54,7 +52,7 @@ const recipeImage = computed<string>(() => {
   if (!props.recipe.image.length) {
     return "/images/placeholder.svg";
   }
-  return props.recipe.image[0];
+  return props.recipe.image[0] + "?impolicy=recipe-card";
 });
 
 const recipeTime = computed<number | undefined>(() => {

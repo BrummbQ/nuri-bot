@@ -19,6 +19,10 @@ export default defineEventHandler(async (event) => {
         throw new Error("No articles found");
       }
 
+      if (selectedProduct.quantity < 1) {
+        continue;
+      }
+
       const listing = articles[0]._embedded.listing;
       const listingId = listing.id;
 

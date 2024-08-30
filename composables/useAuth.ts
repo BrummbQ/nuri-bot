@@ -19,7 +19,7 @@ export function useAuth() {
   const user = useState<User | null>("user");
   const loading = ref<boolean>(false);
   const error = ref<AuthError | null>(null);
-  const { getItem, setItem, removeItem } = useSessionStorage<User>();
+  const { getItem, setItem, removeItem } = useLocalStorage<User>();
 
   user.value = getItem(sessionStorageAuthKey);
 
