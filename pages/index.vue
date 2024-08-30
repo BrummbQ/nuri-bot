@@ -21,7 +21,7 @@
         </div>
       </div>
       <img
-        src="/assets/placeholder.svg"
+        src="/assets/nuri-homepage.png"
         width="550"
         height="550"
         alt="Hero"

@@ -2,7 +2,7 @@
   <div class="flex flex-col min-h-screen">
     <header class="px-4 lg:px-6 h-14 flex items-center">
       <NuxtLink to="/" class="flex items-center justify-center font-bold">
-        <span>NURI</span>
+        <img src="/assets/logo.png" width="100" alt="Logo" />
       </NuxtLink>
       <nav class="ml-auto flex gap-4 sm:gap-6"></nav>
 
