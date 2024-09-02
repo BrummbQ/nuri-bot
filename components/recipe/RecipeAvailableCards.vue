@@ -4,7 +4,6 @@
       v-for="recipe in props.recipes"
       :key="recipe['@id']"
       :recipe="recipe"
-      :selectable="true"
     >
       <UiButton
         class="mt-4"

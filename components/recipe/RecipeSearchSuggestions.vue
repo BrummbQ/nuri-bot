@@ -12,7 +12,10 @@
       >
     </div>
 
-    <div class="flex gap-2">
+    <UiLink :to="wizardUrl" size="small" title="Rezept erstellen"
+      ><Icon name="mdi:wizard-hat" class="text-2xl"
+    /></UiLink>
+    <!-- <div class="flex gap-2">
       <UiRadioInput
         v-for="dietTypeRadio in dietTypeRadios"
         :key="dietTypeRadio.value"
@@ -22,14 +25,19 @@
         :label="dietTypeRadio.label"
         v-model="dietType"
       />
-    </div>
+    </div> -->
   </div>
 </template>
 
 <script setup lang="ts">
 import type { DietType, RecipeSuggestion } from "~/lib/models";
 
+const props = defineProps<{
+  basketId: string;
+}>();
 const emit = defineEmits<{ suggest: [RecipeSuggestion] }>();
+
+const wizardUrl = computed(() => `/basket/${props.basketId}/recipe-wizard`);
 
 const suggestions = [
   {

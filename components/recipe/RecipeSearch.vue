@@ -6,20 +6,23 @@
     @unselect="unselectRecipe($event)"
   />
 
-  <div class="flex mb-5">
-    <UiHeader class="flex-grow mb-0" :level="1">Rezepte suchen</UiHeader>
-  </div>
+  <UiHeader class="flex-grow" :level="1">Rezepte suchen</UiHeader>
 
-  <RecipeSearchInput
-    :loading="loading"
-    :placeholder="data?.searchTerm"
-    @search="queryRecipes($event)"
-  />
-  <RecipeSearchSuggestions @suggest="suggestRecipe($event)" />
-  <RecipeAvailableCards
-    :recipes="recipesFromSearch"
-    @select="selectRecipe($event)"
-  />
+  <div class="p-4">
+    <RecipeSearchInput
+      :loading="loading"
+      :placeholder="data?.searchTerm"
+      @search="queryRecipes($event)"
+    />
+    <RecipeSearchSuggestions
+      :basketId="basketId"
+      @suggest="suggestRecipe($event)"
+    />
+    <RecipeAvailableCards
+      :recipes="recipesFromSearch"
+      @select="selectRecipe($event)"
+    />
+  </div>
 </template>
 
 <script setup lang="ts">

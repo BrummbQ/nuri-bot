@@ -1,6 +1,6 @@
 <template>
   <article class="flex flex-col bg-white rounded-lg overflow-hidden shadow-lg">
-    <a :href="recipeId" target="_blank">
+    <a :href="recipeUrl" target="_blank">
       <img
         :src="recipeImage"
         alt="Recipe Image"
@@ -9,7 +9,7 @@
     </a>
     <div class="p-4 flex-1 flex flex-col">
       <h3 class="text-lg text-gray-600 font-bold mb-2">
-        <a :href="recipeId" target="_blank">{{ props.recipe.name }}</a>
+        <a :href="recipeUrl" target="_blank">{{ props.recipe.name }}</a>
       </h3>
       <p class="flex-1 text-gray-600 dark:text-gray-400 mb-4">
         {{ props.recipe.description }}
@@ -38,15 +38,11 @@ const props = defineProps<{
   recipe: RecipeSchema;
 }>();
 
-const recipeId = computed(() => props.recipe["@id"]);
-
-function parseTimeInMinutes(recipeTime: string): number | undefined {
-  const [_, minutesString] = recipeTime.split("PT");
-  if (minutesString != null) {
-    return parseInt(minutesString);
-  }
-  return undefined;
-}
+const recipeUrl = computed(
+  () =>
+    `/recipe/${encodeURIComponent(encodeURIComponent(props.recipe["@id"]))}`,
+);
+// http://localhost:3000/recipe/https%253A%252F%252Fwww.rewe.de%252Frezepte%252Fgebratene-bananen%252F
 
 const recipeImage = computed<string>(() => {
   if (!props.recipe.image.length) {
@@ -55,23 +51,7 @@ const recipeImage = computed<string>(() => {
   return props.recipe.image[0] + "?impolicy=recipe-card";
 });
 
-const recipeTime = computed<number | undefined>(() => {
-  let totalTime: number | undefined = undefined;
-  if (props.recipe.totalTime) {
-    totalTime = parseTimeInMinutes(props.recipe.totalTime);
-    return totalTime;
-  }
-  if (props.recipe.prepTime) {
-    totalTime = parseTimeInMinutes(props.recipe.prepTime);
-  }
-  if (props.recipe.cookTime) {
-    const cookTime = parseTimeInMinutes(props.recipe.cookTime);
-    if (totalTime != null && cookTime != null) {
-      totalTime += cookTime;
-    } else {
-      totalTime = cookTime;
-    }
-  }
-  return totalTime;
-});
+const recipeTime = computed<number | undefined>(() =>
+  totalRecipeTime(props.recipe),
+);
 </script>

@@ -26,3 +26,13 @@ export async function findRecipeByExternalId(
     return recipeSelect.rows[0].id as number;
   }
 }
+
+export async function findRecipeSchemaByExternalId(
+  id: string,
+): Promise<RecipeSchema | undefined> {
+  const recipeSelect =
+    await sql`SELECT recipe FROM Recipe WHERE external_id = ${id} LIMIT 1`;
+  if (recipeSelect.rows.length) {
+    return recipeSelect.rows[0].recipe as RecipeSchema;
+  }
+}

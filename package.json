@@ -26,7 +26,7 @@
     "nodemailer": "^6.9.14",
     "nuxt": "^3.8.2",
     "nuxt-icon": "^0.6.10",
-    "openai": "^4.52.7",
+    "openai": "^4.57.0",
     "prettier": "3.3.2",
     "typescript": "5.4.5",
     "uuid": "^10.0.0",

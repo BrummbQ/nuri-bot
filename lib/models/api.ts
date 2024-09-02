@@ -64,3 +64,11 @@ export interface SearchGenerateTermQuery {
   seed?: string;
   dietType?: DietType;
 }
+
+export interface SearchGenerateRecipeBody {
+  ingredients: Ingredient[];
+}
+
+export interface SearchGenerateRecipeResponse {
+  recipe: RecipeSchema;
+}

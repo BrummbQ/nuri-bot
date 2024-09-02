@@ -6,12 +6,20 @@ import type {
   RecipeSchema,
   RecipesSearchResponse,
   ReweBasketCookieData,
+  SearchGenerateRecipeBody,
+  SearchGenerateRecipeResponse,
   SearchGenerateTermQuery,
   SearchGenerateTermResponse,
 } from "~/lib/models";
 
+export const useGenerateRecipeLoading = () =>
+  useState("generateRecipeLoading", () => false);
+export const useApiError = () => useState("apiError", () => "");
+
 export function useApi() {
   const { $api } = useNuxtApp();
+  const generateRecipeLoading = useGenerateRecipeLoading();
+  const apiError = useApiError();
 
   function getSearchRecipes(query: string): Promise<RecipesSearchResponse> {
     return $api("/api/recipes", {
@@ -81,6 +89,24 @@ export function useApi() {
     });
   }
 
+  function generateRecipe(
+    body: SearchGenerateRecipeBody,
+  ): Promise<SearchGenerateRecipeResponse | undefined> {
+    generateRecipeLoading.value = true;
+    apiError.value = "";
+    return $api("/api/search/generate-recipe", {
+      method: "POST",
+      body: body,
+    })
+      .catch((e) => {
+        apiError.value = e;
+        return undefined;
+      })
+      .finally(() => {
+        generateRecipeLoading.value = false;
+      });
+  }
+
   return {
     getSearchRecipes,
     postSearchIngredients,
@@ -88,5 +114,6 @@ export function useApi() {
     postOrderIngredients,
     loadProducts,
     generateTerm,
+    generateRecipe,
   };
 }
