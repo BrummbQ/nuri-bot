@@ -1,4 +1,15 @@
 <template>
+  <RecipeSelectedCards
+    v-if="recipes.length"
+    :basketUrl="basketUrl"
+    :selectedRecipes="recipes"
+    @unselect="unselectRecipe($event)"
+  />
+
+  <div class="flex mb-5">
+    <UiHeader class="flex-grow mb-0" :level="1">Rezepte suchen</UiHeader>
+  </div>
+
   <RecipeSearchInput
     :loading="loading"
     :placeholder="data?.searchTerm"
@@ -9,15 +20,6 @@
     :recipes="recipesFromSearch"
     @select="selectRecipe($event)"
   />
-
-  <template v-if="recipes.length > 0">
-    <RecipeSelectedCards
-      :selectedRecipes="recipes"
-      @unselect="unselectRecipe($event)"
-    />
-
-    <UiLink :to="basketUrl">Zum Warenkorb</UiLink>
-  </template>
 </template>
 
 <script setup lang="ts">

@@ -1,8 +1,14 @@
 <template>
-  <UiHeader :level="2">Ausgewählte Rezepte</UiHeader>
-  <RecipeCardView>
+  <div class="flex py-5 bg-white sticky w-full top-0">
+    <UiHeader :level="1" class="flex-grow"
+      >{{ selectedRecipes.length }} Ausgewählte Rezepte</UiHeader
+    >
+    <UiLink :to="basketUrl">Warenkorb</UiLink>
+  </div>
+  <div class="flex gap-6 mb-8 overflow-x-auto">
     <RecipeCard
-      v-for="recipe in props.selectedRecipes"
+      v-for="recipe in selectedRecipes"
+      class="min-w-64"
       :key="recipe['@id']"
       :recipe="recipe"
     >
@@ -13,7 +19,7 @@
         @click="emit('unselect', recipe)"
       />
     </RecipeCard>
-  </RecipeCardView>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -21,6 +27,7 @@ import type { RecipeSchema } from "~/lib/models";
 
 const props = defineProps<{
   selectedRecipes: RecipeSchema[];
+  basketUrl: string;
 }>();
 const emit = defineEmits<{
   unselect: [RecipeSchema];

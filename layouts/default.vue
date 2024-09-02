@@ -1,20 +1,23 @@
 <template>
   <div class="flex flex-col min-h-screen">
-    <header class="px-4 lg:px-6 h-14 flex items-center">
+    <header
+      class="mx-4 px-4 lg:px-6 h-14 flex items-center gap-8 bg-accent rounded-b-xl"
+    >
       <NuxtLink to="/" class="flex items-center justify-center font-bold">
         <img src="/assets/logo.png" width="100" alt="Logo" />
       </NuxtLink>
+      <NuxtLink class="font-medium" to="/basket/new/recipe">Rezepte</NuxtLink>
       <nav class="ml-auto flex gap-4 sm:gap-6"></nav>
 
       <ClientOnly>
-        <UiLink v-if="loggedIn" :to="basketsLink" iconName="mdi:cook"
-          >Meine Warenkörbe</UiLink
-        >
+        <NuxtLink v-if="loggedIn" :to="basketsLink" title="Meine Warenkörbe">
+          <Icon name="mdi:cook" class="text-2xl" />
+        </NuxtLink>
         <UiLink v-else to="/auth/login">Anmelden</UiLink>
       </ClientOnly>
     </header>
 
-    <main class="max-w-6xl mx-auto px-4 py-12 md:px-6 lg:px-8 grow w-full">
+    <main class="max-w-6xl mx-8 xl:mx-auto py-12 grow">
       <slot />
     </main>
 

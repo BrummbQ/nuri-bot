@@ -1,10 +1,10 @@
 <template>
-  <div class="flex place-content-between mb-4">
+  <div class="flex flex-col sm:flex-row place-content-between mb-4">
     <div class="flex gap-1">
       <UiButton
         size="small"
         variant="custom"
-        class="rounded-full bg-lime-300 border-lime-400 text-gray-700 transition-colors hover:bg-lime-400"
+        class="rounded-full bg-accent border-accent-400 text-gray-700 transition-colors hover:bg-accent-400"
         v-for="suggestion in suggestions"
         :key="suggestion.label"
         @click="emit('suggest', { seed: suggestion.data, dietType: dietType })"

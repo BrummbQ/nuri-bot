@@ -1,8 +1,4 @@
 <template>
-  <div class="flex mb-5">
-    <UiHeader class="flex-grow mb-0" :level="1">Rezepte suchen</UiHeader>
-    <UiLink :to="basketUrl">Zum Warenkorb</UiLink>
-  </div>
   <RecipeSearch :basketId="route.params.id" />
 </template>
 
