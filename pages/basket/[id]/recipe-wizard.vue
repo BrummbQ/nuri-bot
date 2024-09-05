@@ -18,7 +18,12 @@
       >
     </div>
 
-    <RecipeWizard v-else @createRecipe="showWizard = false" />
+    <template v-else>
+      <UiLink :to="basketRecipeUrl" class="inline-flex mb-4" variant="accent"
+        >Zurück zum Warenkorb</UiLink
+      >
+      <RecipeWizard @createRecipe="showWizard = false" />
+    </template>
 
     <div v-if="recipe && !showWizard" class="pt-4">
       <RecipeDetail :recipe="recipe" />
@@ -33,20 +38,21 @@ definePageMeta({
 });
 
 const route = useRoute("basket-id-recipe-wizard");
-const basketUrl = computed(() => `/basket/${route.params.id}/basket`);
-const { recipe } = useRecipeWizardState();
+const basketRecipeUrl = computed(() => `/basket/${route.params.id}/recipe`);
+const { recipe, clearWizard } = useRecipeWizardState();
 const { addRecipe } = useBasketStore();
 const showWizard = ref(true);
 
-watchEffect(() => {
+onMounted(() => {
+  clearWizard();
   // recipe state only available on client!
   showWizard.value = recipe.value == null;
 });
 
-function selectRecipe() {
+async function selectRecipe() {
   if (recipe.value != null) {
     addRecipe(recipe.value, route.params.id);
-    navigateTo(`/basket/${route.params.id}/recipe`);
+    await navigateTo(`/basket/${route.params.id}/recipe`);
   }
 }
 </script>

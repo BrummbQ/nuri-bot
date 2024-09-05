@@ -6,11 +6,10 @@ type RecipeWizardState = {
 };
 
 const recipeWizardSessionKey = "recipewizard";
+const defaultState = () => ({ ingredients: {} });
 
 export const useRecipeWizard = () =>
-  useState<RecipeWizardState>("wizardIngredients", () => ({
-    ingredients: {},
-  }));
+  useState<RecipeWizardState>("wizardIngredients", () => defaultState());
 
 export const useRecipeWizardState = () => {
   const state = useRecipeWizard();
@@ -18,7 +17,7 @@ export const useRecipeWizardState = () => {
   const { getItem, setItem } = useSessionStorage<RecipeWizardState>();
 
   onMounted(() => {
-    state.value = getItem(recipeWizardSessionKey) ?? { ingredients: {} };
+    state.value = getItem(recipeWizardSessionKey) ?? defaultState();
   });
 
   const ingredients = computed(() => Object.values(state.value.ingredients));
@@ -42,6 +41,11 @@ export const useRecipeWizardState = () => {
     setItem(recipeWizardSessionKey, state.value);
   }
 
+  function clearWizard() {
+    state.value = defaultState();
+    setItem(recipeWizardSessionKey, state.value);
+  }
+
   return {
     ingredients,
     recipe,
@@ -49,5 +53,6 @@ export const useRecipeWizardState = () => {
     addIngredient,
     removeIngredient,
     setRecipe,
+    clearWizard,
   };
 };

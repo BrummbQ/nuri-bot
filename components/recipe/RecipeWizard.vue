@@ -33,6 +33,7 @@
   </ul>
 
   <UiButton
+    v-if="ingredients.length"
     class="w-full mt-4"
     iconName="mdi:wizard-hat"
     :loading="generateRecipeLoading"
