@@ -13,12 +13,17 @@ CREATE TABLE IF NOT EXISTS Basket (
 );
 `;
 
+  await sql`CREATE TYPE recipe_source AS ENUM ('REWE', 'GENERATED');`;
+
   await sql`
 CREATE TABLE IF NOT EXISTS Recipe (
     id SERIAL PRIMARY KEY,
     external_id VARCHAR(255) UNIQUE NOT NULL,
     recipe JSONB NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    source recipe_source NOT NULL, 
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_by UUID NULL,
+    FOREIGN KEY (created_by) REFERENCES AppUser(id)
 );
 `;
 

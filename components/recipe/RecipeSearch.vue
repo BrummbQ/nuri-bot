@@ -36,7 +36,8 @@ const loading = ref(false);
 const recipesFromSearch = ref<RecipeSchema[]>([]);
 const { data } = await useFetchGenerateSearchTerm();
 const { getSearchRecipes, generateTerm } = useApi();
-const { updateRecipes, recipes, createOrSetBasket } = useBasketStore();
+const { addRecipe, removeRecipe, recipes, createOrSetBasket } =
+  useBasketStore();
 
 callOnce(() => createOrSetBasket(props.basketId));
 
@@ -62,14 +63,11 @@ const selectRecipe = (recipe: RecipeSchema) => {
   recipesFromSearch.value = recipesFromSearch.value.filter(
     (r) => r["@id"] !== recipe["@id"],
   );
-  updateRecipes([...recipes.value, recipe], props.basketId);
+  addRecipe(recipe, props.basketId);
 };
 
 const unselectRecipe = (recipe: RecipeSchema) => {
-  const filteredSelectedRecipes = recipes.value.filter(
-    (r) => r["@id"] !== recipe["@id"],
-  );
-  updateRecipes(filteredSelectedRecipes, props.basketId);
+  removeRecipe(recipe, props.basketId);
   recipesFromSearch.value.push(recipe);
 };
 

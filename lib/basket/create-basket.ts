@@ -22,7 +22,7 @@ async function getOrCreateRecipeIds(
     i.recipes.map(async (r) => {
       let recipeId = await findRecipeByExternalId(r);
       if (!recipeId) {
-        recipeId = await insertRecipe(r);
+        recipeId = await insertRecipe(r, "REWE");
       }
 
       return recipeId;

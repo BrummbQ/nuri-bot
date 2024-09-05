@@ -1,5 +1,5 @@
 <template>
-  <button type="submit" :class="btnClass" :disabled="props.loading">
+  <button :type="type ?? 'submit'" :class="btnClass" :disabled="props.loading">
     <Icon v-if="props.loading" name="line-md:loading-loop" class="text-2xl" />
     <template v-else>
       <Icon
@@ -17,6 +17,7 @@
 <script setup lang="ts">
 const props = withDefaults(
   defineProps<{
+    type?: "submit" | "button";
     iconName?: string;
     variant?: "primary" | "accent" | "custom";
     size?: "small" | "regular";

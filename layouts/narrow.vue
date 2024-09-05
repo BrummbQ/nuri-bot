@@ -2,7 +2,7 @@
   <div class="flex flex-col min-h-screen">
     <UiAppHeader />
 
-    <main class="max-w-6xl px-8 xl:px-0 lg:mx-auto py-12 grow w-full">
+    <main class="max-w-xl px-8 sm:px-0 mx-auto py-12 grow w-full">
       <slot />
     </main>
 

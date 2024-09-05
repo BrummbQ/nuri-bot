@@ -12,3 +12,5 @@ export type RecipeSchema = {
   prepTime?: string;
   cookTime?: string;
 };
+
+export type RecipeSource = "REWE" | "GENERATED";

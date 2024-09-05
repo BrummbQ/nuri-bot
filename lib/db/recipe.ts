@@ -1,10 +1,14 @@
 import { sql } from "@vercel/postgres";
-import type { RecipeSchema } from "../models";
+import type { RecipeSchema, RecipeSource } from "../models";
 
-export async function insertRecipe(r: RecipeSchema): Promise<number> {
+export async function insertRecipe(
+  r: RecipeSchema,
+  source: RecipeSource,
+  userId?: string,
+): Promise<number> {
   const recipeInsert = await sql`
-    INSERT INTO Recipe (external_id, recipe)
-    VALUES (${r["@id"]}, ${JSON.stringify(r)})
+    INSERT INTO Recipe (external_id, recipe, source, created_by)
+    VALUES (${r["@id"]}, ${JSON.stringify(r)}, ${source}, ${userId})
     ON CONFLICT (external_id) DO UPDATE SET recipe = EXCLUDED.recipe
     RETURNING id`;
 

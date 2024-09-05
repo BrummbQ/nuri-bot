@@ -86,13 +86,24 @@ export const useBasketStore = () => {
     currentBasket.value = id;
   }
 
-  function updateRecipes(recipes: RecipeSchema[], basketId?: string) {
-    if (basketId == null) {
-      return;
-    }
+  function addRecipe(recipe: RecipeSchema, basketId: string) {
     createOrSetBasket(basketId);
+    const basket = baskets.value[basketId];
+    const recipes = basket.recipes;
+    if (basket.recipes.find((r) => r["@id"] === recipe["@id"]) == null) {
+      recipes.push(recipe);
+    }
 
-    baskets.value[basketId] = { ...baskets.value[basketId], recipes };
+    baskets.value[basketId] = { ...basket, recipes };
+    setItem(basketsSessionKey, baskets.value);
+  }
+
+  function removeRecipe(recipe: RecipeSchema, basketId: string) {
+    createOrSetBasket(basketId);
+    const basket = baskets.value[basketId];
+    const recipes = basket.recipes.filter((r) => r["@id"] !== recipe["@id"]);
+
+    baskets.value[basketId] = { ...basket, recipes };
     setItem(basketsSessionKey, baskets.value);
   }
 
@@ -154,7 +165,8 @@ export const useBasketStore = () => {
     createOrSetBasket,
     baskets,
     currentBasket,
-    updateRecipes,
+    addRecipe,
+    removeRecipe,
     recipes,
     ingredientsWithProducts,
     marketIdValue,
