@@ -12,9 +12,9 @@
       >
     </div>
 
-    <UiLink :to="wizardUrl" size="small" title="Rezept erstellen"
-      ><Icon name="mdi:wizard-hat" class="text-2xl"
-    /></UiLink>
+    <UiLink :to="wizardUrl" size="small"
+      ><Icon name="mdi:wizard-hat" class="text-2xl mr-2" /> Neues Rezept</UiLink
+    >
     <!-- <div class="flex gap-2">
       <UiRadioInput
         v-for="dietTypeRadio in dietTypeRadios"

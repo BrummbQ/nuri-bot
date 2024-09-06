@@ -23,7 +23,7 @@ const props = withDefaults(
   defineProps<{
     type?: "submit" | "button";
     iconName?: string;
-    variant?: "primary" | "accent" | "custom";
+    variant?: "primary" | "accent" | "custom" | "outline";
     size?: "small" | "regular";
     loading?: boolean;
     disabled?: boolean;

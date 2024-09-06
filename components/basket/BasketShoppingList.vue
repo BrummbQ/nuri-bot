@@ -1,10 +1,6 @@
 <template>
   <BasketSetup />
 
-  <UiHeader v-if="ingredientsWithProducts" :level="2" class="mt-4"
-    >Zutaten</UiHeader
-  >
-
   <UiNotification v-if="searchError" severity="error">
     Fehler beim Laden der Produkte!
   </UiNotification>
@@ -12,7 +8,7 @@
     <Icon name="line-md:loading-loop" width="50" height="50" />
   </div>
   <div v-if="!searchLoading && !searchError" class="mb-4">
-    <ul class="mb-2">
+    <ul class="mt-4">
       <BasketIngredientItem
         v-if="ingredientsWithProducts"
         :ingredientsWithProducts="ingredientsWithProducts"
@@ -21,7 +17,6 @@
         "
       />
     </ul>
-    <BasketOrderButton :basketId="basketId" />
   </div>
 </template>
 

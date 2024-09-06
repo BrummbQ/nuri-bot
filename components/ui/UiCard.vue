@@ -1,6 +1,9 @@
 <template>
-  <article class="flex flex-col bg-white rounded-lg overflow-hidden shadow-lg">
+  <article
+    class="flex flex-col bg-white rounded-lg overflow-hidden shadow-lg relative"
+  >
     <slot name="cardimg" />
+
     <div class="p-4 flex-1 flex flex-col">
       <h3
         class="text-lg text-gray-600 font-bold mb-2 text-ellipsis overflow-hidden text-nowrap"

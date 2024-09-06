@@ -20,6 +20,7 @@ const commonIngredients = [
   "Rapsöl",
   "Butter",
   "Mehl",
+  "Fett",
 ].map((i) => i.toLowerCase());
 
 const tokenizer = new natural.AggressiveTokenizerDe();

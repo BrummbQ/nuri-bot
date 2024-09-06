@@ -1,32 +1,46 @@
 <template>
-  <UiHeader :level="1">Login</UiHeader>
-
-  <UiNotification class="my-4" severity="info"
-    >Zum Fortfahren melde dich mit deiner E-Mail an</UiNotification
-  >
-
-  <form class="flex items-center mb-4" @submit.prevent="handleSubmit">
-    <UiInput
-      class="rounded-r-none"
-      placeholder="Email"
-      v-model="email"
-      type="email"
-      autofocus
-      required
+  <div class="text-center">
+    <img
+      src="/assets/nuribot.png"
+      class="mx-auto mb-4"
+      width="150"
+      height="150"
+      alt="Nuri Bot"
     />
-    <UiButton type="submit" class="rounded-l-none" :loading="loading"
-      >E-Mail senden</UiButton
+    <UiHeader :level="1">Login</UiHeader>
+
+    <p class="mb-4">
+      Hallo! Du kannst dich mit deinem Konto anmelden und direkt nach Rezepten
+      suchen.
+    </p>
+
+    <form class="mb-4 space-y-2" @submit.prevent="handleSubmit">
+      <UiInput
+        class="w-full"
+        placeholder="Email eingeben"
+        v-model="email"
+        type="email"
+        autofocus
+        required
+      />
+      <UiButton type="submit" class="w-full" :loading="loading"
+        >Senden</UiButton
+      >
+    </form>
+    <UiNotification severity="success" v-if="success">
+      Prüfe dein E-Mail Postfach und klicke auf den Anmelden Link!
+    </UiNotification>
+    <UiNotification v-if="error" severity="error"
+      >Fehler beim Login! {{ error.message }}</UiNotification
     >
-  </form>
-  <UiNotification severity="success" v-if="success">
-    Prüfe dein E-Mail Postfach und klicke auf den Anmelden Link!
-  </UiNotification>
-  <UiNotification v-if="error" severity="error"
-    >Fehler beim Login! {{ error.message }}</UiNotification
-  >
+  </div>
 </template>
 
 <script setup lang="ts">
+definePageMeta({
+  layout: "narrow",
+});
+
 const { sendMagicLink, loading, error } = useAuth();
 const email = ref("");
 const success = ref(false);

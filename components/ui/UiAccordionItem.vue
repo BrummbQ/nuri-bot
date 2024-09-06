@@ -1,5 +1,5 @@
 <template>
-  <li class="border-b border-gray-200 p-4">
+  <li class="border rounded-lg bg-gray-300 border-gray-200 my-2 p-4">
     <div
       class="flex justify-between items-center text-lg cursor-pointer"
       @click="toggle()"
@@ -8,19 +8,20 @@
       <Icon class="cursor-pointer" :name="toggledIconName" />
     </div>
 
-    <div v-if="toggled" class="mt-4"><slot /></div>
+    <div v-if="model" class="mt-4"><slot /></div>
   </li>
 </template>
 
 <script setup lang="ts">
-const toggled = ref(false);
+const model = defineModel<boolean>();
+
 const toggledIconName = computed(() =>
-  toggled.value
+  model.value
     ? "fluent:chevron-up-16-regular"
     : "fluent:chevron-down-16-regular",
 );
 
 const toggle = () => {
-  toggled.value = !toggled.value;
+  model.value = !model.value;
 };
 </script>

@@ -33,17 +33,12 @@ export async function searchProducts(
   return result;
 }
 
-export async function searchEmbeddedProducts(
-  search: string,
-  market: string,
-): Promise<ReweProduct[]> {
+export async function searchEmbeddedProducts(search: string, market: string) {
   search = cleanupSearchQuery(search);
   const searchEmbedding = await getEmbedding(search);
   const searchQuery = `[${searchEmbedding}]`;
 
-  const result = await searchProductsByEmbedding(market, searchQuery);
-
-  return result.rows.map((r) => r.data);
+  return searchProductsByEmbedding(market, searchQuery);
 }
 
 export async function searchSimilarProducts(

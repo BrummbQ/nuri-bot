@@ -5,10 +5,10 @@
     </UiButton>
 
     <template #error="{ error, clearError }">
-      <UiNotification severity="error">
+      <UiNotification severity="error" :toast="true">
         Fehler beim Bestellen! {{ error }}
       </UiNotification>
-      <UiButton class="mt-2" @click="clearError">Erneut versuchen</UiButton>
+      <UiButton @click="clearError">Erneut versuchen</UiButton>
     </template>
   </NuxtErrorBoundary>
 </template>

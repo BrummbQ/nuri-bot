@@ -103,8 +103,8 @@ export async function searchProductsByTsquery(
   return await sql`
     SELECT 
       *,
-      similarity(normalize_text(p.product_name), normalize_text(${search})) AS similarity,
-      ts_rank(product_name_search, plainto_tsquery('german', normalize_text(${search}))) AS rank
+      similarity(normalize_text(p.product_name), normalize_text(${searchBasic})) AS similarity,
+      ts_rank(product_name_search, plainto_tsquery('german', normalize_text(${searchBasic}))) AS rank
     FROM 
       product p
     WHERE 

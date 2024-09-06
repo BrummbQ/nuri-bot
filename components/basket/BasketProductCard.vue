@@ -1,20 +1,30 @@
 <template>
   <UiCard
     :title="props.product.productName"
-    @click="toggleProduct()"
-    :class="{ '!bg-emerald-300': props.selectedQuantity }"
+    class="border border-2 border-white"
+    :class="{ '!border-primary': props.selectedQuantity }"
   >
     <template #cardimg>
       <img
         :src="productImg"
         alt="Product Image"
-        width="50"
-        height="50"
+        width="80"
+        height="80"
         class="self-center object-cover mt-4"
       />
+      <div
+        v-if="props.selectedQuantity"
+        class="bg-black rounded-full w-10 h-10 flex items-center justify-center absolute right-2 top-2"
+      >
+        <Icon
+          name="mdi:check"
+          class="text-2xl text-white"
+          :class="{ 'mr-2': $slots.default }"
+        />
+      </div>
     </template>
     <template #cardbody>
-      <div v-if="productListing" class="flex items-center gap-2">
+      <div v-if="productListing" class="flex items-center gap-2 grow">
         <UILabeledInfo
           icon-name="solar:tag-price-bold"
           :text="
@@ -32,20 +42,27 @@
       </div>
     </template>
     <template #cardfooter>
-      <div class="flex flex-row items-center">
-        <UiButton
-          icon-name="fluent:subtract-16-regular"
-          :disabled="props.selectedQuantity < 1"
-          @click.stop="changeQuantity(-1)"
-        />
-        <span class="px-4">
-          {{ props.selectedQuantity }}
-        </span>
-        <UiButton
-          icon-name="fluent:add-16-regular"
-          :disabled="props.selectedQuantity > 9"
-          @click.stop="changeQuantity(1)"
-        />
+      <div class="flex">
+        <div class="flex items-center grow">
+          <UiButton
+            icon-name="fluent:subtract-16-regular"
+            :disabled="props.selectedQuantity < 1"
+            variant="outline"
+            @click.stop="changeQuantity(-1)"
+          />
+          <span class="px-4">
+            {{ props.selectedQuantity }}
+          </span>
+          <UiButton
+            icon-name="fluent:add-16-regular"
+            :disabled="props.selectedQuantity > 9"
+            variant="outline"
+            @click.stop="changeQuantity(1)"
+          />
+        </div>
+        <UiButton type="button" variant="primary" @click="toggleProduct()">{{
+          selectedQuantity ? "Abwählen" : "Wählen"
+        }}</UiButton>
       </div>
     </template>
   </UiCard>
@@ -66,7 +83,10 @@ const productImg = computed(() => {
   if (!props.product.media.images.length) {
     return "/images/placeholder.svg";
   }
-  return props.product.media.images[0]._links.self.href;
+  return (
+    props.product.media.images[0]._links.self.href +
+    "?resize=304px:304px&output-quality=80&output-format=webp&im=BackgroundColor,color=fffff"
+  );
 });
 
 const productListing = computed(() => {
