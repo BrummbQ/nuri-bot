@@ -31,7 +31,7 @@ const basketTitle = computed(() => {
 });
 
 const basketImage = computed(() => {
-  if (!props.basket.recipes.length) {
+  if (!props.basket.recipes.length || !props.basket.recipes[0].image.length) {
     return "/images/placeholder.svg";
   }
   return props.basket.recipes[0].image[0] + "?impolicy=recipe-card";

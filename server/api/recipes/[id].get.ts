@@ -1,4 +1,4 @@
-import { findRecipeSchemaByExternalId } from "~/lib/db";
+import { findRecipeSchemaByExternalId, isRecipeLiked } from "~/lib/db";
 import type { RecipeSchema } from "~/lib/models";
 import { getPineconeRecipeById } from "~/lib/search";
 
@@ -25,5 +25,8 @@ export default defineEventHandler(async (event): Promise<RecipeSchema> => {
     });
   }
 
-  return recipe;
+  const { userId } = event.context.auth;
+  const liked = await isRecipeLiked(decodedRecipeId, userId);
+
+  return { ...recipe, liked };
 });

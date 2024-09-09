@@ -12,11 +12,11 @@ definePageMeta({
   layout: "narrow",
 });
 
-const route = useRoute("basket-id-recipe-recipeId");
+const route = useRoute("user-id-recipe-recipeId");
 const { data } = await useFetchRecipe(route.params.recipeId);
 const { likeRecipe } = useApi();
 
-const basketUrl = computed(() => `/basket/${route.params.id}/ordered`);
+const basketUrl = computed(() => `/user/${route.params.id}/recipe/liked`);
 
 async function like(v: boolean) {
   await likeRecipe(route.params.recipeId, { like: v });

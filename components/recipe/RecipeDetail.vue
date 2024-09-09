@@ -3,7 +3,20 @@
     Rezept existiert nicht!
   </UiNotification>
   <template v-else>
-    <UiHeader :level="1">{{ recipe.name }}</UiHeader>
+    <div class="flex justify-between mb-4">
+      <UiHeader :level="1" :noMargin="true">{{ recipe.name }}</UiHeader>
+      <UiButton
+        v-if="canLike"
+        type="button"
+        variant="outline"
+        title="Rezept speichern"
+        @click="emit('likeRecipe', !recipe.liked)"
+        ><Icon
+          :name="recipe.liked ? 'mdi:heart' : 'mdi:heart-outline'"
+          class="text-2xl"
+          :class="{ 'text-primary': recipe.liked }"
+      /></UiButton>
+    </div>
 
     <img
       :src="recipeImage"
@@ -54,6 +67,10 @@ import type { RecipeSchema } from "~/lib/models";
 
 const props = defineProps<{
   recipe?: RecipeSchema | null;
+  canLike?: boolean;
+}>();
+const emit = defineEmits<{
+  likeRecipe: [like: boolean];
 }>();
 
 const recipeImage = computed<string>(() => {

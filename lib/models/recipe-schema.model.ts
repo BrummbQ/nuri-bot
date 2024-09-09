@@ -11,6 +11,9 @@ export type RecipeSchema = {
   totalTime?: string;
   prepTime?: string;
   cookTime?: string;
+
+  // defined by user recipe like relation
+  liked?: boolean;
 };
 
 export type RecipeSource = "REWE" | "GENERATED";

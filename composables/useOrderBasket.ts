@@ -7,7 +7,7 @@ export default function (basketId: string) {
     recipes,
   } = useBasketStore();
 
-  const orderLoading = ref(false);
+  const orderLoading = useState("orderLoading", () => false);
 
   async function orderBasket() {
     if (reweCookieDataValue.value == null) {

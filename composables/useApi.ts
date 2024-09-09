@@ -3,6 +3,7 @@ import type {
   CreateBasketResponse,
   IngredientsSearchResponse,
   IngredientWithProducts,
+  LikeRecipeBody,
   RecipeSchema,
   RecipesSearchResponse,
   ReweBasketCookieData,
@@ -74,7 +75,7 @@ export function useApi() {
     });
   }
 
-  async function loadProducts(marketId: string) {
+  async function loadProducts(marketId: string): Promise<void> {
     await $api("/api/load-products", {
       method: "POST",
       body: { marketId },
@@ -107,6 +108,20 @@ export function useApi() {
       });
   }
 
+  function likeRecipe(
+    recipeId: string,
+    body: LikeRecipeBody,
+  ): Promise<unknown> {
+    apiError.value = "";
+    return $api(`/api/recipes/${recipeId}/like`, {
+      method: "POST",
+      body,
+    }).catch((e) => {
+      apiError.value = e;
+      return undefined;
+    });
+  }
+
   return {
     getSearchRecipes,
     postSearchIngredients,
@@ -115,5 +130,6 @@ export function useApi() {
     loadProducts,
     generateTerm,
     generateRecipe,
+    likeRecipe,
   };
 }

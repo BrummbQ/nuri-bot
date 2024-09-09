@@ -72,3 +72,11 @@ export interface SearchGenerateRecipeBody {
 export interface SearchGenerateRecipeResponse {
   recipe: RecipeSchema;
 }
+
+export interface LikeRecipeBody {
+  like: boolean;
+}
+
+export interface LikedRecipesResponse {
+  recipes: RecipeSchema[];
+}

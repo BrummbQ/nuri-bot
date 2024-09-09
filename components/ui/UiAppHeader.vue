@@ -9,9 +9,14 @@
     <nav class="ml-auto flex gap-4 sm:gap-6"></nav>
 
     <ClientOnly>
-      <NuxtLink v-if="loggedIn" :to="basketsLink" title="Meine Warenkörbe">
-        <Icon name="mdi:cook" class="text-2xl" />
-      </NuxtLink>
+      <template v-if="loggedIn">
+        <NuxtLink :to="likedRecipesLink" title="Lieblingsrezepte">
+          <Icon name="mdi:heart" class="text-2xl" />
+        </NuxtLink>
+        <NuxtLink :to="basketsLink" title="Meine Warenkörbe">
+          <Icon name="mdi:cook" class="text-2xl" />
+        </NuxtLink>
+      </template>
       <UiLink v-else to="/auth/login">Anmelden</UiLink>
     </ClientOnly>
   </header>
@@ -22,5 +27,8 @@ const { loggedIn, user } = useAuth();
 
 const basketsLink = computed(() =>
   user.value ? `/user/${user.value.userId}/basket` : "",
+);
+const likedRecipesLink = computed(() =>
+  user.value ? `/user/${user.value.userId}/recipe/liked` : "",
 );
 </script>

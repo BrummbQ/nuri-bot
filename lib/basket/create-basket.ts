@@ -4,6 +4,7 @@ import {
   insertBasket,
   insertIngredient,
   insertRecipe,
+  likeRecipe,
   linkIngredientToProduct,
   linkIngredientToRecipe,
 } from "../db";
@@ -16,6 +17,7 @@ import { linkRecipeToIngredients } from "../search";
 
 async function getOrCreateRecipeIds(
   i: IngredientWithProducts,
+  userId: string,
 ): Promise<number[]> {
   return await Promise.all(
     // find or insert recipes
@@ -24,6 +26,9 @@ async function getOrCreateRecipeIds(
       if (!recipeId) {
         recipeId = await insertRecipe(r, "REWE");
       }
+
+      // like recipe
+      await likeRecipe(recipeId, userId, true);
 
       return recipeId;
     }),
@@ -53,7 +58,7 @@ export async function createBasket(
 
   await Promise.all(
     ingredients.map(async (i) => {
-      const recipeIds = await getOrCreateRecipeIds(i);
+      const recipeIds = await getOrCreateRecipeIds(i, userId);
 
       // insert ingredient
       const ingredientId = await insertIngredient(i, basketId);
