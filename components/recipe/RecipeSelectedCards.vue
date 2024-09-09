@@ -11,6 +11,7 @@
       class="min-w-64 w-64"
       :key="recipe['@id']"
       :recipe="recipe"
+      :recipeLink="basketRecipeUrl(basketId, recipe)"
     >
       <UiButton
         class="mt-4"
@@ -27,6 +28,7 @@ import type { RecipeSchema } from "~/lib/models";
 
 const props = defineProps<{
   selectedRecipes: RecipeSchema[];
+  basketId: string;
   basketUrl: string;
 }>();
 const emit = defineEmits<{

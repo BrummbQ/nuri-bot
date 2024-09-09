@@ -14,7 +14,7 @@
 
 <script setup lang="ts">
 const props = defineProps<{
-  severity: "info" | "success" | "error";
+  severity: NotificationSeverity;
   toast?: boolean;
 }>();
 </script>

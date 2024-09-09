@@ -1,15 +1,15 @@
 <template>
   <article class="flex flex-col bg-white rounded-lg overflow-hidden shadow-lg">
-    <a :href="recipeUrl" target="_blank">
+    <NuxtLink :to="props.recipeLink">
       <img
         :src="recipeImage"
         alt="Recipe Image"
         class="w-full h-48 object-cover"
       />
-    </a>
+    </NuxtLink>
     <div class="p-4 flex-1 flex flex-col">
       <h3 class="text-lg text-gray-600 font-bold mb-2">
-        <a :href="recipeUrl" target="_blank">{{ props.recipe.name }}</a>
+        <NuxtLink :to="props.recipeLink">{{ props.recipe.name }}</NuxtLink>
       </h3>
       <p class="flex-1 text-gray-600 dark:text-gray-400 mb-4">
         {{ props.recipe.description }}
@@ -36,13 +36,8 @@ import type { RecipeSchema } from "~/lib/models";
 
 const props = defineProps<{
   recipe: RecipeSchema;
+  recipeLink: string;
 }>();
-
-const recipeUrl = computed(
-  () =>
-    `/recipe/${encodeURIComponent(encodeURIComponent(props.recipe["@id"]))}`,
-);
-// http://localhost:3000/recipe/https%253A%252F%252Fwww.rewe.de%252Frezepte%252Fgebratene-bananen%252F
 
 const recipeImage = computed<string>(() => {
   if (!props.recipe.image.length) {

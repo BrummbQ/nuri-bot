@@ -4,6 +4,7 @@
       v-for="recipe in props.recipes"
       :key="recipe['@id']"
       :recipe="recipe"
+      :recipeLink="basketRecipeUrl(basketId, recipe)"
     >
       <UiButton
         class="mt-4"
@@ -20,6 +21,7 @@ import type { RecipeSchema } from "~/lib/models";
 
 const props = defineProps<{
   recipes: RecipeSchema[];
+  basketId: string;
 }>();
 const emit = defineEmits<{
   select: [RecipeSchema];

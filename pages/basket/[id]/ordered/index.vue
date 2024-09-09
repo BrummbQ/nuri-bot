@@ -33,6 +33,7 @@
         v-for="recipe in data.basket.recipes"
         :key="recipe['@id']"
         :recipe="recipe"
+        :recipeLink="recipeLink(recipe)"
       >
       </RecipeCard>
     </RecipeCardView>
@@ -46,6 +47,8 @@
 </template>
 
 <script setup lang="ts">
+import type { RecipeSchema } from "~/lib/models";
+
 definePageMeta({
   middleware: ["auth-basket"],
 });
@@ -57,6 +60,9 @@ const { postOrderIngredients } = useApi();
 const { reweCookieDataValue } = useBasketStore();
 const orderAgainLoading = ref(false);
 
+function recipeLink(recipe: RecipeSchema) {
+  return `/basket/${route.params.id}/ordered/recipe/${encodeURIComponent(encodeURIComponent(recipe["@id"]))}`;
+}
 async function orderAgain() {
   orderAgainLoading.value = true;
   try {
