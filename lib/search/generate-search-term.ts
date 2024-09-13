@@ -26,5 +26,9 @@ export async function generateSearchTerm(seed: string): Promise<string> {
   });
 
   const searchTerm = completion.choices[0].message.content ?? "";
-  return searchTerm.trim().replaceAll('"', "");
+  return searchTerm
+    .trim()
+    .replaceAll('"', "")
+    .replaceAll("“", "")
+    .replaceAll("„", "");
 }

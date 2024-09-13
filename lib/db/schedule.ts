@@ -38,8 +38,11 @@ export async function linkRecipeToSchedule(
   recipeId: number,
   searchTerm: string,
 ): Promise<void> {
-  await sql`INSERT INTO Recipe_Schedule (schedule_id, recipe_id, searchterm)
-      VALUES (${scheduleId}, ${recipeId}, ${searchTerm})`;
+  await sql`
+    INSERT INTO Recipe_Schedule (schedule_id, recipe_id, searchterm)
+    VALUES (${scheduleId}, ${recipeId}, ${searchTerm})
+    ON CONFLICT (schedule_id, recipe_id) DO NOTHING
+  `;
 }
 
 export async function fetchRecipesForCurrentSchedule(): Promise<
