@@ -30,8 +30,8 @@ export interface IngredientsSearchBody {
   market: string;
 }
 
-export interface RecipesSearchResponse {
-  recipes: ScoredPineconeRecord<Metadata>[];
+export interface ScheduleRecipesResponse {
+  recipes: RecipeSchema[];
 }
 
 export interface CreateBasketBody {
@@ -54,15 +54,6 @@ export interface GetBasketResponse {
 
 export interface GetBasketsResponse {
   baskets: Basket[];
-}
-
-export interface SearchGenerateTermResponse {
-  searchTerm: string;
-}
-
-export interface SearchGenerateTermQuery {
-  seed?: string;
-  dietType?: DietType;
 }
 
 export interface SearchGenerateRecipeBody {

@@ -7,18 +7,15 @@
     @unselect="unselectRecipe($event)"
   />
 
-  <UiHeader class="flex-grow" :level="1">Rezepte suchen</UiHeader>
+  <div class="flex">
+    <UiHeader class="flex-grow" :level="1">Rezepte auswählen</UiHeader>
+    <UiLink :to="wizardUrl" size="small"
+      ><Icon name="mdi:wizard-hat" class="text-2xl mr-2" /> Eigenes
+      Rezept</UiLink
+    >
+  </div>
 
   <div class="p-4">
-    <RecipeSearchInput
-      :loading="loading"
-      :placeholder="recipeSearch"
-      @search="queryRecipes($event)"
-    />
-    <RecipeSearchSuggestions
-      :basketId="basketId"
-      @suggest="suggestRecipe($event)"
-    />
     <RecipeAvailableCards
       :recipes="unselectedRecipes"
       :basketId="basketId"
@@ -28,44 +25,27 @@
 </template>
 
 <script setup lang="ts">
-import type { RecipeSchema, RecipeSuggestion } from "~/lib/models";
+import type { RecipeSchema } from "~/lib/models";
 
 const props = defineProps<{
   basketId: string;
 }>();
 
-const loading = ref(false);
 const recipesFromSearch = ref<RecipeSchema[]>([]);
-const { recipeSearch, setRecipeSearch } = await useRecipeSearchState();
-const { getSearchRecipes, generateTerm } = useApi();
+const recipesData = await useFetchScheduleRecipes();
 const { addRecipe, removeRecipe, recipes, createOrSetBasket } =
   useBasketStore();
+const { recipe } = useRecipeWizardState();
 
 callOnce(() => createOrSetBasket(props.basketId));
 
+const wizardUrl = computed(() => `/basket/${props.basketId}/recipe-wizard`);
 const basketUrl = computed(() => `/basket/${props.basketId}/basket`);
 const unselectedRecipes = computed(() =>
   recipesFromSearch.value.filter(
     (r) => recipes.value.find((sR) => sR["@id"] === r["@id"]) == null,
   ),
 );
-
-const queryRecipes = async (query: string) => {
-  loading.value = true;
-  recipesFromSearch.value = [];
-  setRecipeSearch(query);
-
-  const result = await getSearchRecipes(query);
-  loading.value = false;
-
-  const mappedRecipes: RecipeSchema[] = [];
-  result.recipes.forEach((r) => {
-    if (r.metadata?.recipeSchema) {
-      mappedRecipes.push(r.metadata.recipeSchema as unknown as RecipeSchema);
-    }
-  });
-  recipesFromSearch.value = mappedRecipes;
-};
 
 const selectRecipe = (recipe: RecipeSchema) => {
   addRecipe(recipe, props.basketId);
@@ -75,14 +55,13 @@ const unselectRecipe = (recipe: RecipeSchema) => {
   removeRecipe(recipe, props.basketId);
 };
 
-const suggestRecipe = async (query: RecipeSuggestion) => {
-  const result = await generateTerm(query);
-  queryRecipes(result.searchTerm);
-};
-
 onMounted(() => {
-  if (recipeSearch.value) {
-    queryRecipes(recipeSearch.value);
+  if (recipesData.value) {
+    recipesFromSearch.value = recipesData.value.recipes;
+  }
+  // add recipe from wizard
+  if (recipe.value) {
+    recipesFromSearch.value.push(recipe.value);
   }
 });
 </script>

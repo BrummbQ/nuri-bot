@@ -5,12 +5,9 @@ import type {
   IngredientWithProducts,
   LikeRecipeBody,
   RecipeSchema,
-  RecipesSearchResponse,
   ReweBasketCookieData,
   SearchGenerateRecipeBody,
   SearchGenerateRecipeResponse,
-  SearchGenerateTermQuery,
-  SearchGenerateTermResponse,
 } from "~/lib/models";
 
 export const useGenerateRecipeLoading = () =>
@@ -21,12 +18,6 @@ export function useApi() {
   const { $api } = useNuxtApp();
   const generateRecipeLoading = useGenerateRecipeLoading();
   const apiError = useApiError();
-
-  function getSearchRecipes(query: string): Promise<RecipesSearchResponse> {
-    return $api("/api/recipes", {
-      query: { query },
-    });
-  }
 
   async function postSearchIngredients(
     recipes: RecipeSchema[],
@@ -82,14 +73,6 @@ export function useApi() {
     });
   }
 
-  function generateTerm(
-    query: SearchGenerateTermQuery,
-  ): Promise<SearchGenerateTermResponse> {
-    return $api("/api/search/generate-term", {
-      query,
-    });
-  }
-
   function generateRecipe(
     body: SearchGenerateRecipeBody,
   ): Promise<SearchGenerateRecipeResponse | undefined> {
@@ -123,12 +106,10 @@ export function useApi() {
   }
 
   return {
-    getSearchRecipes,
     postSearchIngredients,
     createBasket,
     postOrderIngredients,
     loadProducts,
-    generateTerm,
     generateRecipe,
     likeRecipe,
   };
