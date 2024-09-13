@@ -33,6 +33,7 @@ export default defineEventHandler(async (event) => {
   setCookie(event, "sessionToken", sessionToken, {
     secure: true,
     httpOnly: true,
+    maxAge: expiresIn,
   });
 
   const sessionExpiresAt = Date.now() + expiresIn * 1000;
