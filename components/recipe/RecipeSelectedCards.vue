@@ -12,6 +12,7 @@
       :key="recipe['@id']"
       :recipe="recipe"
       :recipeLink="basketRecipeUrl(basketId, recipe)"
+      :compact="true"
     >
       <UiButton
         class="mt-4"

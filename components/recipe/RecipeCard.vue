@@ -11,7 +11,7 @@
       <h3 class="text-lg text-gray-600 font-bold mb-2">
         <NuxtLink :to="props.recipeLink">{{ props.recipe.name }}</NuxtLink>
       </h3>
-      <p class="flex-1 text-gray-600 dark:text-gray-400 mb-4">
+      <p v-if="!compact" class="flex-1 text-gray-600 dark:text-gray-400 mb-4">
         {{ props.recipe.description }}
       </p>
       <div class="flex items-center gap-2">
@@ -25,7 +25,7 @@
           :text="props.recipe.recipeYield"
         />
       </div>
-
+      <div class="flex-grow" />
       <slot />
     </div>
   </article>
@@ -37,6 +37,7 @@ import type { RecipeSchema } from "~/lib/models";
 const props = defineProps<{
   recipe: RecipeSchema;
   recipeLink: string;
+  compact?: boolean;
 }>();
 
 const recipeImage = computed<string>(() => {
