@@ -1,11 +1,11 @@
 import {
-  findLastScheduleForTimePeriod,
+  findLastMenuForTimePeriod,
   insertRecipe,
-  insertSchedule,
-  linkRecipeToSchedule,
+  insertMenu,
+  linkRecipeToMenu,
 } from "~/lib/db";
 import { collectRecipes } from "~/lib/search";
-import { daysAgo } from "~/lib/utils/date";
+import { lastSunday } from "~/lib/utils/date";
 
 export default defineEventHandler(async (event) => {
   const authHeader = getHeader(event, "authorization");
@@ -16,22 +16,22 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  // find schedule for current period or create new one
-  const oneWeekAgo = daysAgo(7);
-  const lastSchedule = await findLastScheduleForTimePeriod(oneWeekAgo);
-  if (lastSchedule != null) {
-    // schedule found, no action
+  // find menu for current period or create new one, each sunday a new menu is created
+  const lastSundayDate = lastSunday();
+  const lastMenu = await findLastMenuForTimePeriod(lastSundayDate);
+  if (lastMenu != null) {
+    // menu found, no action
     return;
   }
 
-  // no schedule, create new one and populate it
-  const scheduleId = await insertSchedule();
+  // no menu, create new one and populate it
+  const menuId = await insertMenu();
   const recipes = await collectRecipes();
-  // insert found recipes and link to schedule
+  // insert found recipes and link to menu
   await Promise.all(
     recipes.map(async ([r, s]) => {
       const recipeId = await insertRecipe(r, "REWE");
-      await linkRecipeToSchedule(scheduleId, recipeId, s);
+      await linkRecipeToMenu(menuId, recipeId, s);
     }),
   );
 });

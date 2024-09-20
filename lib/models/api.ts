@@ -30,7 +30,7 @@ export interface IngredientsSearchBody {
   market: string;
 }
 
-export interface ScheduleRecipesResponse {
+export interface MenuRecipesResponse {
   recipes: RecipeSchema[];
 }
 

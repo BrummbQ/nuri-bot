@@ -9,7 +9,7 @@
 
   <div class="flex">
     <UiHeader class="flex-grow" :level="1">Rezepte auswählen</UiHeader>
-    <UiLink :to="wizardUrl" size="small"
+    <UiLink :to="wizardUrl"
       ><Icon name="mdi:wizard-hat" class="text-2xl mr-2" /> Eigenes
       Rezept</UiLink
     >
@@ -32,7 +32,7 @@ const props = defineProps<{
 }>();
 
 const recipesFromSearch = ref<RecipeSchema[]>([]);
-const recipesData = await useFetchScheduleRecipes();
+const recipesData = await useFetchMenuRecipes();
 const { addRecipe, removeRecipe, recipes, createOrSetBasket } =
   useBasketStore();
 const { recipe } = useRecipeWizardState();

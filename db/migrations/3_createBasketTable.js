@@ -68,19 +68,19 @@ CREATE TABLE IF NOT EXISTS AppUser_Recipe_Likes (
 `;
 
   await sql`
-CREATE TABLE IF NOT EXISTS Schedule (
+CREATE TABLE IF NOT EXISTS Menu (
     id SERIAL PRIMARY KEY,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 `;
 
   await sql`
-CREATE TABLE IF NOT EXISTS Recipe_Schedule (
-    schedule_id SERIAL NOT NULL,
+CREATE TABLE IF NOT EXISTS Recipe_Menu (
+    menu_id SERIAL NOT NULL,
     recipe_id SERIAL NOT NULL,
     searchterm VARCHAR(255) NOT NULL,
-    PRIMARY KEY (schedule_id, recipe_id),
-    FOREIGN KEY (schedule_id) REFERENCES Schedule(id),
+    PRIMARY KEY (menu_id, recipe_id),
+    FOREIGN KEY (menu_id) REFERENCES Menu(id),
     FOREIGN KEY (recipe_id) REFERENCES Recipe(id)
 );
 `;

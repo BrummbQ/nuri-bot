@@ -6,7 +6,7 @@ const publicRoutes = [
   "/auth/login",
   "/auth/verify",
   // protected by cron secret
-  "/api/cron/create-recipe-schedule",
+  "/api/cron/create-recipe-menu",
 ];
 
 export default defineEventHandler(async (event) => {
