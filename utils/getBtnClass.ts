@@ -3,7 +3,7 @@ export default function (
   size?: "small" | "regular",
   disabled?: boolean,
 ): string {
-  let sizeClasses = "px-4 h-10";
+  let sizeClasses = "px-4 h-auto py-2";
   if (size === "small") {
     sizeClasses = "px-2 h-8";
   }

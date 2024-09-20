@@ -5,7 +5,7 @@
     <NuxtLink to="/" class="flex items-center justify-center font-bold">
       <img src="/assets/logo.png" width="100" alt="Logo" />
     </NuxtLink>
-    <NuxtLink class="font-medium" to="/basket/new/recipe">Rezepte</NuxtLink>
+    <NuxtLink class="font-medium" :to="newBasketRecipeLink">Rezepte</NuxtLink>
     <nav class="ml-auto flex gap-4 sm:gap-6"></nav>
 
     <ClientOnly>
@@ -31,4 +31,5 @@ const basketsLink = computed(() =>
 const likedRecipesLink = computed(() =>
   user.value ? `/user/${user.value.userId}/recipe/liked` : "",
 );
+const newBasketRecipeLink = `/basket/${newBasketId}/recipe`;
 </script>

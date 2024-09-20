@@ -1,5 +1,10 @@
 import { getBasketById, getBasketIngredients, getBasketsByUserId } from "../db";
-import type { Basket, IngredientWithProducts, RecipeSchema } from "../models";
+import type {
+  Basket,
+  BasketOverview,
+  IngredientWithProducts,
+  RecipeSchema,
+} from "../models";
 
 export async function getBasket(basketId: string): Promise<Basket> {
   const basket = await getBasketById(basketId);
@@ -47,11 +52,26 @@ export async function getBasket(basketId: string): Promise<Basket> {
   };
 }
 
-export async function getBaskets(userId: string): Promise<Basket[]> {
+export async function getBasketsOverview(
+  userId: string,
+): Promise<BasketOverview[]> {
   const basketsResult = await getBasketsByUserId(userId);
   const baskets = await Promise.all(
     basketsResult.rows.map((basket) => getBasket(basket.id)),
   );
 
-  return baskets;
+  return baskets.map((b) => {
+    const title = b.recipes[0]?.name ?? "Leerer Warenkorb";
+    let image = "/images/placeholder.svg";
+    if (b.recipes.length && b.recipes[0].image.length) {
+      image = b.recipes[0].image[0] + "?impolicy=recipe-card";
+    }
+
+    return {
+      basketId: b.basketId,
+      title,
+      image,
+      recipeCount: b.recipes.length,
+    };
+  });
 }

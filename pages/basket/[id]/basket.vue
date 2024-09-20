@@ -1,9 +1,13 @@
 <template>
-  <div class="flex gap-4 py-4 bg-white sticky top-0 z-20">
-    <UiHeader class="flex-grow" :level="1" :noMargin="true">Zutaten</UiHeader>
-    <UiLink variant="accent" :to="recipeUrl">Rezepte ändern</UiLink>
-    <BasketOrderButton :basketId="route.params.id" />
-  </div>
+  <UiHeaderRow
+    class="py-4 !mb-0 bg-white sticky top-0 z-20"
+    headerText="Zutaten"
+  >
+    <div class="flex gap-4">
+      <UiLink variant="accent" :to="recipeUrl">Rezepte ändern</UiLink>
+      <BasketOrderButton :basketId="route.params.id" />
+    </div>
+  </UiHeaderRow>
   <div class="p-4">
     <ClientOnly>
       <BasketShoppingList v-if="recipes.length" :basketId="route.params.id" />

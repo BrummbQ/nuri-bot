@@ -10,9 +10,10 @@ type BasketState = Record<string, Basket>;
 
 const basketsSessionKey = "baskets";
 
+export const newBasketId = "new";
 export const useBaskets = () => useState<BasketState>("baskets", () => ({}));
 export const useCurrentBasket = () =>
-  useState<string | undefined>("currentBasket", () => undefined);
+  useState<string>("currentBasket", () => newBasketId);
 const useSearchLoading = () => useState("searchLoading", () => false);
 const useSearchError = () => useState("searchError", () => "");
 const useMarketId = () => useState<string | undefined>("marketId");
@@ -39,17 +40,14 @@ export const useBasketStore = () => {
   });
 
   const recipes = computed(() => {
-    if (
-      currentBasket.value != null &&
-      baskets.value[currentBasket.value] != null
-    ) {
+    if (baskets.value[currentBasket.value] != null) {
       return baskets.value[currentBasket.value].recipes;
     }
     return [];
   });
 
   const ingredientsWithProducts = computed(() => {
-    if (currentBasket.value != null) {
+    if (baskets.value[currentBasket.value] != null) {
       return baskets.value[currentBasket.value].ingredientsWithProducts;
     }
   });
@@ -80,7 +78,7 @@ export const useBasketStore = () => {
       baskets.value[id] = {
         recipes: [],
         ingredientsWithProducts: [],
-        basketId: "new",
+        basketId: id,
       };
     }
     currentBasket.value = id;
@@ -146,7 +144,7 @@ export const useBasketStore = () => {
     reweCookieData.value = data;
 
     const marketId = readMarketId(reweCookieData.value);
-    if (marketId != null && currentBasket.value != null) {
+    if (marketId != null) {
       const basketValue = baskets.value[currentBasket.value];
       if (basketValue != null) {
         searchIngedients(basketValue.recipes, marketId, currentBasket.value);
@@ -157,7 +155,7 @@ export const useBasketStore = () => {
   function completeCurrentBasket() {
     if (currentBasket.value) {
       delete baskets.value[currentBasket.value];
-      currentBasket.value = undefined;
+      currentBasket.value = newBasketId;
     }
   }
 

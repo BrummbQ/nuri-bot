@@ -1,12 +1,12 @@
 <template>
   <UiHeader :level="1">Meine Warenkörbe</UiHeader>
-  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+  <UiCardView>
     <BasketCard
       v-for="basket in data?.baskets"
       :key="basket.basketId"
       :basket="basket"
     />
-  </div>
+  </UiCardView>
 </template>
 
 <script setup lang="ts">

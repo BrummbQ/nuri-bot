@@ -3,8 +3,7 @@
     Rezept existiert nicht!
   </UiNotification>
   <template v-else>
-    <div class="flex justify-between mb-4">
-      <UiHeader :level="1" :noMargin="true">{{ recipe.name }}</UiHeader>
+    <UiHeaderRow :header-text="recipe.name">
       <UiButton
         v-if="canLike"
         type="button"
@@ -16,7 +15,7 @@
           class="text-2xl"
           :class="{ 'text-primary': recipe.liked }"
       /></UiButton>
-    </div>
+    </UiHeaderRow>
 
     <img
       :src="recipeImage"
@@ -64,6 +63,7 @@
 
 <script setup lang="ts">
 import type { RecipeSchema } from "~/lib/models";
+import UiHeaderRow from "../ui/UiHeaderRow.vue";
 
 const props = defineProps<{
   recipe?: RecipeSchema | null;

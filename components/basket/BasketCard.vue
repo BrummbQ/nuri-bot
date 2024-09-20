@@ -1,8 +1,8 @@
 <template>
-  <UiCard :title="basketTitle">
+  <UiCard :title="basket.title">
     <template #cardimg>
       <img
-        :src="basketImage"
+        :src="basket.image"
         alt="Warenkorb Bild"
         width="300"
         height="200"
@@ -10,7 +10,7 @@
       />
     </template>
     <template #cardbody>
-      Enthält {{ props.basket.recipes.length }} Rezepte
+      Enthält {{ props.basket.recipeCount }} Rezepte
     </template>
     <template #cardfooter>
       <UiLink :to="basketLink">Ansehen</UiLink>
@@ -19,25 +19,9 @@
 </template>
 
 <script setup lang="ts">
-import type { Basket } from "~/lib/models";
+import type { BasketOverview } from "~/lib/models";
 
-const props = defineProps<{ basket: Basket }>();
+const props = defineProps<{ basket: BasketOverview }>();
 
-const basketTitle = computed(() => {
-  if (!props.basket.recipes.length) {
-    return "Leerer Warenkorb";
-  }
-  return props.basket.recipes[0].name;
-});
-
-const basketImage = computed(() => {
-  if (!props.basket.recipes.length || !props.basket.recipes[0].image.length) {
-    return "/images/placeholder.svg";
-  }
-  return props.basket.recipes[0].image[0] + "?impolicy=recipe-card";
-});
-
-const basketLink = computed(() => {
-  return `/basket/${props.basket.basketId}/ordered`;
-});
+const basketLink = computed(() => `/basket/${props.basket.basketId}/ordered`);
 </script>

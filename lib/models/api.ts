@@ -2,7 +2,7 @@ import type { ScoredPineconeRecord } from "@pinecone-database/pinecone";
 import type { Ingredient } from "./ingredient.model";
 import type { ReweProduct } from "./rewe.model";
 import type { Metadata } from "../search";
-import type { Basket } from "./basket-store.model";
+import type { Basket, BasketOverview } from "./basket-store.model";
 import type { DietType } from "./suggestion";
 import type { RecipeSchema } from "./recipe-schema.model";
 
@@ -53,7 +53,7 @@ export interface GetBasketResponse {
 }
 
 export interface GetBasketsResponse {
-  baskets: Basket[];
+  baskets: BasketOverview[];
 }
 
 export interface SearchGenerateRecipeBody {

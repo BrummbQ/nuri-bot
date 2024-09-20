@@ -1,11 +1,11 @@
 <template>
-  <div class="flex py-5 bg-white sticky top-0">
-    <UiHeader :level="1" :noMargin="true" class="flex-grow"
-      >{{ selectedRecipes.length }} Ausgewählte Rezepte</UiHeader
-    >
+  <UiHeaderRow
+    class="py-5 !mb-0 bg-white sticky top-0"
+    :headerText="selectedRecipes.length + ' Ausgewählte Rezepte'"
+  >
     <UiLink :to="basketUrl">Warenkorb</UiLink>
-  </div>
-  <div class="flex gap-6 mb-8 p-4 overflow-x-auto">
+  </UiHeaderRow>
+  <div class="flex gap-6 mb-8 md:p-4 overflow-x-auto">
     <RecipeCard
       v-for="recipe in selectedRecipes"
       class="min-w-64 w-64"
@@ -18,7 +18,8 @@
         iconName="fluent:delete-16-regular"
         variant="accent"
         @click="emit('unselect', recipe)"
-      />
+        >Entfernen</UiButton
+      >
     </RecipeCard>
   </div>
 </template>

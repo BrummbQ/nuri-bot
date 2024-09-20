@@ -7,3 +7,10 @@ export interface Basket {
   ingredientsWithProducts?: IngredientWithProducts[];
   createdAt?: string;
 }
+
+export interface BasketOverview {
+  basketId: string;
+  title: string;
+  image: string;
+  recipeCount: number;
+}

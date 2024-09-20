@@ -28,7 +28,7 @@
 
   <template v-if="data">
     <UiHeader class="mt-10" :level="2">Ausgewählte Rezepte</UiHeader>
-    <RecipeCardView>
+    <UiCardView>
       <RecipeCard
         v-for="recipe in data.basket.recipes"
         :key="recipe['@id']"
@@ -36,7 +36,7 @@
         :recipeLink="recipeLink(recipe)"
       >
       </RecipeCard>
-    </RecipeCardView>
+    </UiCardView>
 
     <BasketShoppingListOverview :basket="data.basket" />
     <p v-if="!data.basket.recipes.length">Warenkorb ist leer</p>

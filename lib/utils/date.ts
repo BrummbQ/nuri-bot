@@ -12,3 +12,12 @@ export function lastSunday(): Date {
   lastSundayDate.setHours(0, 0, 0, 0); // Set to start of day
   return lastSundayDate;
 }
+
+export function formatDateShort(date: Date): string {
+  const formatter = new Intl.DateTimeFormat("de-DE", {
+    month: "numeric",
+    day: "numeric",
+  });
+
+  return formatter.format(date);
+}

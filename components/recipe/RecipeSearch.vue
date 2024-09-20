@@ -7,25 +7,23 @@
     @unselect="unselectRecipe($event)"
   />
 
-  <div class="flex">
-    <UiHeader class="flex-grow" :level="1">Rezepte auswählen</UiHeader>
+  <UiHeaderRow :headerText="'Menü ' + menuPeriod">
     <UiLink :to="wizardUrl"
       ><Icon name="mdi:wizard-hat" class="text-2xl mr-2" /> Eigenes
       Rezept</UiLink
     >
-  </div>
+  </UiHeaderRow>
 
-  <div class="p-4">
-    <RecipeAvailableCards
-      :recipes="unselectedRecipes"
-      :basketId="basketId"
-      @select="selectRecipe($event)"
-    />
-  </div>
+  <RecipeAvailableCards
+    :recipes="unselectedRecipes"
+    :basketId="basketId"
+    @select="selectRecipe($event)"
+  />
 </template>
 
 <script setup lang="ts">
 import type { RecipeSchema } from "~/lib/models";
+import { formatDateShort, lastSunday } from "~/lib/utils/date";
 
 const props = defineProps<{
   basketId: string;
@@ -46,6 +44,12 @@ const unselectedRecipes = computed(() =>
     (r) => recipes.value.find((sR) => sR["@id"] === r["@id"]) == null,
   ),
 );
+const menuPeriod = computed(() => {
+  const lastSundayDate = lastSunday();
+  const nextSundayDate = lastSunday();
+  nextSundayDate.setDate(nextSundayDate.getDate() + 7);
+  return `${formatDateShort(lastSundayDate)} - ${formatDateShort(nextSundayDate)}`;
+});
 
 const selectRecipe = (recipe: RecipeSchema) => {
   addRecipe(recipe, props.basketId);

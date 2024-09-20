@@ -1,8 +1,6 @@
 <template>
-  <div class="flex justify-between">
-    <UiLink :to="basketUrl" class="inline-flex mb-4" variant="accent"
-      >Zurück</UiLink
-    >
+  <div class="flex justify-between mb-4">
+    <UiLink :to="basketUrl" class="inline-flex" variant="accent">Zurück</UiLink>
     <UiButton v-if="inBasket" type="button" @click="unselectRecipe()"
       >Entfernen</UiButton
     >
