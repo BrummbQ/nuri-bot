@@ -14,6 +14,7 @@
       <p v-if="!compact" class="flex-1 text-gray-600 dark:text-gray-400 mb-4">
         {{ props.recipe.description }}
       </p>
+      <div class="flex-grow" />
       <div class="flex items-center gap-2">
         <UILabeledInfo
           iconName="fluent:timer-16-regular"
@@ -25,7 +26,6 @@
           :text="props.recipe.recipeYield"
         />
       </div>
-      <div class="flex-grow" />
       <slot />
     </div>
   </article>

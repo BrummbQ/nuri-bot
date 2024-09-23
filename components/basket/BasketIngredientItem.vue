@@ -6,24 +6,33 @@
     @update:modelValue="toggled($event, ingredient)"
   >
     <template #title>
-      <div class="flex items-center pr-4">
+      <div class="flex flex-1 items-center pr-4">
         <span class="font-bold md:min-w-36 lg:min-w-48 mr-4">{{
           ingredientTitle(ingredient)
         }}</span>
-
-        <span
+        <template
           v-if="
             ingredient.selectedProducts?.length &&
             ingredient.selectedProducts[0].quantity
           "
-          >{{ ingredient.selectedProducts[0].product.productName }}</span
         >
+          <span>{{ ingredient.selectedProducts[0].product.productName }}</span>
+          <div class="flex-1"></div>
+          <UiButton
+            size="small"
+            variant="outline"
+            title="Zutat entfernen"
+            @click.stop="unselectProducts(ingredient)"
+            ><Icon name="fluent:delete-16-regular" class="text-xl my-1"
+          /></UiButton>
+        </template>
         <div class="flex items-center text-red-500" v-else>
           <span class="italic">Keine Auswahl</span>
           <Icon name="fluent:warning-16-regular" class="text-2xl ml-2" />
         </div>
       </div>
     </template>
+
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
       <BasketProductCard
         v-for="product in ingredient.products"
@@ -82,6 +91,18 @@ const changeQuantity = (
     ingredient,
   });
 };
+
+function unselectProducts(ingredient: IngredientWithProducts) {
+  if (ingredient.selectedProducts?.length) {
+    emit("selectProduct", {
+      selectedProduct: {
+        product: ingredient.selectedProducts[0].product,
+        quantity: 0,
+      },
+      ingredient,
+    });
+  }
+}
 
 function toggled(toggle: boolean, ingredient: IngredientWithProducts) {
   expandedIngredient.value = toggle ? ingredient : undefined;

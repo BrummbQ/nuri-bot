@@ -5,7 +5,7 @@ export default function (
 ): string {
   let sizeClasses = "px-4 h-auto py-2";
   if (size === "small") {
-    sizeClasses = "px-2 h-8";
+    sizeClasses = "px-2";
   }
 
   const defaultClasses = `rounded-md flex items-center justify-center ${sizeClasses} `;

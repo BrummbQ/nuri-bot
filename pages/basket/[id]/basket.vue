@@ -8,7 +8,7 @@
       <BasketOrderButton :basketId="route.params.id" />
     </div>
   </UiHeaderRow>
-  <div class="p-4">
+  <div class="md:p-4">
     <ClientOnly>
       <BasketShoppingList v-if="recipes.length" :basketId="route.params.id" />
       <p v-else class="text-center mt-10 font-bold text-gray-500">
