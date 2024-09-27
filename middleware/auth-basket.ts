@@ -4,6 +4,9 @@ import { getBasketById } from "~/lib/db";
 export default defineNuxtRouteMiddleware(async (to, from) => {
   if (!import.meta.server) return;
   const userId = getUserIdFromClientOrServer();
+  if (userId == null) {
+    return navigateToLogin();
+  }
   const basketId = (to.params as { id: string }).id;
 
   // special case for new baskets

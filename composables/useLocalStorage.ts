@@ -22,7 +22,9 @@ export function useLocalStorage<T>() {
   };
 
   const removeItem = (key: string) => {
-    localStorage.removeItem(key);
+    if (import.meta.client) {
+      localStorage.removeItem(key);
+    }
   };
 
   return { setItem, getItem, removeItem };

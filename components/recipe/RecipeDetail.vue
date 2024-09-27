@@ -4,17 +4,27 @@
   </UiNotification>
   <template v-else>
     <UiHeaderRow :header-text="recipe.name">
-      <UiButton
-        v-if="canLike"
-        type="button"
-        variant="outline"
-        title="Rezept speichern"
-        @click="emit('likeRecipe', !recipe.liked)"
-        ><Icon
-          :name="recipe.liked ? 'mdi:heart' : 'mdi:heart-outline'"
-          class="text-2xl"
-          :class="{ 'text-primary': recipe.liked }"
-      /></UiButton>
+      <div class="flex gap-4">
+        <UiButton
+          v-if="canLike"
+          type="button"
+          variant="outline"
+          title="Rezept speichern"
+          @click="emit('likeRecipe', !recipe.liked)"
+          ><Icon
+            :name="recipe.liked ? 'mdi:heart' : 'mdi:heart-outline'"
+            class="text-2xl"
+            :class="{ 'text-primary': recipe.liked }"
+        /></UiButton>
+        <UiButton
+          v-if="canShare"
+          type="button"
+          variant="outline"
+          title="Rezept teilen"
+          @click="shareRecipe()"
+          ><Icon :name="'mdi:share-variant'" class="text-2xl"
+        /></UiButton>
+      </div>
     </UiHeaderRow>
 
     <img
@@ -68,10 +78,14 @@ import UiHeaderRow from "../ui/UiHeaderRow.vue";
 const props = defineProps<{
   recipe?: RecipeSchema | null;
   canLike?: boolean;
+  canShare?: boolean;
 }>();
 const emit = defineEmits<{
   likeRecipe: [like: boolean];
 }>();
+
+const url = useRequestURL();
+const { addNotification } = useNotification();
 
 const recipeImage = computed<string>(() => {
   if (!props.recipe?.image.length) {
@@ -82,4 +96,21 @@ const recipeImage = computed<string>(() => {
 const recipeTime = computed<number | undefined>(() =>
   totalRecipeTime(props.recipe),
 );
+
+async function shareRecipe() {
+  if (props.recipe == null) return;
+  const shareData = {
+    title: `Nuri Rezept ${props.recipe.name}`,
+    url: `${url.origin}${publicRecipeUrl(props.recipe)}`,
+  };
+  try {
+    await navigator.share(shareData);
+  } catch (err) {
+    const isAbort = err instanceof Error && err.name === "AbortError";
+    if (!isAbort) {
+      console.error(err);
+      addNotification({ severity: "error", message: "Teilen nicht möglich!" });
+    }
+  }
+}
 </script>

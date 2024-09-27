@@ -1,7 +1,9 @@
+import { protectApiRoute } from "~/lib/auth";
 import { updateListingInBasket } from "~/lib/basket";
 import type { IngredientsOrderBody } from "~/lib/models";
 
 export default defineEventHandler(async (event) => {
+  protectApiRoute(event.context.auth);
   const body = await readBody<IngredientsOrderBody>(event);
 
   // add each ingredient to rewe basket

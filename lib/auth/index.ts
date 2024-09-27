@@ -32,3 +32,6 @@ export async function verifySession(
 export function createSessionToken(userId: string, expiresIn: number): string {
   return jwt.sign({ userId }, process.env.JWT_SECRET!, { expiresIn });
 }
+
+export * from "./protectApiRoute";
+export * from "./auth-context";

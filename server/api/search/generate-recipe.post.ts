@@ -1,3 +1,4 @@
+import { protectApiRoute } from "~/lib/auth";
 import { insertRecipe } from "~/lib/db";
 import type {
   SearchGenerateRecipeBody,
@@ -7,6 +8,7 @@ import { generateRecipe } from "~/lib/search/generate-recipe";
 
 export default defineEventHandler(
   async (event): Promise<SearchGenerateRecipeResponse> => {
+    protectApiRoute(event.context.auth);
     const query = await readBody<SearchGenerateRecipeBody>(event);
     const { userId } = event.context.auth;
 

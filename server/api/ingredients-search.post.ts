@@ -1,3 +1,4 @@
+import { protectApiRoute } from "~/lib/auth";
 import type {
   IngredientWithProducts,
   IngredientsSearchBody,
@@ -13,6 +14,7 @@ import calcProductQuantity from "~/utils/calcProductQuantity";
 
 export default defineEventHandler(
   async (event): Promise<IngredientsSearchResponse> => {
+    protectApiRoute(event.context.auth);
     const { recipes, market } = await readBody<IngredientsSearchBody>(event);
 
     const ingredients = filterCommonIngredients(recipes);

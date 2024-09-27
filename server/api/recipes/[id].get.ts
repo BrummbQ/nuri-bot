@@ -25,8 +25,9 @@ export default defineEventHandler(async (event): Promise<RecipeSchema> => {
     });
   }
 
-  const { userId } = event.context.auth;
-  const liked = await isRecipeLiked(decodedRecipeId, userId);
+  const userId = event.context.auth?.userId;
+  const liked =
+    userId == null ? false : await isRecipeLiked(decodedRecipeId, userId);
 
   return { ...recipe, liked };
 });

@@ -4,12 +4,18 @@
       >Zurück</UiLink
     >
   </div>
-  <RecipeDetail :recipe="data" :canLike="true" @likeRecipe="like($event)" />
+  <RecipeDetail
+    :recipe="data"
+    :canLike="true"
+    :canShare="true"
+    @likeRecipe="like($event)"
+  />
 </template>
 
 <script setup lang="ts">
 definePageMeta({
   layout: "narrow",
+  middleware: ["auth-basket"],
 });
 
 const route = useRoute("basket-id-recipe-recipeId");

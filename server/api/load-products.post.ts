@@ -1,3 +1,4 @@
+import { protectApiRoute } from "~/lib/auth";
 import { lastFetchedProductByMarket } from "~/lib/db";
 import { loadProducts } from "~/lib/search";
 import { daysAgo } from "~/lib/utils/date";
@@ -10,6 +11,7 @@ interface LoadProductsBody {
  * Load all products from rewe market to db
  */
 export default defineEventHandler(async (event): Promise<void> => {
+  protectApiRoute(event.context.auth);
   const body = await readBody<LoadProductsBody>(event);
 
   try {

@@ -1,7 +1,9 @@
+import { protectApiRoute } from "~/lib/auth";
 import { getRecipeIdByExternalId, likeRecipe } from "~/lib/db";
 import type { LikeRecipeBody } from "~/lib/models";
 
 export default defineEventHandler(async (event): Promise<void> => {
+  protectApiRoute(event.context.auth);
   const recipeId = getRouterParam(event, "id");
   if (recipeId == null) {
     throw createError({

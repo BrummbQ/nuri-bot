@@ -1,10 +1,10 @@
 <template>
-  <UiHeader :level="2">Einkaufsliste</UiHeader>
-  <ul>
+  <UiHeader :level="2" class="mt-6">Einkaufsliste</UiHeader>
+  <ul class="md:px-4 gap-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4">
     <li
-      v-for="(ingredient, index) of props.basket.ingredientsWithProducts"
+      v-for="(ingredient, index) of sortedIngredients"
       :key="ingredient.productName"
-      class="my-2"
+      class="bg-gray-300 py-1 px-2 rounded-md"
     >
       <UiCheckbox
         :id="ingredient.productName"
@@ -24,6 +24,11 @@ const props = defineProps<{ basket: Basket }>();
 
 const shoppingListKey = computed(() => {
   return props.basket.basketId + "_shopping_list";
+});
+const sortedIngredients = computed(() => {
+  return props.basket.ingredientsWithProducts?.sort((a, b) =>
+    a.productName.localeCompare(b.productName),
+  );
 });
 
 const { getItem, setItem } = useSessionStorage<IngredientItem[]>();
