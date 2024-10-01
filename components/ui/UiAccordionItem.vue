@@ -1,5 +1,5 @@
 <template>
-  <li class="border rounded-lg bg-gray-300 border-gray-200 my-2 p-4">
+  <li class="border rounded-lg bg-gray-300 border-gray-200 my-2 px-4 py-2">
     <div
       class="flex justify-between items-center text-lg cursor-pointer"
       @click="toggle()"

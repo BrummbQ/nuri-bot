@@ -1,8 +1,6 @@
 import { getUserIdFromClientOrServer } from "~/lib/auth/getUserIdFromClientOrServet";
-import { getBasketById } from "~/lib/db";
 
 export default defineNuxtRouteMiddleware(async (to, from) => {
-  if (!import.meta.server) return;
   const userId = getUserIdFromClientOrServer();
   if (userId == null) {
     return navigateToLogin();
@@ -14,10 +12,10 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     return;
   }
 
-  const basket = await getBasketById(basketId);
+  const { data, error } = await useFetchBasket(basketId);
 
   // Check if we are logged in and have access
-  if (basket?.user_id === userId) {
+  if (error.value == null && data.value?.basket.userId === userId) {
     return; // continue to the route
   }
 

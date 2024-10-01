@@ -46,6 +46,7 @@ export async function getBasket(basketId: string): Promise<Basket> {
   });
   return {
     basketId: basketId,
+    userId: basket.user_id,
     recipes,
     ingredientsWithProducts,
     createdAt: basket.created_at,

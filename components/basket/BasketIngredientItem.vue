@@ -6,7 +6,7 @@
     @update:modelValue="toggled($event, ingredient)"
   >
     <template #title>
-      <div class="flex flex-1 items-center pr-4">
+      <div class="flex flex-1 items-center pr-4 min-h-8">
         <span class="font-bold md:min-w-36 lg:min-w-48 mr-4">{{
           ingredientTitle(ingredient)
         }}</span>
