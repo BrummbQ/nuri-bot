@@ -5,7 +5,7 @@ from schemas import ReweProductsResponse, ReweProduct
 from models import product
 
 
-def search_products(
+async def search_products(
     search: str, market: str, page_size: int = 10, page: int = 1
 ) -> ReweProductsResponse:
     url = "https://shop.rewe.de/api/products"
@@ -18,10 +18,19 @@ def search_products(
         "market": market,
     }
 
-    with httpx.Client() as client:
-        response = client.get(url, params=params)
-        response.raise_for_status()  # Check for HTTP errors
-        return response.json()  # Return the response JSON
+    async with httpx.AsyncClient() as client:
+        try:
+            response = await client.get(url, params=params, timeout=20)
+            response.raise_for_status()
+            return response.json()
+
+        except httpx.TimeoutException as e:
+            print(f"Timeout fetching products for market {market}, page {page}: {e}")
+            raise
+
+        except httpx.HTTPError as e:
+            print(f"HTTP error fetching products for market {market}, page {page}: {e}")
+            raise
 
 
 def rewe_product_name(product: ReweProduct) -> str:
