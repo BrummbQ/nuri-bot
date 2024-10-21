@@ -1,6 +1,8 @@
 import jwt from "jsonwebtoken";
 import { findUserById } from "../db";
 
+const jwtAlgorithm = "RS256";
+
 export async function verifySession(
   url?: string,
   sessionToken?: string | null,
@@ -11,7 +13,10 @@ export async function verifySession(
   }
 
   try {
-    const decoded = jwt.verify(sessionToken, process.env.JWT_SECRET!) as {
+    const publicKey = Buffer.from(process.env.JWT_PUBLIC!, "base64").toString();
+    const decoded = jwt.verify(sessionToken, publicKey, {
+      algorithms: [jwtAlgorithm],
+    }) as {
       userId: string;
     };
 
@@ -30,7 +35,11 @@ export async function verifySession(
 }
 
 export function createSessionToken(userId: string, expiresIn: number): string {
-  return jwt.sign({ userId }, process.env.JWT_SECRET!, { expiresIn });
+  const privateKey = Buffer.from(process.env.JWT_SECRET!, "base64").toString();
+  return jwt.sign({ userId }, privateKey, {
+    expiresIn,
+    algorithm: jwtAlgorithm,
+  });
 }
 
 export * from "./protectApiRoute";
