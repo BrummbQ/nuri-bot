@@ -1,4 +1,4 @@
-import { protectApiRoute } from "~/lib/auth";
+import { protectApiRoute, sessionToken } from "~/lib/auth";
 import type {
   IngredientWithProducts,
   IngredientsSearchBody,
@@ -27,7 +27,11 @@ export default defineEventHandler(
     console.time("db search products");
     const responseIngredients: IngredientWithProducts[] = await Promise.all(
       consolidatedIngredients.map(async (ingredient) => {
-        const products = await searchSimilarProducts(ingredient, market);
+        const products = await searchSimilarProducts(
+          ingredient,
+          market,
+          sessionToken(event),
+        );
         const ingredientWithProducts: IngredientWithProducts = {
           ...ingredient,
           products,

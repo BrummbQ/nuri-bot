@@ -1,13 +1,10 @@
-import type { ProductGrammage, ReweProduct } from "../models";
+import type { ProductGrammage, ProductSearchResponse } from "../models";
 
 export function parseGrammage(
-  product: ReweProduct,
+  product: ProductSearchResponse,
 ): ProductGrammage | undefined {
-  if (product._embedded.articles.length) {
-    const grammage =
-      product._embedded.articles[0]._embedded.listing.pricing.grammage;
-
-    const match = grammage?.match(/^(\d+)\s*([a-zA-ZäöüÄÖÜß]*)/);
+  if (product.grammage != null) {
+    const match = product.grammage?.match(/^(\d+)\s*([a-zA-ZäöüÄÖÜß]*)/);
     if (match == null) {
       return;
     }

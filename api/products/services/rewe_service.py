@@ -64,6 +64,12 @@ def rewe_product_grammage(product: ReweProduct) -> str | None:
         return articles[0]["_embedded"]["listing"]["pricing"]["grammage"]
 
 
+def rewe_product_listing_id(product: ReweProduct) -> str | None:
+    articles = product["_embedded"]["articles"]
+    if len(articles) and "id" in articles[0]["_embedded"]["listing"]:
+        return articles[0]["_embedded"]["listing"]["id"]
+
+
 def rewe_product_image(product: ReweProduct) -> str | None:
     images = product["media"]["images"]
     if len(images):
@@ -89,6 +95,7 @@ def postprocess_rewe_products(
             grammage=rewe_product_grammage(p),
             main_image_href=rewe_product_image(p),
             provider=product.ProductDataProvider.REWE.value,
+            listing_id=rewe_product_listing_id(p),
             provider_data=p,
             fetched_at=now,
             market_id=market_id,

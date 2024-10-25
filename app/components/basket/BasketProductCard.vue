@@ -1,6 +1,6 @@
 <template>
   <UiCard
-    :title="props.product.productName"
+    :title="props.product.name"
     class="border border-2 border-white"
     :class="{ '!border-primary': props.selectedQuantity }"
   >
@@ -24,20 +24,18 @@
       </div>
     </template>
     <template #cardbody>
-      <div v-if="productListing" class="flex items-center gap-2 grow">
+      <div
+        v-if="product.price && product.currency"
+        class="flex items-center gap-2 grow"
+      >
         <UILabeledInfo
           icon-name="solar:tag-price-bold"
-          :text="
-            formatCurrency(
-              productListing.pricing.currentRetailPrice,
-              productListing.pricing.currency,
-            )
-          "
+          :text="formatCurrency(product.price, product.currency)"
         />
 
         <UILabeledInfo
           icon-name="material-symbols:weight"
-          :text="productListing.pricing.grammage"
+          :text="product.grammage"
         />
       </div>
     </template>
@@ -69,10 +67,10 @@
 </template>
 
 <script setup lang="ts">
-import type { ReweProduct } from "~/lib/models";
+import type { ProductSearchResponse } from "~/lib/models";
 
 const props = defineProps<{
-  product: ReweProduct;
+  product: ProductSearchResponse;
   selectedQuantity: number;
 }>();
 const emit = defineEmits<{
@@ -80,21 +78,13 @@ const emit = defineEmits<{
 }>();
 
 const productImg = computed(() => {
-  if (!props.product.media.images.length) {
+  if (!props.product.main_image_href) {
     return "/images/placeholder.svg";
   }
   return (
-    props.product.media.images[0]._links.self.href +
+    props.product.main_image_href +
     "?resize=304px:304px&output-quality=80&output-format=webp&im=BackgroundColor,color=fffff"
   );
-});
-
-const productListing = computed(() => {
-  const articles = props.product._embedded.articles;
-  if (!articles.length) {
-    return;
-  }
-  return articles[0]._embedded.listing;
 });
 
 const toggleProduct = () => {

@@ -3,7 +3,6 @@ import type {
   Ingredient,
   IngredientWithProducts,
   RecipeSchema,
-  ReweProduct,
 } from "../models";
 
 export async function insertIngredient(
@@ -40,7 +39,7 @@ export async function linkIngredientToRecipe(
 
 export async function linkIngredientToProduct(
   ingredientId: number,
-  productId: number,
+  productId: string,
   quantity: number,
 ) {
   await sql`
@@ -54,17 +53,15 @@ export async function linkIngredientToProduct(
   );
 }
 
-interface BasketIngredientRow {
+export interface BasketIngredientRow {
   basket_id: string;
   ingredient_id: number;
   ingredient_json: Ingredient;
-  recipe_id: number;
-  recipe_external_id: string;
-  recipe_json: RecipeSchema;
-  product_id: number;
-  product_name: string;
-  product_data: ReweProduct;
-  product_quantity: number;
+  recipe_id?: number;
+  recipe_external_id?: string;
+  recipe_json?: RecipeSchema;
+  product_id?: string;
+  product_quantity?: number;
 }
 
 export async function getBasketIngredients(
@@ -78,9 +75,7 @@ export async function getBasketIngredients(
       r.id AS recipe_id,
       r.external_id AS recipe_external_id,
       r.recipe AS recipe_json,
-      p.id AS product_id,
-      p.product_name AS product_name,
-      p.data AS product_data,
+      ip.product_id AS product_id,
       ip.quantity AS product_quantity
     FROM 
         Basket b
@@ -92,8 +87,6 @@ export async function getBasketIngredients(
         Recipe r ON ir.recipe_id = r.id
     LEFT JOIN 
         Ingredient_Product ip ON i.id = ip.ingredient_id
-    LEFT JOIN 
-        Product p ON ip.product_id = p.id
     WHERE 
         b.id = ${basketId};
     `;

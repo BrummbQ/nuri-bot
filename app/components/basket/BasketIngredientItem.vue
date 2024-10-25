@@ -16,7 +16,7 @@
             ingredient.selectedProducts[0].quantity
           "
         >
-          <span>{{ ingredient.selectedProducts[0].product.productName }}</span>
+          <span>{{ ingredient.selectedProducts[0].product.name }}</span>
           <div class="flex-1"></div>
           <UiButton
             size="small"
@@ -52,7 +52,7 @@
 <script setup lang="ts">
 import type {
   IngredientWithProducts,
-  ReweProduct,
+  ProductSearchResponse,
   SelectedProduct,
 } from "~/lib/models";
 
@@ -71,14 +71,14 @@ const emit = defineEmits<{
 const expandedIngredient = ref<IngredientWithProducts>();
 
 const selectedProduct = (
-  product: ReweProduct,
+  product: ProductSearchResponse,
   ingredient: IngredientWithProducts,
 ): SelectedProduct | undefined => {
   return ingredient.selectedProducts?.find((p) => p.product.id === product.id);
 };
 
 const changeQuantity = (
-  product: ReweProduct,
+  product: ProductSearchResponse,
   ingredient: IngredientWithProducts,
   quantity?: number,
 ) => {

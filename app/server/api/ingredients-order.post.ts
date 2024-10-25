@@ -16,20 +16,17 @@ export default defineEventHandler(async (event) => {
     }
     // add all products for each ingredient
     for (let selectedProduct of selectedProducts) {
-      const articles = selectedProduct.product._embedded.articles;
-      if (!articles.length) {
-        throw new Error("No articles found");
+      const listingId = selectedProduct.product.listing_id;
+      if (listingId == null) {
+        throw new Error("No listing id found");
       }
 
       if (selectedProduct.quantity < 1) {
         continue;
       }
 
-      const listing = articles[0]._embedded.listing;
-      const listingId = listing.id;
-
       // add product to basket
-      const response = await updateListingInBasket(
+      await updateListingInBasket(
         listingId,
         selectedProduct.quantity,
         body.reweCookies,
@@ -37,7 +34,7 @@ export default defineEventHandler(async (event) => {
       console.log(
         "Added product",
         selectedProduct.quantity,
-        selectedProduct.product.productName,
+        selectedProduct.product.name,
       );
     }
   }

@@ -1,8 +1,11 @@
 import { describe, expect, it } from "vitest";
-import type { IngredientWithProducts, ReweProduct } from "~/lib/models";
+import type {
+  IngredientWithProducts,
+  ProductSearchResponse,
+} from "~/lib/models";
 
 function mockIngredient(
-  products: ReweProduct[],
+  products: ProductSearchResponse[],
   quantity?: number,
   unit?: string,
 ): IngredientWithProducts {

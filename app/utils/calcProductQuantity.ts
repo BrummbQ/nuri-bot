@@ -1,9 +1,12 @@
-import type { IngredientWithProducts, ReweProduct } from "~/lib/models";
+import type {
+  IngredientWithProducts,
+  ProductSearchResponse,
+} from "~/lib/models";
 import { parseGrammage } from "~/lib/search/parse-grammage";
 
 export default function (
   ingredient: IngredientWithProducts,
-  product: ReweProduct,
+  product: ProductSearchResponse,
 ): number | undefined {
   const grammage = parseGrammage(product);
   if (grammage == null || ingredient.quantity == null) {
