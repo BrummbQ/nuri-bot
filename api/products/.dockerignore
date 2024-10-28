@@ -14,3 +14,4 @@ venv/
 Dockerfile
 README.md
 *.log
+tests
