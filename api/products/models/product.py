@@ -1,12 +1,14 @@
 import datetime
 from typing import Any, Optional
+from bson import ObjectId
+from fastapi import HTTPException
 from pymongo import UpdateOne
 from enum import Enum
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 import time
 
 from db.mongo import mongo_db
-from schemas import ProductSearchParam
+from schemas import ProductSearchParam, PyObjectId
 
 
 class ProductDataProvider(str, Enum):
@@ -14,6 +16,7 @@ class ProductDataProvider(str, Enum):
 
 
 class ProductModel(BaseModel):
+    id: Optional[PyObjectId] = Field(alias="_id", default=None)
     external_id: str
     name: str
     brand_name: Optional[str]
@@ -26,6 +29,7 @@ class ProductModel(BaseModel):
     provider_data: Any
     fetched_at: datetime.datetime
     market_id: str
+    listing_id: Optional[str]
 
 
 async def delete_products(market_id: str):
@@ -82,6 +86,13 @@ async def search_products(search: ProductSearchParam) -> list[ProductModel]:
     cursor = mongo_db.products_collection().aggregate(query)
     results = await cursor.to_list(length=10)
     return [ProductModel.model_validate(p) for p in results]
+
+
+async def find_product(id: PyObjectId) -> ProductModel:
+    product = await mongo_db.products_collection().find_one({"_id": ObjectId(id)})
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    return ProductModel.model_validate(product)
 
 
 async def search_products_text(search: ProductSearchParam) -> list[ProductModel]:

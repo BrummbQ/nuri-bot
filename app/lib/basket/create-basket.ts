@@ -1,5 +1,4 @@
 import {
-  findProductByExternalId,
   findRecipeByExternalId,
   insertBasket,
   insertIngredient,
@@ -38,11 +37,7 @@ async function getOrCreateRecipeIds(
 async function linkProducts(products: SelectedProduct[], ingredientId: number) {
   await Promise.all(
     products.map(async (p) => {
-      // link ingredient to product
-      const productId = await findProductByExternalId(p.product);
-      if (productId != null) {
-        await linkIngredientToProduct(ingredientId, productId, p.quantity);
-      }
+      await linkIngredientToProduct(ingredientId, p.product.id, p.quantity);
     }),
   );
 }

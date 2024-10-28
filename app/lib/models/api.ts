@@ -1,18 +1,14 @@
-import type { ScoredPineconeRecord } from "@pinecone-database/pinecone";
-import type { Ingredient } from "./ingredient.model";
-import type { ReweProduct } from "./rewe.model";
-import type { Metadata } from "../search";
+import type { Ingredient, ProductSearchResponse } from "./ingredient.model";
 import type { Basket, BasketOverview } from "./basket-store.model";
-import type { DietType } from "./suggestion";
 import type { RecipeSchema } from "./recipe-schema.model";
 
 export interface SelectedProduct {
   quantity: number;
-  product: ReweProduct;
+  product: ProductSearchResponse;
 }
 
 export interface IngredientWithProducts extends Ingredient {
-  products: ReweProduct[];
+  products: ProductSearchResponse[];
   selectedProducts?: SelectedProduct[];
 }
 

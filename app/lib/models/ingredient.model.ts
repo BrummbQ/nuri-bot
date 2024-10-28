@@ -17,3 +17,15 @@ export interface RecipeIngredient {
   ingredient: string;
   recipe: RecipeSchema;
 }
+
+export interface ProductSearchResponse {
+  id: string;
+  external_id: string;
+  name: string;
+  category_path: string;
+  price?: number;
+  currency?: "EUR";
+  grammage?: string;
+  main_image_href?: string;
+  listing_id?: string;
+}

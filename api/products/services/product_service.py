@@ -1,17 +1,17 @@
 import asyncio
 from datetime import datetime, timedelta
 import time
-from typing import Dict, Optional
+from typing import Dict
 
 from services import rewe_service
 from models import product
-from schemas import ProductSearchParam, ProductSearchResponse
+from schemas import ProductSearchParam, ProductSearchResponse, PyObjectId
 
 
 async def load_products(market_id: str):
-    # if _should_skip_load(market_id):
-    #     print(f"Skipping load for market {market_id} - recently fetched")
-    #     return
+    if await _should_skip_load(market_id):
+        print(f"Skipping load for market {market_id} - recently fetched")
+        return
 
     # Initialize first page to get total pages
     first_page = await _fetch_page(market_id, 1)
@@ -100,6 +100,7 @@ async def _import_products(products: list[product.ProductModel], page: int) -> N
 def format_product_from_search(product: product.ProductModel) -> ProductSearchResponse:
     p = product.model_dump(
         include=[
+            "id",
             "external_id",
             "name",
             "category_path",
@@ -107,13 +108,20 @@ def format_product_from_search(product: product.ProductModel) -> ProductSearchRe
             "currency",
             "grammage",
             "main_image_href",
+            "listing_id",
         ]
     )
     # add brand again to name
-    p["name"] = f"{product.brand_name} {product.name}"
+    if product.brand_name and len(product.brand_name):
+        p["name"] = f"{product.brand_name} {product.name}"
     return p
 
 
 async def search_products(search: ProductSearchParam) -> list[ProductSearchResponse]:
     products = await product.search_products(search)
     return [format_product_from_search(p) for p in products]
+
+
+async def product_details(id: PyObjectId) -> ProductSearchResponse:
+    p = await product.find_product(id)
+    return format_product_from_search(p)

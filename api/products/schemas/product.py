@@ -9,12 +9,10 @@ class LoadProductsRequestBody(BaseModel):
 class ProductSearchParam(BaseModel):
     marketId: str
     productName: str
-    quantity: Optional[int]
-    unit: Optional[str]
-    note: Optional[str]
 
 
 class ProductSearchResponse(BaseModel):
+    id: str
     external_id: str
     name: str
     category_path: str
@@ -22,3 +20,4 @@ class ProductSearchResponse(BaseModel):
     currency: Optional[str]
     grammage: Optional[str]
     main_image_href: Optional[str]
+    listing_id: Optional[str]

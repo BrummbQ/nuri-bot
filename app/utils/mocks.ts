@@ -1,23 +1,13 @@
-import type { ReweProduct } from "~/lib/models";
+import type { ProductSearchResponse } from "~/lib/models";
 
-export function mockProduct(grammage?: string): ReweProduct {
+export function mockProduct(grammage?: string): ProductSearchResponse {
   return {
-    _embedded: {
-      articles: [
-        {
-          _embedded: {
-            listing: {
-              pricing: {
-                currentRetailPrice: 179,
-                currency: "EUR",
-                basePrice: 716,
-                baseUnit: { KG: 1 },
-                grammage,
-              },
-            },
-          },
-        },
-      ],
-    },
-  } as ReweProduct;
+    id: "1",
+    external_id: "1",
+    name: "",
+    category_path: "",
+    price: 179,
+    currency: "EUR",
+    grammage,
+  };
 }

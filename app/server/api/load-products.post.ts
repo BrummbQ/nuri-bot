@@ -1,10 +1,21 @@
-import { protectApiRoute } from "~/lib/auth";
-import { lastFetchedProductByMarket } from "~/lib/db";
-import { loadProducts } from "~/lib/search";
-import { daysAgo } from "~/lib/utils/date";
+import { protectApiRoute, sessionToken } from "~/lib/auth";
 
 interface LoadProductsBody {
   marketId: string;
+}
+
+export async function loadProducts(marketId: string, token: string) {
+  const result = await $fetch<void>(
+    `${process.env.PRODUCTS_API}/api/v1/products/load`,
+    {
+      method: "POST",
+      headers: { authorization: `Bearer ${token}` },
+      body: {
+        marketId,
+      },
+    },
+  );
+  return result;
 }
 
 /**
@@ -15,20 +26,9 @@ export default defineEventHandler(async (event): Promise<void> => {
   const body = await readBody<LoadProductsBody>(event);
 
   try {
-    const lastFetched = await lastFetchedProductByMarket(body.marketId);
-    let fetchProducts = true;
-    // skip fetch if last import less then 7 days ago
-    if (lastFetched != null) {
-      const oneWeekAgo = daysAgo(7);
-      fetchProducts = lastFetched < oneWeekAgo;
-    }
-    if (fetchProducts) {
-      console.time("Load products");
-      await loadProducts(body.marketId);
-      console.timeEnd("Load products");
-    }
+    await loadProducts(body.marketId, sessionToken(event));
   } catch (e) {
-    console.error("DB error:", e);
+    console.error("Product Api error:", e);
     throw createError({
       statusCode: 500,
       statusMessage: "Could not load products",

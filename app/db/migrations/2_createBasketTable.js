@@ -49,10 +49,9 @@ CREATE TABLE IF NOT EXISTS Ingredient_Recipe (
   await sql`
 CREATE TABLE IF NOT EXISTS Ingredient_Product (
     ingredient_id SERIAL NOT NULL,
-    product_id SERIAL NOT NULL,
+    product_id VARCHAR(255) NOT NULL,
     quantity INT NOT NULL,
     PRIMARY KEY (ingredient_id, product_id),
-    FOREIGN KEY (product_id) REFERENCES Product(id),
     FOREIGN KEY (ingredient_id) REFERENCES Ingredient(id)
 );
 `;
