@@ -53,4 +53,6 @@ mongo_db = MongoDB()
 async def close_mongo_connection():
     if mongo_db.client:
         mongo_db.client.close()
+        mongo_db.products_db = None
+        mongo_db.client = None
         print("Closed MongoDB connection")
