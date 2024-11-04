@@ -15,3 +15,4 @@ Dockerfile
 README.md
 *.log
 tests
+pytest.ini

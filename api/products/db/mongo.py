@@ -5,13 +5,12 @@ from core import Settings, get_settings
 class MongoDB:
     client: AsyncIOMotorClient = None
     products_db: AsyncIOMotorDatabase = None
-    products_db_name = "Products"
 
     def connect_to_mongo(self, settings: Settings):
         if self.client:
             self.client.close()
         self.client = AsyncIOMotorClient(settings.MONGODB_URI)
-        self.products_db = self.client[self.products_db_name]
+        self.products_db = self.client[settings.PRODUCTS_DB]
         print("Connected to MongoDB")
 
     async def setup_schema(self):

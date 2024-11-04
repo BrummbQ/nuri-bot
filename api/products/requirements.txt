@@ -5,3 +5,4 @@ pydantic-settings==2.5.2
 PyJWT==2.9.0
 pyjwt[crypto]
 pytest==8.3.3
+split-words==0.1.3
