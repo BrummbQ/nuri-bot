@@ -68,7 +68,17 @@ async def search_products(search: ProductSearchParam) -> list[ProductModel]:
                     {
                         "text": {
                             "query": search_term,
-                            "path": ["name", "grammage"],
+                            "path": "name",
+                        }
+                    },
+                    {
+                        "wildcard": {
+                            "path": {
+                                "value": "name",
+                                "multi": "keywordAnalyzer",
+                            },
+                            "query": f"*{search.productName}*",
+                            "allowAnalyzedField": True,
                         }
                     },
                     {
@@ -95,11 +105,11 @@ async def search_products(search: ProductSearchParam) -> list[ProductModel]:
 
     query = [
         search_query,
-        {"$limit": 10},
         {"$match": {"market_id": search.marketId}},
         {
             "$addFields": {
                 "name_length": {"$toDouble": {"$strLenCP": "$name"}},
+                "category_length": {"$toDouble": {"$strLenCP": "$category_path"}},
             },
         },
         {
@@ -109,11 +119,22 @@ async def search_products(search: ProductSearchParam) -> list[ProductModel]:
                         {"$meta": "searchScore"},
                         {"$multiply": ["$name_length", 0.1]},
                     ]
-                }
+                },
+            },
+        },
+        {
+            "$addFields": {
+                "adjusted_score_path": {
+                    "$subtract": [
+                        "$adjusted_score",
+                        {"$multiply": ["$category_length", 0.1]},
+                    ]
+                },
             },
         },
         {"$match": {"adjusted_score": {"$gt": 0.3}}},
-        {"$sort": {"adjusted_score": -1}},
+        {"$sort": {"adjusted_score_path": -1}},
+        {"$limit": 10},
         {
             "$project": {
                 "_id": 1,

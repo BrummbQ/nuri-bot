@@ -96,22 +96,22 @@ async def test_search_success_mais(client_authenticated: AsyncClient):
             "grammage": "3x420g (1 kg = 4,74 €)",
         },
         {
-            "name": "Bonduelle Goldmais 140g",
+            "name": "REWE Bio Zuckermais vakuumiert 400g",
+            "category_path": "Obst & Gemüse/Frisches Gemüse/Mais/",
+            "price": 249,
+            "grammage": "400g (1 kg = 6,23 €)",
+        },
+        {
+            "name": "Bonduelle Goldmais 570g",
             "category_path": "Fertiggerichte & Konserven/Gemüsekonserven/Mais-Konserven/",
-            "price": 139,
-            "grammage": "140g (1 kg = 9,93 €)",
+            "price": 239,
+            "grammage": "570g (1 kg = 4,19 €)",
         },
         {
             "name": "Bonduelle Goldmais 285g",
             "category_path": "Fertiggerichte & Konserven/Gemüsekonserven/Mais-Konserven/",
             "price": 179,
             "grammage": "285g (1 kg = 6,28 €)",
-        },
-        {
-            "name": "Bonduelle Bio Goldmais 285g",
-            "category_path": "Fertiggerichte & Konserven/Gemüsekonserven/Mais-Konserven/",
-            "price": 229,
-            "grammage": "285g (1 kg = 8,04 €)",
         },
     ]
 
@@ -134,16 +134,60 @@ async def test_search_success_limette(client_authenticated: AsyncClient):
             "grammage": "4 Stück",
         },
         {
-            "name": "Leverno Limetten-Fix 100ml",
-            "category_path": "Kochen & Backen/Backzutaten/Klassische Backzutaten/Backaromen/",
-            "price": 99,
-            "grammage": "100ml (1 l = 9,90 €)",
-        },
-        {
             "name": "Bio Limette 1 Stück",
             "category_path": "Obst & Gemüse/Frisches Obst/Zitrusfrüchte/",
             "price": 59,
             "grammage": "1 Stück",
+        },
+        {
+            "name": "REWE Beste Wahl Eistee Zitrone Limette 0,5l",
+            "category_path": "Getränke & Genussmittel/Soft Drinks/Eistee/",
+            "price": 55,
+            "grammage": "0,50l (1 l = 1,10 €)",
+        },
+        {
+            "name": "REWE Beste Wahl Eistee Zitrone-Limette 6x0,5l",
+            "category_path": "Getränke & Genussmittel/Soft Drinks/Eistee/",
+            "price": 330,
+            "grammage": "6x0,50l (1 l = 1,10 €)",
+        },
+    ]
+
+    actual_products = format_products(response)
+    assert actual_products == expected_products
+
+
+@pytest.mark.anyio
+async def test_search_success_vollmilch(client_authenticated: AsyncClient):
+    response = await client_authenticated.get(
+        "/api/v1/products/search",
+        params={"marketId": "4040426", "productName": "vollmilch"},
+    )
+    assert response.status_code == 200
+    expected_products = [
+        {
+            "name": "REWE Bio H-Vollmilch 3,8% 1l",
+            "category_path": "Käse, Eier & Molkerei/Milch/H-Milch/",
+            "price": 115,
+            "grammage": "1l",
+        },
+        {
+            "name": "Sachsenmilch H-Vollmilch 3,5% 1l",
+            "category_path": "Käse, Eier & Molkerei/Milch/H-Milch/",
+            "price": 159,
+            "grammage": "1l",
+        },
+        {
+            "name": "MinusL H-Vollmilch 3,5% 1l",
+            "category_path": "Käse, Eier & Molkerei/Milch/H-Milch/",
+            "price": 189,
+            "grammage": "1l",
+        },
+        {
+            "name": "ja! H-Milch 3,5% 1l",
+            "category_path": "Käse, Eier & Molkerei/Milch/H-Milch/",
+            "price": 105,
+            "grammage": "1l",
         },
     ]
 

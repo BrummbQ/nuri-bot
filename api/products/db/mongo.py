@@ -25,11 +25,35 @@ class MongoDB:
                 "mappings": {
                     "dynamic": False,
                     "fields": {
-                        "category_path": {"type": "string"},
+                        "category_path": {
+                            "type": "string",
+                            "multi": {
+                                "keywordAnalyzer": {
+                                    "type": "string",
+                                    "analyzer": "keyword_lower",
+                                }
+                            },
+                        },
                         "grammage": {"type": "string"},
-                        "name": {"type": "string"},
+                        "name": {
+                            "type": "string",
+                            "multi": {
+                                "keywordAnalyzer": {
+                                    "type": "string",
+                                    "analyzer": "keyword_lower",
+                                }
+                            },
+                        },
                     },
                 },
+                "analyzers": [
+                    {
+                        "name": "keyword_lower",
+                        "charFilters": [],
+                        "tokenizer": {"type": "keyword"},
+                        "tokenFilters": [{"type": "lowercase"}],
+                    }
+                ],
             },
             "name": "ProductSearch",
         }
