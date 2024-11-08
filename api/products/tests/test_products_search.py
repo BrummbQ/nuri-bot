@@ -96,22 +96,22 @@ async def test_search_success_mais(client_authenticated: AsyncClient):
             "grammage": "3x420g (1 kg = 4,74 €)",
         },
         {
+            "name": "Bonduelle Goldmais 140g",
+            "category_path": "Fertiggerichte & Konserven/Gemüsekonserven/Mais-Konserven/",
+            "price": 139,
+            "grammage": "140g (1 kg = 9,93 €)",
+        },
+        {
             "name": "Bonduelle Goldmais 285g",
             "category_path": "Fertiggerichte & Konserven/Gemüsekonserven/Mais-Konserven/",
             "price": 179,
             "grammage": "285g (1 kg = 6,28 €)",
         },
         {
-            "name": "Bonduelle Goldmais 570g",
+            "name": "Bonduelle Bio Goldmais 285g",
             "category_path": "Fertiggerichte & Konserven/Gemüsekonserven/Mais-Konserven/",
-            "price": 239,
-            "grammage": "570g (1 kg = 4,19 €)",
-        },
-        {
-            "name": "REWE Beste Wahl Maiskölbchen 190g",
-            "category_path": "Fertiggerichte & Konserven/Gemüsekonserven/Mais-Konserven/",
-            "price": 129,
-            "grammage": "190g (1 kg = 6,79 €)",
+            "price": 229,
+            "grammage": "285g (1 kg = 8,04 €)",
         },
     ]
 
