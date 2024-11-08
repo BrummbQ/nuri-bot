@@ -25,8 +25,14 @@ export default defineEventHandler(async (event) => {
   }
 
   // no menu, create new one and populate it
-  const menuId = await insertMenu();
   const recipes = await collectRecipes();
+  if (!recipes.length) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: "Failed to collect recipes",
+    });
+  }
+  const menuId = await insertMenu();
   // insert found recipes and link to menu
   await Promise.all(
     recipes.map(async ([r, s]) => {

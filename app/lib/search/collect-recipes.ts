@@ -1,49 +1,35 @@
 import type { RecipeSchema } from "../models";
-import { generateSearchTerm } from "./generate-search-term";
+import { generateMenuSearchTerms } from "./generate-search-term";
 import { searchRecipes } from "./recipes";
 
 type RecipeSearchTerm = [RecipeSchema, string];
 
+async function findRecipe(
+  searchTerm: string,
+): Promise<RecipeSchema | undefined> {
+  const searchResults = await searchRecipes(searchTerm);
+  const randomResult =
+    searchResults[Math.floor(Math.random() * searchResults.length)];
+  if (randomResult.metadata?.recipeSchema) {
+    return JSON.parse(randomResult.metadata?.recipeSchema);
+  }
+}
+
 /**
- * Search recipes with generated queries from predefined seeds
+ * Search recipes with generated queries
  */
 export async function collectRecipes(): Promise<RecipeSearchTerm[]> {
-  const recipeRequirements = [
-    "Vegetarisch",
-    "Vegetarisch",
-    "Fleisch",
-    "Fisch",
-    "Burger",
-    "Gesund",
-    "Einfach",
-    "Schnell",
-    "Aufwendig",
-    "Exotisch",
-    "Burger",
-    "Asiatisch",
-    "Mexikanisch",
-    "Italienisch",
-    "Salat",
-    "Hausmannskost",
-    "Pizza",
-    "Kalorienarm",
-    "Saisonal",
-    "Preiswert",
-  ];
+  const searchTerms = await generateMenuSearchTerms();
   return (
     await Promise.all(
-      recipeRequirements.map(async (r) => {
-        const searchTerm = await generateSearchTerm(r);
-        const searchResults = await searchRecipes(searchTerm);
-        const randomResult =
-          searchResults[Math.floor(Math.random() * searchResults.length)];
-        if (randomResult.metadata?.recipeSchema) {
-          return [
-            JSON.parse(randomResult.metadata?.recipeSchema),
-            searchTerm,
-          ] as RecipeSearchTerm;
+      searchTerms.map(async (searchTerm) => {
+        const recipe = await findRecipe(searchTerm);
+        if (recipe != null) {
+          return [recipe, searchTerm];
         }
       }),
     )
-  ).filter((r) => r != null && r[0] != null) as RecipeSearchTerm[];
+  )
+    .filter((r) => r != null)
+    .slice(0, 20) as RecipeSearchTerm[];
 }
