@@ -44,6 +44,9 @@ class MongoDB:
                                 }
                             },
                         },
+                        "score_boost": {
+                            "type": "number",
+                        },
                     },
                 },
                 "analyzers": [

@@ -8,20 +8,23 @@ import type { Ingredient, RecipeIngredient } from "../models";
 const openai = new OpenAI();
 
 const ingredientsBasePrompt = (ingredients: RecipeIngredient[]) => `
+
 Fasse folgende Zutatenliste in ein CSV zusammen. Gib nur ein CSV zurück ohne extra Text! Keine Zutat darf doppelt auftreten, fasse ähnliche zusammen und addiere die Mengen.
 
 1. Feld: Produktname (Plural bei Obst/Stück, ohne Markenbezeichnung)
 2. Feld: Beschreibt die Anzahl oder Menge
 3. Feld: Mengeneinheit (EL, g, ml, kg, Stück)
-4. Feld: Zusätzliche beschreibende Infos über das Produkt
+4. Feld: Kategorie des Produktes
 
 Beispiel Antwort CSV, jeder Eintrag hat 4 Felder, also maximal 3 Kommas. Ohne Kopfzeile, nur Werte!
-Olivenöl,1,EL,
-Salz,,,
-Birnen,2,,
-Paprika,1,,rot
-Orangen,1,Stück,
-Eier,2,Stück,
+Olivenöl,1,EL,Öle
+Salz,,,Salz
+Birnen,2,,Birnen
+Paprika,1,,Paprika
+Orangen,1,Stück,Zitrusfrüchte
+Eier,2,Stück,Eier
+Vollmilch,1,Liter,Milch
+Mais,400,g,Mais
 
 Zutaten:
 ${ingredients.map((i) => i.ingredient).join("\n")}
@@ -42,7 +45,7 @@ function parseIngredientsCSV(csv: string, delimiter = ","): Ingredient[] {
       productName: values[0],
       quantity: +values[1],
       unit: values[2],
-      note: values[3],
+      category: values[3],
       recipes: [],
     });
   });

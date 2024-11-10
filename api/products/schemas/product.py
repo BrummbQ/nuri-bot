@@ -9,6 +9,7 @@ class LoadProductsRequestBody(BaseModel):
 class ProductSearchParam(BaseModel):
     marketId: str
     productName: str
+    productCategory: str | None = None
 
 
 class ProductSearchResponse(BaseModel):

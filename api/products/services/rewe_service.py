@@ -76,6 +76,15 @@ def rewe_product_image(product: ReweProduct) -> str | None:
         return images[0]["_links"]["self"]["href"]
 
 
+def rewe_product_score_boosting(product: ReweProduct) -> int:
+    if "boostings" in product and len(product["boostings"]):
+        boost = int(product["boostings"][0]["boost"])
+        if boost > 0:
+            return boost
+
+    return 1
+
+
 def postprocess_rewe_products(
     market_id: str,
     response: ReweProductsResponse,
@@ -99,6 +108,7 @@ def postprocess_rewe_products(
             provider_data=p,
             fetched_at=now,
             market_id=market_id,
+            score_boost=rewe_product_score_boosting(p),
         )
         for p in products_dump
     ]

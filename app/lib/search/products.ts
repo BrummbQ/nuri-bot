@@ -10,7 +10,11 @@ export async function searchSimilarProducts(
     {
       method: "GET",
       headers: { authorization: `Bearer ${token}` },
-      query: { marketId, productName: ingredient.productName },
+      query: {
+        marketId,
+        productName: ingredient.productName,
+        productCategory: ingredient.category,
+      },
     },
   );
   return result;

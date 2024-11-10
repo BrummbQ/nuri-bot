@@ -6,6 +6,7 @@ export interface Ingredient {
   note?: string;
   productName: string;
   recipes: RecipeSchema[];
+  category?: string;
 }
 
 export interface ProductGrammage {

@@ -7,7 +7,6 @@ from enum import Enum
 from pydantic import BaseModel, Field
 import time
 
-from .helper import split_search_term
 from db.mongo import mongo_db
 from schemas import ProductSearchParam, PyObjectId
 
@@ -31,6 +30,7 @@ class ProductModel(BaseModel):
     fetched_at: datetime.datetime
     market_id: str
     listing_id: Optional[str]
+    score_boost: Optional[int] = 1
 
 
 async def delete_products(market_id: str):
@@ -58,7 +58,7 @@ async def import_products(
 
 
 async def search_products(search: ProductSearchParam) -> list[ProductModel]:
-    search_term = split_search_term(search.productName)
+    search_term = search.productName
 
     search_query = {
         "$search": {
@@ -69,71 +69,24 @@ async def search_products(search: ProductSearchParam) -> list[ProductModel]:
                         "text": {
                             "query": search_term,
                             "path": "name",
-                        }
-                    },
-                    {
-                        "wildcard": {
-                            "path": {
-                                "value": "name",
-                                "multi": "keywordAnalyzer",
-                            },
-                            "query": f"*{search.productName}*",
-                            "allowAnalyzedField": True,
+                            "score": {"boost": {"path": "score_boost", "undefined": 1}},
                         }
                     },
                     {
                         "text": {
-                            "query": search_term,
+                            "query": search.productCategory or search.productName,
                             "path": "category_path",
-                            "score": {"boost": {"value": 2}},
+                            "score": {"boost": {"path": "score_boost", "undefined": 1}},
                         }
                     },
                 ],
             },
         }
     }
-    # if product name was splitted, search for the nonsplitted as well
-    if search_term is not search.productName:
-        search_query["$search"]["compound"]["should"].append(
-            {
-                "text": {
-                    "query": search.productName,
-                    "path": ["name", "grammage"],
-                }
-            },
-        )
 
     query = [
         search_query,
         {"$match": {"market_id": search.marketId}},
-        {
-            "$addFields": {
-                "name_length": {"$toDouble": {"$strLenCP": "$name"}},
-                "category_length": {"$toDouble": {"$strLenCP": "$category_path"}},
-            },
-        },
-        {
-            "$addFields": {
-                "adjusted_score": {
-                    "$subtract": [
-                        {"$meta": "searchScore"},
-                        {"$multiply": ["$name_length", 0.1]},
-                    ]
-                },
-            },
-        },
-        {
-            "$addFields": {
-                "adjusted_score_path": {
-                    "$subtract": [
-                        "$adjusted_score",
-                        {"$multiply": ["$category_length", 0.1]},
-                    ]
-                },
-            },
-        },
-        {"$match": {"adjusted_score": {"$gt": 0.3}}},
-        {"$sort": {"adjusted_score_path": -1}},
         {"$limit": 10},
         {
             "$project": {
