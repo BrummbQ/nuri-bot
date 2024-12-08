@@ -16,7 +16,8 @@ export const useCurrentBasket = () =>
   useState<string>("currentBasket", () => newBasketId);
 const useSearchLoading = () => useState("searchLoading", () => false);
 const useSearchError = () => useState("searchError", () => "");
-const useMarketId = () => useState<string | undefined>("marketId");
+const useMarketId = () =>
+  useState<string | undefined>("marketId", () => readMarketId());
 
 export const useBasketStore = () => {
   const baskets = useBaskets();
@@ -30,10 +31,6 @@ export const useBasketStore = () => {
   );
   const { getItem, setItem } = useSessionStorage<BasketState>();
   const { postSearchIngredients, loadProducts } = useApi();
-
-  watchEffect(() => {
-    marketId.value = readMarketId(reweCookieData.value);
-  });
 
   onMounted(() => {
     baskets.value = getItem(basketsSessionKey) ?? {};
@@ -140,14 +137,18 @@ export const useBasketStore = () => {
   const marketIdValue = computed(() => marketId.value);
   const reweCookieDataValue = computed(() => reweCookieData.value);
 
-  function updateReweCookieData(data?: ReweBasketCookieData[]) {
-    reweCookieData.value = data;
+  function updateReweCookieData() {
+    reweCookieData.value = readExtensionBasketData();
+    marketId.value = readMarketId();
 
-    const marketId = readMarketId(reweCookieData.value);
-    if (marketId != null) {
+    if (marketId.value != null) {
       const basketValue = baskets.value[currentBasket.value];
       if (basketValue != null) {
-        searchIngedients(basketValue.recipes, marketId, currentBasket.value);
+        searchIngedients(
+          basketValue.recipes,
+          marketId.value,
+          currentBasket.value,
+        );
       }
     }
   }

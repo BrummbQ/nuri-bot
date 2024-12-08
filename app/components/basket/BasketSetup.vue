@@ -34,7 +34,7 @@ window.addEventListener(
     }
 
     if (event.data.type && event.data.type === "REWE_CONFIGURED") {
-      updateReweCookieData(readExtensionBasketData());
+      updateReweCookieData();
     }
   },
   false,

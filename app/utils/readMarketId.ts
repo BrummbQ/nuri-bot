@@ -1,20 +1,9 @@
-import type { ReweBasketCookieData } from "~/lib/models";
-
 /**
- * Extract market id from rewe cookies
+ * Extract market id from local storage
  */
-export default function (
-  basketData?: ReweBasketCookieData[],
-): string | undefined {
-  if (basketData) {
-    const marketsCookie = basketData.find((v) => v.name === "marketsCookie");
-    if (marketsCookie) {
-      const marketsCookieValue = JSON.parse(
-        decodeURIComponent(marketsCookie.value),
-      );
-      return marketsCookieValue?.online?.wwIdent;
-    }
+export default function (): string | undefined {
+  if (!import.meta.client) {
+    return undefined;
   }
-
-  return undefined;
+  return localStorage.getItem("rewe-market") ?? undefined;
 }
