@@ -4,9 +4,7 @@
   <UiNotification v-if="searchError" severity="error">
     Fehler beim Laden der Produkte!
   </UiNotification>
-  <div v-if="searchLoading" class="text-center">
-    <Icon name="line-md:loading-loop" width="50" height="50" />
-  </div>
+  <UiLoadingIndicator v-if="searchLoading" class="mt-32" />
   <div v-if="!searchLoading && !searchError" class="mb-4">
     <ul class="mt-4">
       <BasketIngredientItem
