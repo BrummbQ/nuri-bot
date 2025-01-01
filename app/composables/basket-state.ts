@@ -16,8 +16,13 @@ export const useCurrentBasket = () =>
   useState<string>("currentBasket", () => newBasketId);
 const useSearchLoading = () => useState("searchLoading", () => false);
 const useSearchError = () => useState("searchError", () => "");
+// try to read rewe cookie and market id from local storage
 const useMarketId = () =>
   useState<string | undefined>("marketId", () => readMarketId());
+const useReweCookieData = () =>
+  useState<ReweBasketCookieData[] | undefined>("reweCookieData", () =>
+    readExtensionBasketData(),
+  );
 
 export const useBasketStore = () => {
   const baskets = useBaskets();
@@ -25,10 +30,7 @@ export const useBasketStore = () => {
   const searchLoading = useSearchLoading();
   const searchError = useSearchError();
   const marketId = useMarketId();
-  // try to read basket data from local storage
-  const reweCookieData = ref<ReweBasketCookieData[] | undefined>(
-    readExtensionBasketData(),
-  );
+  const reweCookieData = useReweCookieData();
   const { getItem, setItem } = useSessionStorage<BasketState>();
   const { postSearchIngredients, loadProducts } = useApi();
 
@@ -153,6 +155,13 @@ export const useBasketStore = () => {
     }
   }
 
+  function resetReweCookieData() {
+    clearExtensionBasketData();
+    clearMarketId();
+    reweCookieData.value = undefined;
+    marketId.value = undefined;
+  }
+
   function completeCurrentBasket() {
     if (currentBasket.value) {
       delete baskets.value[currentBasket.value];
@@ -176,5 +185,6 @@ export const useBasketStore = () => {
     searchError,
     completeCurrentBasket,
     searchIngedients,
+    resetReweCookieData,
   };
 };

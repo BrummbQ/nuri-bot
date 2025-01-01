@@ -57,7 +57,7 @@ const route = useRoute("basket-id-ordered");
 
 const { data, error } = await useFetchBasket(route.params.id);
 const { postOrderIngredients } = useApi();
-const { reweCookieDataValue } = useBasketStore();
+const { reweCookieDataValue, resetReweCookieData } = useBasketStore();
 const orderAgainLoading = ref(false);
 
 function recipeLink(recipe: RecipeSchema) {
@@ -71,6 +71,7 @@ async function orderAgain() {
       reweCookieDataValue.value,
     );
   } catch (e) {
+    resetReweCookieData();
     throw createError({ statusMessage: "Could not order", fatal: true });
   } finally {
     orderAgainLoading.value = false;

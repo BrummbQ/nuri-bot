@@ -5,6 +5,7 @@ export default function (basketId: string) {
     ingredientsWithProducts,
     completeCurrentBasket,
     recipes,
+    resetReweCookieData,
   } = useBasketStore();
 
   const orderLoading = useState("orderLoading", () => false);
@@ -26,6 +27,25 @@ export default function (basketId: string) {
 
     orderLoading.value = true;
 
+    // first order ingredients in rewe basket
+    try {
+      await postOrderIngredients(
+        ingredientsWithProducts.value,
+        reweCookieDataValue.value,
+      );
+    } catch (e) {
+      // if we have an error, reset the rewe cookie data
+      console.error(e);
+      resetReweCookieData();
+      orderLoading.value = false;
+      throw createError({
+        statusCode: 400,
+        statusMessage: "Error ordering ingredients",
+        fatal: true,
+      });
+    }
+
+    // then create our basket
     try {
       const createBasketResponse = await createBasket({
         basketId,
@@ -33,18 +53,13 @@ export default function (basketId: string) {
         recipes: recipes.value,
       });
 
-      await postOrderIngredients(
-        ingredientsWithProducts.value,
-        reweCookieDataValue.value,
-      );
-
       await navigateTo(`/basket/${createBasketResponse.basketId}/ordered`);
       completeCurrentBasket();
     } catch (e) {
       console.error(e);
       throw createError({
         statusCode: 400,
-        statusMessage: "Error ordering basket",
+        statusMessage: "Error creating basket",
         fatal: true,
       });
     } finally {
