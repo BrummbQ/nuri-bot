@@ -34,7 +34,7 @@
 <script setup lang="ts">
 definePageMeta({
   layout: "narrow",
-  middleware: ["auth-basket"],
+  middleware: ["auth"],
 });
 
 const route = useRoute("basket-id-recipe-wizard");

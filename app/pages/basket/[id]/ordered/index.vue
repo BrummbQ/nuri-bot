@@ -50,7 +50,7 @@
 import type { RecipeSchema } from "~/lib/models";
 
 definePageMeta({
-  middleware: ["auth-basket"],
+  middleware: ["auth"],
 });
 
 const route = useRoute("basket-id-ordered");
