@@ -77,7 +77,7 @@ export async function updateListingInBasket(
   listingId: string,
   quantity: number,
   cookie: string,
-) {
+): Promise<{ id: string }> {
   const headers = {
     accept: "application/vnd.com.rewe.digital.basket-v2+json",
     cookie,
@@ -93,6 +93,25 @@ export async function updateListingInBasket(
         includeTimeslot: false,
         context: "product-list-search",
       },
+    },
+  );
+}
+
+export async function deleteListingInBasket(
+  basketId: string,
+  listingId: string,
+  cookie: string,
+): Promise<{ id: string }> {
+  const headers = {
+    accept: "application/vnd.com.rewe.digital.basket-v2+json",
+    cookie,
+  };
+
+  return await $fetch(
+    `https://shop.rewe.de/api/baskets/${basketId}/listings/${listingId}`,
+    {
+      method: "DELETE",
+      headers,
     },
   );
 }

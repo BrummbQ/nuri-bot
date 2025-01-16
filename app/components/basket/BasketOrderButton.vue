@@ -1,8 +1,14 @@
 <template>
   <NuxtErrorBoundary>
-    <UiButton :loading="orderLoading" @click="orderBasket">
-      {{ props.label }}
-    </UiButton>
+    <ClientOnly>
+      <UiButton
+        :loading="orderLoading"
+        :disabled="!basketConfigured || searchLoading"
+        @click="orderBasket"
+      >
+        {{ props.label }}
+      </UiButton>
+    </ClientOnly>
 
     <template #error="{ error, clearError }">
       <UiNotification severity="error" :toast="true">
@@ -23,5 +29,6 @@ const props = withDefaults(defineProps<Props>(), {
   label: "Bestellen",
 });
 
-const { orderBasket, orderLoading } = useOrderBasket(props.basketId);
+const { orderBasket, orderLoading, basketConfigured, searchLoading } =
+  useOrderBasket(props.basketId);
 </script>

@@ -32,7 +32,8 @@ export const useBasketStore = () => {
   const marketId = useMarketId();
   const reweCookieData = useReweCookieData();
   const { getItem, setItem } = useSessionStorage<BasketState>();
-  const { postSearchIngredients, loadProducts } = useApi();
+  const { postSearchIngredients, loadProducts, validateIngredientsOrder } =
+    useApi();
 
   onMounted(() => {
     baskets.value = getItem(basketsSessionKey) ?? {};
@@ -62,11 +63,15 @@ export const useBasketStore = () => {
     try {
       await loadProducts(marketId);
 
+      await validateIngredientsOrder(marketId, reweCookieData.value);
+
       const result = await postSearchIngredients(recipes, marketId);
       updateIngredientsWithProducts(result.ingredients, basketId);
     } catch (e) {
       console.error(e);
       searchError.value = "Could not search ingredients";
+      updateIngredientsWithProducts([], basketId);
+      resetReweCookieData();
     } finally {
       searchLoading.value = false;
     }

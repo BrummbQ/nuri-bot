@@ -3,7 +3,7 @@
     class="py-5 !mb-0 bg-white sticky top-0"
     :headerText="selectedRecipes.length + ' Ausgewählte Rezepte'"
   >
-    <UiLink :to="basketUrl">Warenkorb</UiLink>
+    <UiLink :to="basketUrl">Weiter</UiLink>
   </UiHeaderRow>
   <div class="flex gap-6 mb-8 md:p-4 overflow-x-auto">
     <RecipeCard

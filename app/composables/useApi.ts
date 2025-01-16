@@ -73,6 +73,19 @@ export function useApi() {
     });
   }
 
+  async function validateIngredientsOrder(
+    marketId: string,
+    basketData?: ReweBasketCookieData[],
+  ): Promise<void> {
+    if (basketData == null) {
+      throw new Error("Incomplete data");
+    }
+    await $api("/api/validate-ingredients-order", {
+      method: "POST",
+      body: { marketId, reweCookies: extensionBasketDataToString(basketData) },
+    });
+  }
+
   function generateRecipe(
     body: SearchGenerateRecipeBody,
   ): Promise<SearchGenerateRecipeResponse | undefined> {
@@ -109,6 +122,7 @@ export function useApi() {
     postSearchIngredients,
     createBasket,
     postOrderIngredients,
+    validateIngredientsOrder,
     loadProducts,
     generateRecipe,
     likeRecipe,

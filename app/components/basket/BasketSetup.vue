@@ -1,12 +1,12 @@
 <template>
-  <div class="flex items-center gap-4">
+  <div class="flex items-center gap-4 mb-6" v-if="!basketConfigured">
     <UiLink
       iconName="fluent:link-16-regular"
       to="https://shop.rewe.de/"
       target="_blank"
       >Rewe Markt {{ basketConfigured ? "ändern" : "wählen" }}</UiLink
     >
-    <p v-if="!basketConfigured">
+    <p>
       Gewünschten Markt auswählen und mit der
       <a
         class="underline text-lime-700"

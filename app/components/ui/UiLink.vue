@@ -11,7 +11,7 @@ const props = withDefaults(
     iconName?: string;
     target?: string;
     to: string;
-    variant?: "primary" | "accent" | "custom";
+    variant?: "primary" | "accent" | "outline" | "custom";
     size?: "small" | "regular";
   }>(),
   { variant: "primary" },

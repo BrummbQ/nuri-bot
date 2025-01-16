@@ -8,7 +8,7 @@
   />
 
   <UiHeaderRow :headerText="'Menü ' + menuPeriod">
-    <UiLink :to="wizardUrl"
+    <UiLink :to="wizardUrl" variant="outline"
       ><Icon name="mdi:wizard-hat" class="text-2xl mr-2" /> Eigenes
       Rezept</UiLink
     >

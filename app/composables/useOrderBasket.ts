@@ -6,7 +6,9 @@ export default function (basketId: string) {
     completeCurrentBasket,
     recipes,
     resetReweCookieData,
+    searchLoading,
   } = useBasketStore();
+  const basketConfigured = computed(() => !!reweCookieDataValue.value);
 
   const orderLoading = useState("orderLoading", () => false);
 
@@ -67,5 +69,5 @@ export default function (basketId: string) {
     }
   }
 
-  return { orderBasket, orderLoading };
+  return { orderBasket, orderLoading, basketConfigured, searchLoading };
 }
