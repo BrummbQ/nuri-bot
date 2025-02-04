@@ -8,8 +8,8 @@ import type {
   Basket,
   BasketOverview,
   IngredientWithProducts,
+  ProductSearchResponse,
   RecipeSchema,
-  SelectedProduct,
 } from "../models";
 import { findProduct } from "../search";
 
@@ -28,6 +28,76 @@ export function recipesFromIngredients(
   return recipes;
 }
 
+export async function collectSelectedProducts(
+  ingredients: BasketIngredientRow[],
+  token: string,
+): Promise<Record<string, ProductSearchResponse>> {
+  // collect products without duplicates
+  const selectedProducts = new Set<string>();
+  ingredients.forEach((i) => {
+    if (i.product_id != null) {
+      selectedProducts.add(i.product_id);
+    }
+  });
+
+  // fetch products from api
+  const products: Record<string, ProductSearchResponse> = {};
+  await Promise.all(
+    Array.from(selectedProducts).map(async (product_id) => {
+      const product = await findProduct(product_id, token);
+      if (product != null) {
+        products[product_id] = product;
+      }
+    }),
+  );
+  return products;
+}
+
+export function collectIngredients(
+  ingredients: BasketIngredientRow[],
+  products: Record<string, ProductSearchResponse>,
+) {
+  const ingredientsRecord = ingredients.reduce(
+    (acc, ingredient) => {
+      const existingIngredient = acc[ingredient.ingredient_id];
+      const existingProduct = ingredient.product_id
+        ? products[ingredient.product_id]
+        : null;
+      const ingredientQuantity = ingredient.ingredient_json.quantity ?? 0;
+      const productQuantity = ingredient.product_quantity ?? 0;
+
+      if (existingIngredient != null && existingIngredient.quantity != null) {
+        existingIngredient.quantity += ingredientQuantity;
+        if (existingIngredient.selectedProducts?.length) {
+          existingIngredient.selectedProducts[0].quantity += productQuantity;
+        }
+      } else {
+        const ingredientWithProducts: IngredientWithProducts = {
+          quantity: ingredient.ingredient_json.quantity,
+          unit: ingredient.ingredient_json.unit,
+          productName: ingredient.ingredient_json.productName,
+          selectedProducts: [],
+          products: [],
+          recipes: [],
+        };
+        if (existingProduct != null) {
+          const selectedProduct = {
+            quantity: productQuantity,
+            product: existingProduct,
+          };
+          ingredientWithProducts.selectedProducts = [selectedProduct];
+        }
+
+        acc[ingredient.ingredient_id] = ingredientWithProducts;
+      }
+
+      return acc;
+    },
+    {} as Record<string, IngredientWithProducts>,
+  );
+  return Object.values(ingredientsRecord);
+}
+
 export async function getBasket(
   basketId: string,
   token: string,
@@ -38,40 +108,9 @@ export async function getBasket(
   }
   const ingredients = await getBasketIngredients(basketId);
   const recipes = recipesFromIngredients(ingredients);
-  const ingredientsWithProducts: IngredientWithProducts[] = [];
+  const products = await collectSelectedProducts(ingredients, token);
+  const ingredientsWithProducts = collectIngredients(ingredients, products);
 
-  await Promise.all(
-    ingredients.map(async (ingredient) => {
-      const product = ingredient.product_id
-        ? await findProduct(ingredient.product_id, token)
-        : undefined;
-      let selectedProduct: SelectedProduct | undefined;
-      if (product != null && ingredient.product_quantity != null) {
-        selectedProduct = {
-          quantity: ingredient.product_quantity,
-          product: product,
-        };
-      }
-
-      const ingredientItem = ingredientsWithProducts.find(
-        (iP) => iP.productName === ingredient.ingredient_json.productName,
-      );
-      if (ingredientItem == null) {
-        const selectedProducts =
-          selectedProduct == null ? [] : [selectedProduct];
-        ingredientsWithProducts.push({
-          ...ingredient.ingredient_json,
-          products: [],
-          selectedProducts,
-        });
-      } else if (selectedProduct != null) {
-        ingredientItem.selectedProducts = [
-          ...(ingredientItem.selectedProducts ?? []),
-          selectedProduct,
-        ];
-      }
-    }),
-  );
   return {
     basketId: basketId,
     userId: basket.user_id,

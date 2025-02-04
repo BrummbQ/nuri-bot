@@ -37,6 +37,10 @@ CREATE TABLE IF NOT EXISTS Ingredient (
 `;
 
   await sql`
+CREATE INDEX IF NOT EXISTS ingredient_basket_id_idx ON Ingredient (basket_id);
+  `;
+
+  await sql`
 CREATE TABLE IF NOT EXISTS Ingredient_Recipe (
     recipe_id SERIAL NOT NULL,
     ingredient_id SERIAL NOT NULL,
@@ -45,6 +49,10 @@ CREATE TABLE IF NOT EXISTS Ingredient_Recipe (
     FOREIGN KEY (ingredient_id) REFERENCES Ingredient(id)
 );
 `;
+
+  await sql`
+CREATE INDEX IF NOT EXISTS ingredient_recipe_ingredient_id_idx ON Ingredient_Recipe (ingredient_id);
+  `;
 
   await sql`
 CREATE TABLE IF NOT EXISTS Ingredient_Product (

@@ -24,19 +24,22 @@ const { reweCookieDataValue, updateReweCookieData } = useBasketStore();
 
 const basketConfigured = computed(() => reweCookieDataValue.value);
 
-// watch rewe configured event
-window.addEventListener(
-  "message",
-  (event) => {
-    // We only accept messages from ourselves
-    if (event.source !== window) {
-      return;
-    }
+const handleReweConfiguredMessage = (event: MessageEvent) => {
+  // We only accept messages from ourselves
+  if (event.source !== window) {
+    return;
+  }
 
-    if (event.data.type && event.data.type === "REWE_CONFIGURED") {
-      updateReweCookieData();
-    }
-  },
-  false,
-);
+  if (event.data.type === "REWE_CONFIGURED") {
+    updateReweCookieData();
+  }
+};
+
+onMounted(() => {
+  window.addEventListener("message", handleReweConfiguredMessage);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("message", handleReweConfiguredMessage);
+});
 </script>
