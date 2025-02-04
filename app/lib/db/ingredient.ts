@@ -57,9 +57,6 @@ export interface BasketIngredientRow {
   basket_id: string;
   ingredient_id: number;
   ingredient_json: Ingredient;
-  recipe_id?: number;
-  recipe_external_id?: string;
-  recipe_json?: RecipeSchema;
   product_id?: string;
   product_quantity?: number;
 }
@@ -72,23 +69,12 @@ export async function getBasketIngredients(
       b.id AS basket_id,
       i.id AS ingredient_id,
       i.ingredient AS ingredient_json,
-      r.id AS recipe_id,
-      r.external_id AS recipe_external_id,
-      r.recipe AS recipe_json,
       ip.product_id AS product_id,
       ip.quantity AS product_quantity
-    FROM 
-        Basket b
-    JOIN 
-        Ingredient i ON b.id = i.basket_id
-    LEFT JOIN 
-        Ingredient_Recipe ir ON i.id = ir.ingredient_id
-    LEFT JOIN 
-        Recipe r ON ir.recipe_id = r.id
-    LEFT JOIN 
-        Ingredient_Product ip ON i.id = ip.ingredient_id
-    WHERE 
-        b.id = ${basketId};
+    FROM Basket b
+    JOIN Ingredient i ON b.id = i.basket_id
+    LEFT JOIN Ingredient_Product ip ON i.id = ip.ingredient_id
+    WHERE b.id = ${basketId};
     `;
   return result.rows as BasketIngredientRow[];
 }

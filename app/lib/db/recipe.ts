@@ -1,6 +1,21 @@
 import { sql } from "@vercel/postgres";
 import type { RecipeSchema, RecipeSource } from "../models";
 
+export async function getRecipesByBasket(
+  basketId: string,
+): Promise<RecipeSchema[]> {
+  const result = await sql`
+    SELECT DISTINCT
+      r.recipe AS recipe_json
+    FROM Basket b
+    JOIN Ingredient i ON b.id = i.basket_id
+    JOIN Ingredient_Recipe ir ON i.id = ir.ingredient_id
+    JOIN Recipe r ON ir.recipe_id = r.id
+    WHERE b.id = ${basketId};
+    `;
+  return result.rows.map((row) => row.recipe_json);
+}
+
 export async function insertRecipe(
   r: RecipeSchema,
   source: RecipeSource,
