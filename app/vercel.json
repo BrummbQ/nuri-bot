@@ -1,8 +1,0 @@
-{
-  "crons": [
-    {
-      "path": "/api/cron/create-recipe-menu",
-      "schedule": "0 18 * * *"
-    }
-  ]
-}
