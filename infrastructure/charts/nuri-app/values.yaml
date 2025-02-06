@@ -1,4 +1,4 @@
-# Default values for products-api.
+# Default values for nuri-app.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
@@ -7,13 +7,13 @@ replicaCount: 1
 
 # This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
 image:
-  repository: ghcr.io/brummbq/products-api
+  repository: ghcr.io/brummbq/nuri-app
   # This sets the pull policy for images.
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
 
-containerPort: 8080
+containerPort: 3000
 
 # This is for the secretes for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: []
@@ -62,17 +62,22 @@ service:
 ingress:
   enabled: true
   annotations:
-    traefik.ingress.kubernetes.io/router.entrypoints: "web" # HTTP entrypoint (port 80)
-    #traefik.ingress.kubernetes.io/router.entrypoints: "websecure" # HTTPS (optional)
+    cert-manager.io/cluster-issuer: letsencrypt-production
+    traefik.ingress.kubernetes.io/router.middlewares: "nuri-prod-redirect-to-non-www@kubernetescrd"
   hosts:
-    - host: api.nuribot.de
+    - host: nuribot.de
       paths:
         - path: /
           pathType: Prefix
-  # tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
+    - host: www.nuribot.de
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: nuribot-tls
+      hosts:
+        - nuribot.de
+        - www.nuribot.de
 
 resources:
   # We usually recommend not to specify default resources and to leave this as a conscious
@@ -82,17 +87,17 @@ resources:
   limits:
     cpu: 1
     memory: 512Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
 
 # This is to setup the liveness and readiness probes more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
 livenessProbe:
   tcpSocket:
-    port: 8080
+    port: 3000
 readinessProbe:
   tcpSocket:
-    port: 8080
+    port: 3000
 
 #This section is for setting up autoscaling more information can be found here: https://kubernetes.io/docs/concepts/workloads/autoscaling/
 autoscaling:
@@ -120,6 +125,3 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
-
-env:
-  productsDb: "Products"
