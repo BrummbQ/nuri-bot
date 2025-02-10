@@ -1,14 +1,17 @@
-import { sql } from "@vercel/postgres";
+import { query } from "./db";
 
 export async function insertMagicLink(
   token: string,
   user_id: string,
   expiresAt: Date,
 ) {
-  const linkInsert = await sql`
+  const linkInsert = await query(
+    `
   INSERT INTO MagicLink (token, user_id, expires_at)
-  VALUES (${token}, ${user_id}, ${expiresAt.toISOString()})
-  RETURNING id`;
+  VALUES ($1, $2, $3)
+  RETURNING id`,
+    [token, user_id, expiresAt.toISOString()],
+  );
 
   if (!linkInsert.rows.length) {
     throw new Error("Could not find inserted link");
@@ -18,29 +21,35 @@ export async function insertMagicLink(
 }
 
 export async function findMagicLink(token: string) {
-  const linkSelect = await sql`
+  const linkSelect = await query(
+    `
     SELECT ml.id, u.id as user_id, u.email as email, ml.expires_at
     FROM MagicLink ml
     JOIN AppUser u ON ml.user_id = u.id
-    WHERE token = ${token}`;
+    WHERE token = $1`,
+    [token],
+  );
 
   return linkSelect.rows[0];
 }
 
 export async function findMagicLinkByUser(userId: string) {
-  const linkSelect = await sql`
+  const linkSelect = await query(
+    `
     SELECT *
     FROM MagicLink
-    WHERE user_id = ${userId}
-    LIMIT 1`;
+    WHERE user_id = $1
+    LIMIT 1`,
+    [userId],
+  );
 
   return linkSelect.rows[0];
 }
 
 export async function deleteMagicLink(id: number) {
-  await sql`DELETE FROM MagicLink WHERE id = ${id}`;
+  await query(`DELETE FROM MagicLink WHERE id = $1`, [id]);
 }
 
 export async function deleteMagicLinkFromUser(userId: number) {
-  await sql`DELETE FROM MagicLink WHERE user_id = ${userId}`;
+  await query(`DELETE FROM MagicLink WHERE user_id = $1`, [userId]);
 }

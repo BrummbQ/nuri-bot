@@ -1,4 +1,3 @@
-import type { QueryResultRow } from "@vercel/postgres";
 import { expect } from "vitest";
 import { fetch } from "@nuxt/test-utils/e2e";
 import { findUserByEmail, findMagicLinkByUser } from "~/lib/db";
@@ -6,7 +5,7 @@ import { createSessionToken } from "~/lib/auth";
 
 export async function sendMagicLink(
   testmail: string,
-): Promise<{ token: string; user: QueryResultRow }> {
+): Promise<{ token: string; user: any }> {
   const { status, statusText } = await fetch("/api/auth/magic-link", {
     headers: { "Content-Type": "application/json" },
     method: "POST",
@@ -44,7 +43,7 @@ export async function verifyToken(
 
 export async function loginUser(
   testmail: string,
-): Promise<{ sessionToken: string; user: QueryResultRow }> {
+): Promise<{ sessionToken: string; user: any }> {
   const { token, user } = await sendMagicLink(testmail);
   await verifyToken(token, testmail, user.id);
   const sessionToken = createSessionToken(user.id, 1000);
