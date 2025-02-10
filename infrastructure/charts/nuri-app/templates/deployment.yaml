@@ -40,6 +40,12 @@ spec:
             - name: http
               containerPort: {{ .Values.containerPort }}
               protocol: TCP
+          env:
+          - name: POSTGRES_URL
+            valueFrom:
+              secretKeyRef:
+                name: postgres-cluster-app
+                key: uri
           envFrom:
           - secretRef:
               name: {{ .Release.Name }}-secrets

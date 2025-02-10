@@ -1,9 +1,5 @@
-import { sql } from "@vercel/postgres";
-import type {
-  Ingredient,
-  IngredientWithProducts,
-  RecipeSchema,
-} from "../models";
+import { query } from "./db";
+import type { Ingredient, IngredientWithProducts } from "../models";
 
 export async function insertIngredient(
   i: IngredientWithProducts,
@@ -14,10 +10,13 @@ export async function insertIngredient(
     unit: i.unit,
     quantity: i.quantity,
   });
-  const ingredientInsert = await sql`
+  const ingredientInsert = await query(
+    `
     INSERT INTO Ingredient (basket_id, ingredient)
-    VALUES (${basketId}, ${ingredientJson})
-    RETURNING id`;
+    VALUES ($1, $2)
+    RETURNING id`,
+    [basketId, ingredientJson],
+  );
 
   if (!ingredientInsert.rows.length) {
     throw new Error("Could not find inserted ingredient");
@@ -31,9 +30,12 @@ export async function linkIngredientToRecipe(
   recipeId: number,
   ingredientId: number,
 ) {
-  await sql`
+  await query(
+    `
     INSERT INTO Ingredient_Recipe (recipe_id, ingredient_id)
-    VALUES (${recipeId}, ${ingredientId})`;
+    VALUES ($1, $2)`,
+    [recipeId, ingredientId],
+  );
   console.log("Linked ingredient to recipe", ingredientId, recipeId);
 }
 
@@ -42,9 +44,12 @@ export async function linkIngredientToProduct(
   productId: string,
   quantity: number,
 ) {
-  await sql`
+  await query(
+    `
     INSERT INTO Ingredient_Product (ingredient_id, product_id, quantity)
-    VALUES (${ingredientId}, ${productId}, ${quantity})`;
+    VALUES ($1, $2, $3)`,
+    [ingredientId, productId, quantity],
+  );
   console.log(
     "Linked ingredient to product",
     ingredientId,
@@ -64,7 +69,8 @@ export interface BasketIngredientRow {
 export async function getBasketIngredients(
   basketId: string,
 ): Promise<BasketIngredientRow[]> {
-  const result = await sql`
+  const result = await query(
+    `
     SELECT 
       b.id AS basket_id,
       i.id AS ingredient_id,
@@ -74,7 +80,9 @@ export async function getBasketIngredients(
     FROM Basket b
     JOIN Ingredient i ON b.id = i.basket_id
     LEFT JOIN Ingredient_Product ip ON i.id = ip.ingredient_id
-    WHERE b.id = ${basketId};
-    `;
+    WHERE b.id = $1;
+    `,
+    [basketId],
+  );
   return result.rows as BasketIngredientRow[];
 }

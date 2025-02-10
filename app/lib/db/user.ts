@@ -1,14 +1,18 @@
-import { sql } from "@vercel/postgres";
+import { query } from "./db";
 
 export async function findUserById(userId: string) {
-  const userSelect =
-    await sql`SELECT * FROM AppUser WHERE id = ${userId} LIMIT 1`;
+  const userSelect = await query(
+    "SELECT * FROM AppUser WHERE id = $1 LIMIT 1",
+    [userId],
+  );
   return userSelect.rows[0];
 }
 
 export async function findUserByEmail(email: string) {
-  const userSelect =
-    await sql`SELECT * FROM AppUser WHERE email = ${email} LIMIT 1`;
+  const userSelect = await query(
+    "SELECT * FROM AppUser WHERE email = $1 LIMIT 1",
+    [email],
+  );
   return userSelect.rows[0];
 }
 
@@ -18,10 +22,13 @@ export async function findOrInsertUser(email: string) {
     return user;
   }
 
-  const userInsert = await sql`
+  const userInsert = await query(
+    `
   INSERT INTO AppUser (email)
-  VALUES (${email})
-  RETURNING id, email`;
+  VALUES ($1)
+  RETURNING id, email`,
+    [email],
+  );
 
   if (!userInsert.rows.length) {
     throw new Error("Could not find inserted user");
@@ -31,5 +38,5 @@ export async function findOrInsertUser(email: string) {
 }
 
 export async function deleteUserByEmail(email: string) {
-  await sql`DELETE FROM AppUser WHERE email = ${email}`;
+  await query("DELETE FROM AppUser WHERE email = $1", [email]);
 }

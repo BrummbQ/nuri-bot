@@ -19,8 +19,8 @@
     "@testing-library/vue": "^8.1.0",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/nodemailer": "^6.4.15",
+    "@types/pg": "^8.11.11",
     "@types/uuid": "^10.0.0",
-    "@vercel/postgres": "^0.9.0",
     "@vue/test-utils": "^2.4.6",
     "happy-dom": "^14.12.3",
     "jsonwebtoken": "^9.0.2",
@@ -36,5 +36,8 @@
     "vue": "^3.3.8",
     "vue-router": "^4.2.5",
     "vue-tsc": "^1.8.27"
+  },
+  "dependencies": {
+    "pg": "^8.13.1"
   }
 }
