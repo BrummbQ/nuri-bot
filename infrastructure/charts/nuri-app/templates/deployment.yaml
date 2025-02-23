@@ -46,6 +46,8 @@ spec:
               secretKeyRef:
                 name: postgres-cluster-app
                 key: uri
+          - name: PRODUCTS_API
+            value: "http://api.nuribot.de"
           envFrom:
           - secretRef:
               name: {{ .Release.Name }}-secrets
