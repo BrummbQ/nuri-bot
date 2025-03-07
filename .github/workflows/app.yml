@@ -103,7 +103,8 @@ jobs:
           EMAIL_SMTP_PORT: ${{ secrets.EMAIL_SMTP_PORT }}
           EMAIL_SMTP_PW: ${{ secrets.EMAIL_SMTP_PW }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         run: |
           helm upgrade --install nuri-app ./infrastructure/charts/nuri-app \
             --kubeconfig kubeconfig \
@@ -118,4 +119,6 @@ jobs:
             --set secrets.EMAIL_SMTP_PORT="${EMAIL_SMTP_PORT}" \
             --set secrets.EMAIL_SMTP_PW="${EMAIL_SMTP_PW}" \
             --set secrets.OPENAI_API_KEY="${OPENAI_API_KEY}" \
+            --set secrets.AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}" \
+            --set secrets.AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}" \
             --wait
