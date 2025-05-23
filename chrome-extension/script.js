@@ -18,10 +18,13 @@ async function readCookiesFromRewe(reweTabId) {
   const [{ result }] = await chrome.scripting.executeScript({
     target: { tabId: reweTabId },
     func: () => {
-      const marketId = document
-        .querySelector("[data-market-id]")
-        .getAttribute("data-market-id");
-      return marketId;
+      const marketIdElement = document.querySelector("[data-wwident]");
+
+      if (marketIdElement == null) {
+        return window.ReweBasket.sessionMarketInformation.marketCode;
+      }
+
+      return marketIdElement.getAttribute("data-wwident");
     },
   });
 

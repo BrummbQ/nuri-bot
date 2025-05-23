@@ -26,16 +26,30 @@ export default defineEventHandler(async (event) => {
       }
 
       // add product to basket
-      await updateListingInBasket(
-        listingId,
-        selectedProduct.quantity,
-        body.reweCookies,
-      );
-      console.log(
-        "Added product",
-        selectedProduct.quantity,
-        selectedProduct.product.name,
-      );
+      try {
+        await updateListingInBasket(
+          listingId,
+          selectedProduct.quantity,
+          body.reweCookies,
+        );
+        console.log(
+          "Added product",
+          selectedProduct.quantity,
+          selectedProduct.product.name,
+        );
+      } catch (e: any) {
+        console.error("Error adding product", selectedProduct.product.name, e);
+        // continue on 400 errors, some products might not be available anymore
+        if (e.response?.status === 400) {
+          console.error("Bad Request (400) adding product:", e.response._data);
+          continue;
+        }
+
+        throw createError({
+          statusCode: 500,
+          statusMessage: "Error adding product to basket",
+        });
+      }
     }
   }
 });
