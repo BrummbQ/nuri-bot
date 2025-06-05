@@ -1,17 +1,10 @@
 import nodemailer from "nodemailer";
 import crypto from "crypto";
 import { insertMagicLink, findOrInsertUser } from "~/lib/db";
+import { getAppUrl } from "~/lib/utils/url";
 
 interface MagicLinkBody {
   email: string;
-}
-
-function getAppUrl(): string {
-  if (process.env.NODE_ENV === "production") {
-    return `https://nuribot.de`;
-  } else {
-    return `http://localhost:3000`;
-  }
 }
 
 export default defineEventHandler(async (event) => {

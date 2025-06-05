@@ -1,5 +1,6 @@
 import {
   getBasketById,
+  getBasketByShareToken,
   getBasketIngredients,
   getBasketsByUserId,
   getRecipesByBasket,
@@ -117,4 +118,16 @@ export async function getBasketsOverview(
       recipeCount: b.recipes.length,
     };
   });
+}
+
+export async function getSharedBasket(
+  shareToken: string,
+  sessionToken: string,
+): Promise<Basket> {
+  const basket = await getBasketByShareToken(shareToken);
+  if (basket == null) {
+    throw new Error(`Basket share ${shareToken} not found or expired!`);
+  }
+
+  return await getBasket(basket.id, sessionToken);
 }

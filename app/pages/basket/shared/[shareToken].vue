@@ -16,12 +16,13 @@ definePageMeta({
   middleware: ["auth"],
 });
 
-const route = useRoute("basket-id-ordered");
+const route = useRoute("basket-shared-shareToken");
 
-const { data, error } = await useFetchBasket(route.params.id);
-const { postOrderIngredients, shareBasket } = useApi();
+const { data, error } = await useFetchSharedBasket(route.params.shareToken);
+const { postOrderIngredients } = useApi();
 const { reweCookieDataValue, resetReweCookieData } = useBasketStore();
 const orderAgainLoading = ref(false);
+const url = useRequestURL();
 const { addNotification } = useNotification();
 
 async function orderAgain() {
@@ -40,22 +41,17 @@ async function orderAgain() {
 }
 
 async function share() {
+  const shareData = {
+    title: `Nuri Warenkorb`,
+    url: url.toString(),
+  };
   try {
-    const { shareUrl } = await shareBasket(route.params.id);
-    const shareData = {
-      title: `Nuri Warenkorb`,
-      url: shareUrl,
-    };
-
     await navigator.share(shareData);
-  } catch (e) {
-    const isAbort = e instanceof Error && e.name === "AbortError";
+  } catch (err) {
+    const isAbort = err instanceof Error && err.name === "AbortError";
     if (!isAbort) {
-      console.error(e);
-      addNotification({
-        severity: "error",
-        message: "Teilen nicht möglich!",
-      });
+      console.error(err);
+      addNotification({ severity: "error", message: "Teilen nicht möglich!" });
     }
   }
 }

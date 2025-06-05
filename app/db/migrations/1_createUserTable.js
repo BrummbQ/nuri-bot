@@ -1,7 +1,4 @@
 import { query } from "./db.js";
-import dotenv from "dotenv";
-
-dotenv.config({ path: [".env.development.local"] });
 
 try {
   await query(`

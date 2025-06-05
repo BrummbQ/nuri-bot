@@ -1,7 +1,4 @@
-import { query } from "./db.js";
-import dotenv from "dotenv";
-
-dotenv.config({ path: [".env.development.local"] });
+import { query, queryIgnoreDuplicate } from "./db.js";
 
 try {
   await query(`
@@ -13,7 +10,9 @@ CREATE TABLE IF NOT EXISTS Basket (
 );
 `);
 
-  await query(`CREATE TYPE recipe_source AS ENUM ('REWE', 'GENERATED');`);
+  await queryIgnoreDuplicate(
+    `CREATE TYPE recipe_source AS ENUM ('REWE', 'GENERATED');`,
+  );
 
   await query(`
 CREATE TABLE IF NOT EXISTS Recipe (
@@ -91,6 +90,28 @@ CREATE TABLE IF NOT EXISTS Recipe_Menu (
     FOREIGN KEY (recipe_id) REFERENCES Recipe(id)
 );
 `);
+
+  await queryIgnoreDuplicate(
+    `CREATE TYPE share_role AS ENUM ('viewer', 'editor');`,
+  );
+
+  await query(`
+  CREATE TABLE IF NOT EXISTS BasketShare (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    basket_id UUID NOT NULL,
+    share_token UUID UNIQUE NOT NULL,
+    role share_role NOT NULL DEFAULT 'viewer',
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    expires_at TIMESTAMP NULL,
+    FOREIGN KEY (basket_id) REFERENCES Basket(id),
+
+    UNIQUE (basket_id, role)
+  );
+  `);
+
+  await query(
+    `CREATE UNIQUE INDEX IF NOT EXISTS basketshare_share_token_idx ON BasketShare (share_token);`,
+  );
 
   console.log("Created table");
 } catch (error) {

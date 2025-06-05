@@ -40,8 +40,8 @@ export interface CreateBasketResponse {
   basketId: string;
 }
 
-export interface GetBasketQuery {
-  basketId: string;
+export interface ShareBasketResponse {
+  shareUrl: string;
 }
 
 export interface GetBasketResponse {

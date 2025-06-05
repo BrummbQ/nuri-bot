@@ -22,3 +22,7 @@ Deployed with helm on CI
 
 1. create serviceaccount with ci-serviceaccount.yaml
 2. create custom kubeconfig with token
+
+# Local Development
+
+Port forward for postgres db: `kubectl port-forward svc/postgres-cluster-rw 5432:5432 -n nuri-prod`

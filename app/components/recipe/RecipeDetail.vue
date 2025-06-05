@@ -16,14 +16,11 @@
             class="text-2xl"
             :class="{ 'text-primary': recipe.liked }"
         /></UiButton>
-        <UiButton
+        <UiShareButton
           v-if="canShare"
-          type="button"
-          variant="outline"
           title="Rezept teilen"
           @click="shareRecipe()"
-          ><Icon :name="'mdi:share-variant'" class="text-2xl"
-        /></UiButton>
+        />
       </div>
     </UiHeaderRow>
 

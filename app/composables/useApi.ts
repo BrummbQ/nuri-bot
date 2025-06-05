@@ -8,6 +8,7 @@ import type {
   ReweBasketCookieData,
   SearchGenerateRecipeBody,
   SearchGenerateRecipeResponse,
+  ShareBasketResponse,
 } from "~/lib/models";
 
 export const useGenerateRecipeLoading = () =>
@@ -38,13 +39,21 @@ export function useApi() {
     recipes,
     ingredients,
   }: CreateBasketBody): Promise<CreateBasketResponse> {
-    const result = await $api("/api/create-basket", {
+    const result = await $api("/api/baskets/create", {
       method: "POST",
       body: {
         basketId,
         ingredients,
         recipes,
       },
+    });
+    return result;
+  }
+
+  async function shareBasket(basketId: string): Promise<ShareBasketResponse> {
+    const result = await $api(`/api/baskets/${basketId}/share`, {
+      method: "POST",
+      body: {},
     });
     return result;
   }
@@ -121,6 +130,7 @@ export function useApi() {
   return {
     postSearchIngredients,
     createBasket,
+    shareBasket,
     postOrderIngredients,
     validateIngredientsOrder,
     loadProducts,
