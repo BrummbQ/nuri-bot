@@ -14,3 +14,13 @@ export function formatDateShort(date: Date): string {
 
   return formatter.format(date);
 }
+
+export function formatDateLong(date: Date): string {
+  const formatter = new Intl.DateTimeFormat("de-DE", {
+    year: "2-digit",
+    month: "short",
+    day: "numeric",
+  });
+
+  return formatter.format(date);
+}

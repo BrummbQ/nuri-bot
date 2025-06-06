@@ -1,5 +1,5 @@
 <template>
-  <UiHeaderRow headerText="Warenkorb vollständig!">
+  <UiHeaderRow :headerText="basketTitle">
     <UiShareButton
       title="Warenkorb teilen"
       @click="emit('share', basket.basketId)"
@@ -48,12 +48,17 @@
 
 <script setup lang="ts">
 import type { Basket, RecipeSchema } from "~/lib/models";
+import { formatBasketTitle } from "~/lib/utils/basket";
 
 const props = defineProps<{ basket: Basket; orderAgainLoading: boolean }>();
 const emit = defineEmits<{
   orderAgain: [];
   share: [basketId: string];
 }>();
+
+const basketTitle = computed(() => {
+  return formatBasketTitle(props.basket);
+});
 
 function recipeLink(recipe: RecipeSchema) {
   return `/basket/${props.basket.basketId}/ordered/recipe/${encodeURIComponent(encodeURIComponent(recipe["@id"]))}`;

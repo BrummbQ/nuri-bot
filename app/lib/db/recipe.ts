@@ -122,6 +122,7 @@ export async function getLikedRecipes(userId: string): Promise<RecipeSchema[]> {
   FROM AppUser_Recipe_Likes l
   JOIN recipe r ON l.recipe_id = r.id
   WHERE l.user_id = $1
+  ORDER BY l.created_at DESC
   LIMIT 100`,
     [userId],
   );

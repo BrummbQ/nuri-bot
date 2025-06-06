@@ -67,6 +67,7 @@ CREATE TABLE IF NOT EXISTS Ingredient_Product (
 CREATE TABLE IF NOT EXISTS AppUser_Recipe_Likes (
     recipe_id SERIAL NOT NULL,
     user_id UUID NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (recipe_id, user_id),
     FOREIGN KEY (recipe_id) REFERENCES Recipe(id),
     FOREIGN KEY (user_id) REFERENCES AppUser(id)

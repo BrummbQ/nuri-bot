@@ -1,4 +1,4 @@
-import type { ProductSearchResponse } from "~/lib/models";
+import type { Basket, ProductSearchResponse } from "~/lib/models";
 
 export function mockProduct(grammage?: string): ProductSearchResponse {
   return {
@@ -9,5 +9,15 @@ export function mockProduct(grammage?: string): ProductSearchResponse {
     price: 179,
     currency: "EUR",
     grammage,
+  };
+}
+
+export function mockBasket(): Basket {
+  return {
+    basketId: "1",
+    userId: "user-1",
+    recipes: [],
+    ingredientsWithProducts: [],
+    createdAt: new Date(2000, 0, 1).toISOString(),
   };
 }

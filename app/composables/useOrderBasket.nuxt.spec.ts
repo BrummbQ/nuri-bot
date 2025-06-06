@@ -31,7 +31,7 @@ describe("useOrderBasket", () => {
 
     const { orderBasket, orderLoading } = useOrderBasket(basketId);
 
-    await expect(orderBasket()).rejects.toThrow("Error ordering ingredients");
+    await expect(orderBasket()).rejects.toThrow("No REWE cookies available");
     expect(orderLoading.value).toBe(false);
     expect(localStorage.getItem(extensionBasketDataKey)).toBe(null);
   });
