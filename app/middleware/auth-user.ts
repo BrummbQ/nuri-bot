@@ -11,5 +11,5 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   }
 
   // If not authenticated, redirect to login
-  return navigateToLogin();
+  return await navigateToLogin(userId == null ? to.fullPath : undefined);
 });

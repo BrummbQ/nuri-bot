@@ -30,7 +30,9 @@ describe("Auth", async () => {
       redirect: "manual",
     });
     expect(status).toBe(302);
-    expect(headers.get("location")).toEqual("/auth/login");
+    expect(headers.get("location")).toEqual(
+      "/auth/login?redirect=/user/123/basket",
+    );
   });
 
   it("should auth protected api routes", async () => {

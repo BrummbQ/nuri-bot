@@ -3,20 +3,21 @@ import type { GetBasketResponse } from "~/lib/models";
 
 export default async function (basketId: string) {
   const nuxtApp = useNuxtApp();
+  const route = useRoute();
   const { data, error } = await useFetch<GetBasketResponse>(
     `/api/baskets/${basketId}`,
   );
 
-  if (error.value?.statusCode === 401) {
-    navigateToLogin();
-  }
+  await nuxtApp.runWithContext(async () => {
+    if (error.value?.statusCode === 401) {
+      await navigateToLogin(route.fullPath);
+    }
 
-  if (error.value?.statusCode === 403) {
-    await nuxtApp.runWithContext(() => {
+    if (error.value?.statusCode === 403) {
       const userId = getUserIdFromClientOrServer();
-      navigateTo(`/user/${userId}/basket`);
-    });
-  }
+      await navigateTo(`/user/${userId}/basket`);
+    }
+  });
 
   return { data, error };
 }

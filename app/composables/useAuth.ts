@@ -23,13 +23,13 @@ export function useAuth() {
 
   user.value = getItem(sessionStorageAuthKey);
 
-  const sendMagicLink = async (email: string) => {
+  const sendMagicLink = async (email: string, redirect: string) => {
     loading.value = true;
     error.value = null;
     try {
       await $fetch("/api/auth/magic-link", {
         method: "POST",
-        body: { email },
+        body: { email, redirect },
       });
     } catch (e: unknown) {
       if (e instanceof Error) {

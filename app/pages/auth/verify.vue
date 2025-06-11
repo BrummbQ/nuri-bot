@@ -1,4 +1,3 @@
-<!-- pages/auth/verify.vue -->
 <template>
   <h1>Einloggen...</h1>
   <p v-if="error">{{ error }}</p>
@@ -6,16 +5,16 @@
 
 <script setup lang="ts">
 const route = useRoute();
-const router = useRouter();
 const { verifyToken, error, user } = useAuth();
 
 onMounted(async () => {
   const token = route.query.token as string;
+  const redirect = route.query.redirect as string;
   if (token) {
     await verifyToken(token);
     if (user.value) {
-      // Redirect to dashboard or home page
-      router.push("/");
+      // Navigate to redirect or home page
+      await navigateTo(redirect || "/");
     }
   }
 });

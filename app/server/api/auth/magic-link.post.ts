@@ -5,6 +5,7 @@ import { getAppUrl } from "~/lib/utils/url";
 
 interface MagicLinkBody {
   email: string;
+  redirect?: string;
 }
 
 export default defineEventHandler(async (event) => {
@@ -25,7 +26,7 @@ export default defineEventHandler(async (event) => {
 
   // Create magic link
   const appUrl = getAppUrl();
-  const magicLink = `${appUrl}/auth/verify?token=${token}`;
+  const magicLink = `${appUrl}/auth/verify?token=${token}&redirect=${encodeURIComponent(body.redirect ?? "/")}`;
   await insertMagicLink(token, user.id, expiresAt);
 
   // Send email with magic link

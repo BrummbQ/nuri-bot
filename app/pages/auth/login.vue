@@ -42,11 +42,14 @@ definePageMeta({
 });
 
 const { sendMagicLink, loading, error } = useAuth();
+const route = useRoute();
+const redirectTo = route.query.redirect || "/";
+
 const email = ref("");
 const success = ref(false);
 
 const handleSubmit = async () => {
-  await sendMagicLink(email.value);
+  await sendMagicLink(email.value, redirectTo as string);
   if (!error.value) {
     success.value = true;
   }
