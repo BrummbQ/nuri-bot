@@ -4,6 +4,7 @@ import type {
   RecipeSchema,
   SearchGenerateRecipeBody,
 } from "../models";
+import { categorizeType } from "./categorize-recipe";
 
 const openai = new OpenAI();
 
@@ -109,6 +110,7 @@ export async function generateRecipe(
                   },
                 },
               },
+              categorization: categorizeType,
             },
             required: [
               "name",
@@ -121,6 +123,7 @@ export async function generateRecipe(
               "recipeCategory",
               "recipeIngredient",
               "recipeInstructions",
+              "categorization",
             ],
           },
         },

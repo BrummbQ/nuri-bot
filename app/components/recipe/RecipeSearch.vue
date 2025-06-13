@@ -1,4 +1,6 @@
 <template>
+  <h1 class="text-xl font-semibold text-gray-400">Menü {{ menuPeriod }}</h1>
+
   <RecipeSelectedCards
     v-if="recipes.length"
     :basketUrl="basketUrl"
@@ -6,13 +8,6 @@
     :selectedRecipes="recipes"
     @unselect="unselectRecipe($event)"
   />
-
-  <UiHeaderRow :headerText="'Menü ' + menuPeriod">
-    <UiLink :to="wizardUrl" variant="outline"
-      ><Icon name="mdi:wizard-hat" class="text-2xl mr-2" /> Eigenes
-      Rezept</UiLink
-    >
-  </UiHeaderRow>
 
   <RecipeAvailableCards
     :recipes="unselectedRecipes"

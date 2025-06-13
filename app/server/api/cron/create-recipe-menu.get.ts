@@ -21,7 +21,7 @@ export default defineEventHandler(async (event) => {
   const lastMenu = await findLastMenuForTimePeriod(lastSundayDate);
   if (lastMenu != null) {
     // menu found, no action
-    return;
+    //return;
   }
 
   // no menu, create new one and populate it

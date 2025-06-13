@@ -1,3 +1,5 @@
+import type { RecipeCategorization } from "./recipe-category.model";
+
 export type RecipeSchema = {
   "@id": string;
   description: string;
@@ -11,6 +13,7 @@ export type RecipeSchema = {
   totalTime?: string;
   prepTime?: string;
   cookTime?: string;
+  categorization?: RecipeCategorization;
 
   // defined by user recipe like relation
   liked?: boolean;
